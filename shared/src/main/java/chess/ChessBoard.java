@@ -9,7 +9,8 @@ package chess;
 public class ChessBoard {
 
     public ChessBoard() {
-        
+        ChessMove move = new ChessMove(null,null,null);
+        ChessMove test = null;
     }
 
     /**
