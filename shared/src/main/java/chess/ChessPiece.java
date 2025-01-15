@@ -1,7 +1,12 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 
 /**
  * Represents a single chess piece
@@ -58,6 +63,61 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
     }
+
+
+    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition startPosition) {
+        /** find current position
+         * See if 1 move in front is open
+         * Start can move 1 or 2 forward
+         * see if diagonals are open
+         * See if in diagonal is in bounds (make separate method)
+         */
+
+        ChessPiece current = board.getPiece(startPosition);
+
+        ArrayList<ChessMove> moves = new ArrayList<>();
+
+        if (current.getTeamColor() == WHITE) {
+            ChessPosition oneAhead = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn());
+            ChessPosition twoAhead = new ChessPosition(startPosition.getRow() + 2, startPosition.getColumn());
+            ChessPosition diagonalRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 1);
+            ChessPosition diagonalLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 1);
+            //This makes it possible for pawns to move 2 forward from starting position if there's nothing in front
+            if (startPosition.getRow() == 2 &&  board.getPiece(oneAhead) == null &&  board.getPiece(twoAhead) == null){
+                moves.add(new ChessMove(startPosition, twoAhead, null));
+            }
+
+            //This makes it possible to move one forward if it's empty and if it's inbounds
+            if (board.getPiece(oneAhead) == null && inbounds(oneAhead)){
+                moves.add(new ChessMove(startPosition, oneAhead, null));
+            }
+
+            if (board.getPiece(diagonalRight) != null && inbounds(diagonalRight) && board.getPiece(diagonalRight).getTeamColor() == BLACK) {
+                moves.add(new ChessMove(startPosition, diagonalRight, null));
+
+            }
+
+            if (board.getPiece(diagonalLeft) != null && inbounds(diagonalLeft) && board.getPiece(diagonalLeft).getTeamColor() == BLACK) {
+                moves.add(new ChessMove(startPosition, diagonalLeft, null));
+            }
+        }
+
+
+
+
+    }
+
+
+    public boolean inbounds(ChessPosition endPosition) {
+        if (endPosition.getRow() > 0 && endPosition.getRow() < 9 && endPosition.getColumn() > 0 && endPosition.getColumn() < 9){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
