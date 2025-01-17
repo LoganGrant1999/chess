@@ -71,9 +71,145 @@ public class ChessPiece {
             return kingMoves(board, myPosition);
         }
 
+        if (piece == PieceType.KNIGHT){
+            return knightMoves(board, myPosition);
+        }
+
 
         return new ArrayList<ChessMove>();
     }
+
+
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition startPosition) {
+        /**
+         * find current position
+         * Move knight forward in long L and right if in bounds and not same color
+         * Move knight forward in short L and right if in bounds and not same color
+         * Move knight forward in long L and left if in bounds and not same color
+         * Move knight forward in short L and left if in bounds and not same color
+         * Move knight backward in long L and right if in bounds and not same color
+         * Move knight backward in short L and right if in bounds and not same color
+         * Move knight backward in long L and left if in bounds and not same color
+         * Move knight backward in short L and left if in bounds and not same color
+         */
+
+        ChessPiece current = board.getPiece(startPosition);
+
+        ArrayList<ChessMove> moves = new ArrayList<>();
+
+        // sets moves for WHITE KNIGHTS
+        if (current.getTeamColor() == WHITE) {
+            // sets position changes for WHITE KNIGHTS
+            ChessPosition forwardLongRight = new ChessPosition(startPosition.getRow() + 2, startPosition.getColumn() + 1);
+            ChessPosition forwardLongLeft = new ChessPosition(startPosition.getRow() + 2, startPosition.getColumn() - 1);
+            ChessPosition forwardShortRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 2);
+            ChessPosition forwardShortLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 2);
+            ChessPosition backwardLongRight = new ChessPosition(startPosition.getRow() - 2, startPosition.getColumn() + 1);
+            ChessPosition backwardLongLeft = new ChessPosition(startPosition.getRow() - 2, startPosition.getColumn() - 1);
+            ChessPosition backwardShortRight = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() + 2);
+            ChessPosition backwardShortLeft = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 2);
+
+            // Moves WHITE KNIGHT forward and right in long L
+            if (inbounds(forwardLongRight) && (board.getPiece(forwardLongRight) == null || getTeamColor() != board.getPiece(forwardLongRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardLongRight, null));
+            }
+
+            // Moves WHITE KNIGHT forward and left in long L
+            if (inbounds(forwardLongLeft) && (board.getPiece(forwardLongLeft) == null || getTeamColor() != board.getPiece(forwardLongLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardLongLeft, null));
+            }
+
+            // Moves WHITE KNIGHT forward and right in short L
+            if (inbounds(forwardShortRight) && (board.getPiece(forwardShortRight) == null || getTeamColor() != board.getPiece(forwardShortRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardShortRight, null));
+            }
+
+            // Moves WHITE KNIGHT forward and left in short L
+            if (inbounds(forwardShortLeft) && (board.getPiece(forwardShortLeft) == null || getTeamColor() != board.getPiece(forwardShortLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardShortLeft, null));
+            }
+
+            // Moves WHITE KNIGHT backward and right in long L
+            if (inbounds(backwardLongRight) && (board.getPiece(backwardLongRight) == null || getTeamColor() != board.getPiece(backwardLongRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardLongRight, null));
+            }
+
+            // Moves WHITE KNIGHT backward and left in long L
+            if (inbounds(backwardLongLeft) && (board.getPiece(backwardLongLeft) == null || getTeamColor() != board.getPiece(backwardLongLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardLongLeft, null));
+            }
+
+            // Moves WHITE KNIGHT backward and right in short L
+            if (inbounds(backwardShortRight) && (board.getPiece(backwardShortRight) == null || getTeamColor() != board.getPiece(backwardLongRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardShortRight, null));
+            }
+
+            // Moves WHITE KNIGHT backward and left in short L
+            if (inbounds(backwardShortLeft) && (board.getPiece(backwardShortLeft) == null || getTeamColor() != board.getPiece(backwardShortLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardShortLeft, null));
+            }
+        }
+
+        // sets moves for BLACK KNIGHTS
+        if (current.getTeamColor() == BLACK) {
+
+            // sets position changes for BLACK KNIGHTS
+            ChessPosition forwardLongRight = new ChessPosition(startPosition.getRow() - 2, startPosition.getColumn() + 1);
+            ChessPosition forwardLongLeft = new ChessPosition(startPosition.getRow() - 2, startPosition.getColumn() - 1);
+            ChessPosition forwardShortRight = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() + 2);
+            ChessPosition forwardShortLeft = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 2);
+            ChessPosition backwardLongRight = new ChessPosition(startPosition.getRow() + 2, startPosition.getColumn() + 1);
+            ChessPosition backwardLongLeft = new ChessPosition(startPosition.getRow() + 2, startPosition.getColumn() - 1);
+            ChessPosition backwardShortRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 2);
+            ChessPosition backwardShortLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 2);
+
+            // Moves BLACK KNIGHT forward and right in long L
+            if (inbounds(forwardLongRight) && (board.getPiece(forwardLongRight) == null || getTeamColor() != board.getPiece(forwardLongRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardLongRight, null));
+            }
+
+            // Moves BLACK KNIGHT forward and left in long L
+            if (inbounds(forwardLongLeft) && (board.getPiece(forwardLongLeft) == null || getTeamColor() != board.getPiece(forwardLongLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardLongLeft, null));
+            }
+
+            // Moves BLACK KNIGHT forward and right in short L
+            if (inbounds(forwardShortRight) && (board.getPiece(forwardShortRight) == null || getTeamColor() != board.getPiece(forwardShortRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardShortRight, null));
+            }
+
+            // Moves BLACK KNIGHT forward and left in short L
+            if (inbounds(forwardShortLeft) && (board.getPiece(forwardShortLeft) == null || getTeamColor() != board.getPiece(forwardShortLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, forwardShortLeft, null));
+            }
+
+            // Moves BLACK KNIGHT backward and right in long L
+            if (inbounds(backwardLongRight) && (board.getPiece(backwardLongRight) == null || getTeamColor() != board.getPiece(backwardLongRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardLongRight, null));
+            }
+
+            // Moves BLACK KNIGHT backward and left in long L
+            if (inbounds(backwardLongLeft) && (board.getPiece(backwardLongLeft) == null || getTeamColor() != board.getPiece(backwardLongLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardLongLeft, null));
+            }
+
+            // Moves BLACK KNIGHT backward and right in short L
+            if (inbounds(backwardShortRight) && (board.getPiece(backwardShortRight) == null || getTeamColor() != board.getPiece(backwardLongRight).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardShortRight, null));
+            }
+
+            // Moves BLACK KNIGHT backward and left in short L
+            if (inbounds(backwardShortLeft) && (board.getPiece(backwardShortLeft) == null || getTeamColor() != board.getPiece(backwardShortLeft).getTeamColor())) {
+                moves.add(new ChessMove(startPosition, backwardShortLeft, null));
+            }
+        }
+
+        return moves;
+    }
+
+
+
+
 
 
 
