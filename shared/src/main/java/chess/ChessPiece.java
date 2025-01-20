@@ -83,7 +83,22 @@ public class ChessPiece {
             return bishopMoves(board, myPosition);
         }
 
+        if (piece == PieceType.QUEEN){
+            return queenMoves(board, myPosition);
+        }
+
         return new ArrayList<ChessMove>();
+    }
+
+
+    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition startPosition) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+
+        moves.addAll(rookMoves(board, startPosition));
+        moves.addAll(bishopMoves(board, startPosition));
+
+        return moves;
+
     }
 
 
@@ -364,10 +379,6 @@ public class ChessPiece {
 
         return moves;
     }
-
-
-
-
 
 
 
