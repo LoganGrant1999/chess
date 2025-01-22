@@ -407,10 +407,10 @@ public class ChessPiece {
             ChessPosition oneBehind = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn());
             ChessPosition oneLeft = new ChessPosition(startPosition.getRow(), startPosition.getColumn() - 1);
             ChessPosition oneRight = new ChessPosition(startPosition.getRow(), startPosition.getColumn() + 1);
-            ChessPosition ForwardDiagonalRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 1);
-            ChessPosition ForwardDiagonalLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 1);
-            ChessPosition BackwardDiagonalRight = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() + 1);
-            ChessPosition BackwardDiagonalLeft = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 1);
+            ChessPosition forwardDiagonalRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 1);
+            ChessPosition forwardDiagonalLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 1);
+            ChessPosition backwardDiagonalRight = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() + 1);
+            ChessPosition backwardDiagonalLeft = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 1);
 
 
             // Moves WHITE KING one space forward
@@ -434,24 +434,24 @@ public class ChessPiece {
             }
 
             // Moves WHITE KING one space diagonally forward to the right
-            if (inbounds(ForwardDiagonalRight) && (board.getPiece(ForwardDiagonalRight) == null || getTeamColor() != board.getPiece(ForwardDiagonalRight).getTeamColor())){
-                moves.add(new ChessMove (startPosition, ForwardDiagonalRight, null));
+            if (inbounds(forwardDiagonalRight) && (board.getPiece(forwardDiagonalRight) == null || getTeamColor() != board.getPiece(forwardDiagonalRight).getTeamColor())){
+                moves.add(new ChessMove (startPosition, forwardDiagonalRight, null));
             }
 
 
             // Moves WHITE KING one space diagonally forward to the left
-            if (inbounds(ForwardDiagonalLeft) && (board.getPiece(ForwardDiagonalLeft) == null || getTeamColor() != board.getPiece(ForwardDiagonalLeft).getTeamColor())){
-                moves.add(new ChessMove (startPosition, ForwardDiagonalLeft, null));
+            if (inbounds(forwardDiagonalLeft) && (board.getPiece(forwardDiagonalLeft) == null || getTeamColor() != board.getPiece(forwardDiagonalLeft).getTeamColor())){
+                moves.add(new ChessMove (startPosition, forwardDiagonalLeft, null));
             }
 
             // Moves WHITE KING one space diagonally backward to the right
-            if (inbounds(BackwardDiagonalRight) && (board.getPiece(BackwardDiagonalRight) == null || getTeamColor() != board.getPiece(BackwardDiagonalRight).getTeamColor())){
-                moves.add(new ChessMove (startPosition, BackwardDiagonalRight, null));
+            if (inbounds(backwardDiagonalRight) && (board.getPiece(backwardDiagonalRight) == null || getTeamColor() != board.getPiece(backwardDiagonalRight).getTeamColor())){
+                moves.add(new ChessMove (startPosition, backwardDiagonalRight, null));
             }
 
             // Moves WHITE KING one space diagonally backward to the left
-            if (inbounds(BackwardDiagonalLeft) && (board.getPiece(BackwardDiagonalLeft) == null || getTeamColor() != board.getPiece(BackwardDiagonalLeft).getTeamColor())){
-                moves.add(new ChessMove (startPosition, BackwardDiagonalLeft, null));
+            if (inbounds(backwardDiagonalLeft) && (board.getPiece(backwardDiagonalLeft) == null || getTeamColor() != board.getPiece(backwardDiagonalLeft).getTeamColor())){
+                moves.add(new ChessMove (startPosition, backwardDiagonalLeft, null));
             }
 
         }
@@ -464,10 +464,10 @@ public class ChessPiece {
             ChessPosition oneBehind = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn());
             ChessPosition oneLeft = new ChessPosition(startPosition.getRow(), startPosition.getColumn() - 1);
             ChessPosition oneRight = new ChessPosition(startPosition.getRow(), startPosition.getColumn() + 1);
-            ChessPosition ForwardDiagonalRight = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() + 1);
-            ChessPosition ForwardDiagonalLeft = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 1);
-            ChessPosition BackwardDiagonalRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 1);
-            ChessPosition BackwardDiagonalLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 1);
+            ChessPosition forwardDiagonalRight = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() + 1);
+            ChessPosition forwardDiagonalLeft = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 1);
+            ChessPosition backwardDiagonalRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 1);
+            ChessPosition backwardDiagonalLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 1);
 
             // Moves BLACK KING one space forward
             if (inbounds(oneAhead) && (board.getPiece(oneAhead) == null || getTeamColor() != board.getPiece(oneAhead).getTeamColor())) {
@@ -490,24 +490,24 @@ public class ChessPiece {
             }
 
             // Moves BLACK KING one space diagonally forward to the right
-            if (inbounds(ForwardDiagonalRight) && (board.getPiece(ForwardDiagonalRight) == null || getTeamColor() != board.getPiece(ForwardDiagonalRight).getTeamColor())){
-                moves.add(new ChessMove (startPosition, ForwardDiagonalRight, null));
+            if (inbounds(forwardDiagonalRight) && (board.getPiece(forwardDiagonalRight) == null || getTeamColor() != board.getPiece(forwardDiagonalRight).getTeamColor())){
+                moves.add(new ChessMove (startPosition, forwardDiagonalRight, null));
             }
 
 
             // Moves BLACK KING one space diagonally forward to the left
-            if (inbounds(ForwardDiagonalLeft) && (board.getPiece(ForwardDiagonalLeft) == null || getTeamColor() != board.getPiece(ForwardDiagonalLeft).getTeamColor())){
-                moves.add(new ChessMove (startPosition, ForwardDiagonalLeft, null));
+            if (inbounds(forwardDiagonalLeft) && (board.getPiece(forwardDiagonalLeft) == null || getTeamColor() != board.getPiece(forwardDiagonalLeft).getTeamColor())){
+                moves.add(new ChessMove (startPosition, forwardDiagonalLeft, null));
             }
 
             // Moves BLACK KING one space diagonally backward to the right
-            if (inbounds(BackwardDiagonalRight) && (board.getPiece(BackwardDiagonalRight) == null || getTeamColor() != board.getPiece(BackwardDiagonalRight).getTeamColor())){
-                moves.add(new ChessMove (startPosition, BackwardDiagonalRight, null));
+            if (inbounds(backwardDiagonalRight) && (board.getPiece(backwardDiagonalRight) == null || getTeamColor() != board.getPiece(backwardDiagonalRight).getTeamColor())){
+                moves.add(new ChessMove (startPosition, backwardDiagonalRight, null));
             }
 
             // Moves BLACK KING one space diagonally backward to the left
-            if (inbounds(BackwardDiagonalLeft) && (board.getPiece(BackwardDiagonalLeft) == null || getTeamColor() != board.getPiece(BackwardDiagonalLeft).getTeamColor())){
-                moves.add(new ChessMove (startPosition, BackwardDiagonalLeft, null));
+            if (inbounds(backwardDiagonalLeft) && (board.getPiece(backwardDiagonalLeft) == null || getTeamColor() != board.getPiece(backwardDiagonalLeft).getTeamColor())){
+                moves.add(new ChessMove (startPosition, backwardDiagonalLeft, null));
             }
 
         }
