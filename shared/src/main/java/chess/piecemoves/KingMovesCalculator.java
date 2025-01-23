@@ -1,4 +1,4 @@
-package chess.PieceMoves;
+package chess.piecemoves;
 
 import chess.ChessBoard;
 import chess.ChessMove;
@@ -7,12 +7,11 @@ import chess.ChessPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
-public class KingMoveCalculator implements PieceMovesCalculator {
+public class KingMovesCalculator implements PieceMovesCalculator {
 
 
     @Override

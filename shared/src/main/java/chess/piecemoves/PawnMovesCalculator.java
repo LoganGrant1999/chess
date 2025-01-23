@@ -1,4 +1,4 @@
-package chess.PieceMoves;
+package chess.piecemoves;
 
 import chess.ChessBoard;
 import chess.ChessMove;
@@ -11,7 +11,7 @@ import java.util.Collection;
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
-public class PawnMoveCalculator implements PieceMovesCalculator {
+public class PawnMovesCalculator implements PieceMovesCalculator {
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition) {
         ChessPiece current = board.getPiece(startPosition);

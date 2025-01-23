@@ -1,14 +1,10 @@
 package chess;
 
-import chess.PieceMoves.*;
+import chess.piecemoves.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
-
-import static chess.ChessGame.TeamColor.BLACK;
-import static chess.ChessGame.TeamColor.WHITE;
 
 /**
  * Represents a single chess piece
@@ -66,27 +62,27 @@ public class ChessPiece {
         PieceType piece = getPieceType();
 
         if (piece == PieceType.PAWN) {
-            return new PawnMoveCalculator().calculateMoves(board, myPosition);
+            return new PawnMovesCalculator().calculateMoves(board, myPosition);
         }
 
         if (piece == PieceType.KING) {
-            return new KingMoveCalculator().calculateMoves(board, myPosition);
+            return new KingMovesCalculator().calculateMoves(board, myPosition);
         }
 
         if (piece == PieceType.KNIGHT) {
-            return new KnightMoveCalculator().calculateMoves(board, myPosition);
+            return new KnightMovesCalculator().calculateMoves(board, myPosition);
         }
 
         if (piece == PieceType.ROOK) {
-            return new RookMoveCalculator().calculateMoves(board, myPosition);
+            return new RookMovesCalculator().calculateMoves(board, myPosition);
         }
 
         if (piece == PieceType.BISHOP) {
-            return new BishopMoveCalculator().calculateMoves(board, myPosition);
+            return new BishopMovesCalculator().calculateMoves(board, myPosition);
         }
 
         if (piece == PieceType.QUEEN) {
-            return new QueenMoveCalculator().calculateMoves(board, myPosition);
+            return new QueenMovesCalculator().calculateMoves(board, myPosition);
         }
 
         return new ArrayList<ChessMove>();
