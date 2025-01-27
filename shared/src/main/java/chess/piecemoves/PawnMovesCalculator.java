@@ -13,88 +13,90 @@ import static chess.ChessGame.TeamColor.WHITE;
 
 public class PawnMovesCalculator implements PieceMovesCalculator {
     @Override
-    public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition) {
-        ChessPiece current = board.getPiece(startPosition);
+    public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos) {
+        ChessPiece curr = board.getPiece(pos);
 
         ArrayList<ChessMove> moves = new ArrayList<>();
 
         // Makes moves for pawns that WHITE
-        if (current.getTeamColor() == WHITE) {
+        if (curr.getTeamColor() == WHITE) {
 
             // Sets possible position changes for WHITE pawns
-            ChessPosition oneAhead = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn());
-            ChessPosition twoAhead = new ChessPosition(startPosition.getRow() + 2, startPosition.getColumn());
-            ChessPosition diagonalRight = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() + 1);
-            ChessPosition diagonalLeft = new ChessPosition(startPosition.getRow() + 1, startPosition.getColumn() - 1);
+            ChessPosition oneAhead = new ChessPosition(pos.getRow() + 1, pos.getColumn());
+            ChessPosition twoAhead = new ChessPosition(pos.getRow() + 2, pos.getColumn());
+            ChessPosition diagonalRight = new ChessPosition(pos.getRow() + 1, pos.getColumn() + 1);
+            ChessPosition diagonalLeft = new ChessPosition(pos.getRow() + 1, pos.getColumn() - 1);
 
-            if (inbounds(twoAhead) && startPosition.getRow() == 2 && board.getPiece(oneAhead) == null && board.getPiece(twoAhead) == null) {
-                moves.add(new ChessMove(startPosition, twoAhead, null));
+            if (inbounds(twoAhead) && board.getPiece(oneAhead) == null && board.getPiece(twoAhead) == null && pos.getRow() == 2) {
+                moves.add(new ChessMove(pos, twoAhead, null));
             }
 
-            if (inbounds(oneAhead) && board.getPiece(oneAhead) == null && startPosition.getRow() != 7) {
-                moves.add(new ChessMove(startPosition, oneAhead, null));
+            if (inbounds(oneAhead) && board.getPiece(oneAhead) == null && pos.getRow() != 7) {
+                moves.add(new ChessMove(pos, oneAhead, null));
             }
 
-            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null && current.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && startPosition.getRow() != 7) {
-                moves.add(new ChessMove(startPosition, diagonalRight, null));
+            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && pos.getRow() != 7) {
+                moves.add(new ChessMove(pos, diagonalRight, null));
             }
 
-            if (inbounds(diagonalLeft) && board.getPiece(diagonalLeft) != null && current.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor() && startPosition.getRow() != 7) {
-                moves.add(new ChessMove(startPosition, diagonalLeft, null));
+            if (inbounds(diagonalLeft) && board.getPiece(diagonalLeft) != null &&
+                    curr.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor() && pos.getRow() != 7) {
+                moves.add(new ChessMove(pos, diagonalLeft, null));
             }
 
-            if (startPosition.getRow() == 7 && board.getPiece(oneAhead) == null) {
-                moves.addAll(promoter(startPosition, oneAhead));
+            if (pos.getRow() == 7 && board.getPiece(oneAhead) == null) {
+                moves.addAll(promoter(pos, oneAhead));
             }
 
-            if (startPosition.getRow() == 7 && board.getPiece(diagonalLeft) != null && current.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor()) {
-                moves.addAll(promoter(startPosition, diagonalLeft));
+            if (pos.getRow() == 7 && board.getPiece(diagonalRight) != null
+                    && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor()) {
+                moves.addAll(promoter(pos, diagonalRight));
             }
 
-            if (startPosition.getRow() == 7 && board.getPiece(diagonalRight) != null && current.getTeamColor() != board.getPiece(diagonalRight).getTeamColor()) {
-                moves.addAll(promoter(startPosition, diagonalRight));
+            if (pos.getRow() == 7 && board.getPiece(diagonalLeft) != null
+                    && curr.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor()) {
+                moves.addAll(promoter(pos, diagonalLeft));
             }
         }
 
         // Makes moves for pawns that are BLACK
-        if (current.getTeamColor() == BLACK) {
+        if (curr.getTeamColor() == BLACK) {
 
             // sets position changes for pawns that are BLACK
-            ChessPosition oneAhead = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn());
-            ChessPosition twoAhead = new ChessPosition(startPosition.getRow() - 2, startPosition.getColumn());
-            ChessPosition diagonalRight = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() + 1);
-            ChessPosition diagonalLeft = new ChessPosition(startPosition.getRow() - 1, startPosition.getColumn() - 1);
+            ChessPosition oneAhead = new ChessPosition(pos.getRow() - 1, pos.getColumn());
+            ChessPosition twoAhead = new ChessPosition(pos.getRow() - 2, pos.getColumn());
+            ChessPosition diagonalRight = new ChessPosition(pos.getRow() - 1, pos.getColumn() + 1);
+            ChessPosition diagonalLeft = new ChessPosition(pos.getRow() - 1, pos.getColumn() - 1);
 
-            if (inbounds(twoAhead) && startPosition.getRow() == 7 && board.getPiece(oneAhead) == null && board.getPiece(oneAhead) == null) {
-                moves.add(new ChessMove(startPosition, twoAhead, null));
+            if (inbounds(twoAhead) && pos.getRow() == 7 && board.getPiece(oneAhead) == null && board.getPiece(twoAhead) == null) {
+                moves.add(new ChessMove(pos, twoAhead, null));
             }
 
-            if (inbounds(oneAhead) && board.getPiece(oneAhead) == null && startPosition.getRow() != 2) {
-                moves.add(new ChessMove(startPosition, oneAhead, null));
+            if (inbounds(oneAhead) && board.getPiece(oneAhead) == null && pos.getRow() != 2) {
+                moves.add(new ChessMove(pos, oneAhead, null));
             }
 
-            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null && current.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && startPosition.getRow() != 2) {
-                moves.add(new ChessMove(startPosition, diagonalRight, null));
+            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && pos.getRow() != 2) {
+                moves.add(new ChessMove(pos, diagonalRight, null));
             }
 
-            if (inbounds(diagonalLeft) && board.getPiece(diagonalLeft) != null && current.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor() && startPosition.getRow() != 2) {
-                moves.add(new ChessMove(startPosition, diagonalLeft, null));
+            if (inbounds(diagonalLeft) && board.getPiece(diagonalLeft) != null && curr.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor() && pos.getRow() != 2) {
+                moves.add(new ChessMove(pos, diagonalLeft, null));
             }
 
-            if (startPosition.getRow() == 2 && board.getPiece(oneAhead) == null) {
-                moves.addAll(promoter(startPosition, oneAhead));
+            if (pos.getRow() == 2 && board.getPiece(oneAhead) == null) {
+                moves.addAll(promoter(pos, oneAhead));
             }
 
-            if (startPosition.getRow() == 2 && board.getPiece(diagonalLeft) != null && current.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor()) {
-                moves.addAll(promoter(startPosition, diagonalLeft));
+            if (pos.getRow() == 2 && board.getPiece(diagonalLeft) != null && curr.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor()) {
+                moves.addAll(promoter(pos, diagonalLeft));
             }
 
-            if (startPosition.getRow() == 2 && board.getPiece(diagonalRight) != null && current.getTeamColor() != board.getPiece(diagonalRight).getTeamColor()) {
-                moves.addAll(promoter(startPosition, diagonalRight));
+            if (pos.getRow() == 2 && board.getPiece(diagonalRight) != null && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor()) {
+                moves.addAll(promoter(pos, diagonalRight));
             }
         }
 
         return moves;
     }
 }
-
