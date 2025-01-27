@@ -18,10 +18,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
 
         ArrayList<ChessMove> moves = new ArrayList<>();
 
-        // Makes moves for pawns that WHITE
         if (curr.getTeamColor() == WHITE) {
 
-            // Sets possible position changes for WHITE pawns
             ChessPosition oneAhead = new ChessPosition(pos.getRow() + 1, pos.getColumn());
             ChessPosition twoAhead = new ChessPosition(pos.getRow() + 2, pos.getColumn());
             ChessPosition diagonalRight = new ChessPosition(pos.getRow() + 1, pos.getColumn() + 1);
@@ -35,7 +33,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
                 moves.add(new ChessMove(pos, oneAhead, null));
             }
 
-            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && pos.getRow() != 7) {
+            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null
+                    && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && pos.getRow() != 7) {
                 moves.add(new ChessMove(pos, diagonalRight, null));
             }
 
@@ -59,10 +58,8 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
             }
         }
 
-        // Makes moves for pawns that are BLACK
         if (curr.getTeamColor() == BLACK) {
 
-            // sets position changes for pawns that are BLACK
             ChessPosition oneAhead = new ChessPosition(pos.getRow() - 1, pos.getColumn());
             ChessPosition twoAhead = new ChessPosition(pos.getRow() - 2, pos.getColumn());
             ChessPosition diagonalRight = new ChessPosition(pos.getRow() - 1, pos.getColumn() + 1);
@@ -76,11 +73,13 @@ public class PawnMovesCalculator implements PieceMovesCalculator {
                 moves.add(new ChessMove(pos, oneAhead, null));
             }
 
-            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && pos.getRow() != 2) {
+            if (inbounds(diagonalRight) && board.getPiece(diagonalRight) != null
+                    && curr.getTeamColor() != board.getPiece(diagonalRight).getTeamColor() && pos.getRow() != 2) {
                 moves.add(new ChessMove(pos, diagonalRight, null));
             }
 
-            if (inbounds(diagonalLeft) && board.getPiece(diagonalLeft) != null && curr.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor() && pos.getRow() != 2) {
+            if (inbounds(diagonalLeft) && board.getPiece(diagonalLeft) != null
+                    && curr.getTeamColor() != board.getPiece(diagonalLeft).getTeamColor() && pos.getRow() != 2) {
                 moves.add(new ChessMove(pos, diagonalLeft, null));
             }
 
