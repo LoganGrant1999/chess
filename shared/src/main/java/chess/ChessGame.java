@@ -113,5 +113,4 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return board;
     }
-
 }
