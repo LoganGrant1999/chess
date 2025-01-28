@@ -1,5 +1,8 @@
 package chess;
 
+import chess.piecemoves.PieceMovesCalculator;
+
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -75,12 +78,37 @@ public class ChessGame {
         throw new RuntimeException("Not implemented");
     }
 
+
+    public ChessPosition kingPos(ChessBoard currBoard, TeamColor color) {
+
+        for (int x = 1; x < 9; x++) {
+            for (int y = 1; y < 9; y++) {
+
+                int row = x;
+                int col = y;
+
+                ChessPosition curr = new ChessPosition(row, col);
+                ChessPiece currPiece = currBoard.getPiece(curr);
+
+                if (currPiece != null && currPiece.getPieceType() == ChessPiece.PieceType.KING
+                        && currPiece.getTeamColor() == color) {
+                    return curr;
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
     /**
      * Determines if the given team is in checkmate
      *
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
+
     public boolean isInCheckmate(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
     }
