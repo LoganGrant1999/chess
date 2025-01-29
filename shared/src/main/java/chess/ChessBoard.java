@@ -17,6 +17,22 @@ public class ChessBoard {
         this.board = new ChessPiece[8][8];
     }
 
+    public ChessBoard(ChessBoard oldBoard) {
+
+        this.board = new ChessPiece[8][8];
+
+        for (int x = 0; x < 8; ++x) {
+            for (int y = 0; y < 8; ++y) {
+                ChessPiece oldPiece = oldBoard.board[x][y];
+
+                if (oldPiece != null) {
+                    ChessPiece newPiece = new ChessPiece(oldPiece.getTeamColor(), oldPiece.getPieceType());
+                    this.board[x][y] = newPiece;
+                }
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
