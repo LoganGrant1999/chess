@@ -62,7 +62,6 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
         ArrayList<ChessMove> goodMoves = new ArrayList<>();
-
         ChessPiece startPiece = board.getPiece(startPosition);
 
         if (board.getPiece(startPosition) == null){
@@ -173,7 +172,6 @@ public class ChessGame {
         for (ChessMove move : currTeamMoves){
 
             ChessGame copyGame = new ChessGame(this);
-
             ChessPiece movingPiece = copyGame.getBoard().getPiece(move.getStartPosition());
             copyGame.getBoard().addPiece(move.getEndPosition(), movingPiece);
             copyGame.getBoard().addPiece(move.getStartPosition(), null);
