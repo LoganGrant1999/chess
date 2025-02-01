@@ -23,9 +23,11 @@ public class ChessBoard {
 
         for (int x = 0; x < 8; ++x) {
             for (int y = 0; y < 8; ++y) {
+
                 ChessPiece oldPiece = oldBoard.board[x][y];
 
                 if (oldPiece != null) {
+
                     ChessPiece newPiece = new ChessPiece(oldPiece.getTeamColor(), oldPiece.getPieceType());
                     this.board[x][y] = newPiece;
                 }

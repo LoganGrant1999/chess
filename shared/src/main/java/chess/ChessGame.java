@@ -109,7 +109,6 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
 
-
         if (promote == null){
             board.addPiece(endPos, currPiece);
         } else {
@@ -172,6 +171,7 @@ public class ChessGame {
                 }
             }
         }
+
         return null;
     }
 
@@ -247,7 +247,6 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return board;
     }
-
 
     @Override
     public boolean equals(Object o) {
