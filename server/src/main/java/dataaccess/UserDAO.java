@@ -1,12 +1,12 @@
 package dataaccess;
 
 import model.Authtoken;
-import model.User;
+import model.UserData;
 
 public interface UserDAO{
 
-    Authtoken insertUser(User user);
+    Authtoken insertUser(UserData userData);
 
-    User getUser(String userName);
+    UserData getUser(String userName);
 
 }
