@@ -8,5 +8,4 @@ public abstract class BaseHandler implements Route {
 
     final Gson gson = new Gson();
 
-
 }

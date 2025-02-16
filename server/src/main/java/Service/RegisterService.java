@@ -10,7 +10,7 @@ public class RegisterService {
 
     private MemoryUserDAO dao = new MemoryUserDAO();
 
-    public RegisterResponse register(RegisterRequest req){
+    public static RegisterResponse register(RegisterRequest req){
 
         UserData userData = new UserData(req.getUsername(), req.getPassword(), req.getEmail());
 
