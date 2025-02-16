@@ -14,7 +14,7 @@ public class RegisterService {
 
         UserData userData = new UserData(req.getUsername(), req.getPassword(), req.getEmail());
 
-        if (dao.getUser(userData.getUsername()) != null) {
+        if (dao.getUser(UserData.getUsername()) != null) {
             // Return failure response
             return new RegisterResponse("", "", 400, "User exists already");
         }

@@ -1,6 +1,6 @@
 package dataaccess;
 
-import model.Authtoken;
+import model.AuthData;
 import model.UserData;
 
 import java.util.HashMap;
@@ -14,14 +14,18 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public Authtoken insertUser(UserData userData) {
-          db.put(userData.getUsername(), userData);
-
-          return new Authtoken();
+    public void createUser(UserData userData) {
+        db.put(userData.username(), userData);
     }
 
     @Override
-    public UserData getUser(String userName) {
-        return db.get(userName);
+    public UserData getUser(String username) {
+        return db.get(username);
+    }
+
+    @Override
+    public void clear() {
+        db.clear();
     }
 }
+
