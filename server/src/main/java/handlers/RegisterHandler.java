@@ -1,20 +1,15 @@
 package handlers;
 
 import Service.RegisterService;
-import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
 import exceptions.AlreadyTakenException;
 import exceptions.MissingDataException;
-import exceptions.ServerException;
 import request.RegisterRequest;
 import response.RegisterResponse;
 import spark.Request;
 import spark.Response;
-
-
-import java.util.Map;
 
 public class RegisterHandler extends BaseHandler{
 
@@ -58,7 +53,7 @@ public class RegisterHandler extends BaseHandler{
 
             return new ErrorFormatter(e).getErrorFormat();
 
-        } catch (ServerException e){
+        } catch (DataAccessException e){
 
             response.status(500);
 

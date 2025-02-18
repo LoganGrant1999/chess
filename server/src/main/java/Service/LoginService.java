@@ -1,11 +1,7 @@
 package Service;
 
-import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import exceptions.InvalidCredentialsException;
-import exceptions.ServerException;
 import model.AuthData;
 import model.UserData;
 import request.LoginRequest;
@@ -16,7 +12,7 @@ import java.util.UUID;
 
 public class LoginService {
 
-    public LoginResponse login(LoginRequest req, MemoryUserDAO user, MemoryAuthDAO auth){
+    public LoginResponse login(LoginRequest req, MemoryUserDAO user, MemoryAuthDAO auth) throws DataAccessException {
 
         UserData userData = user.getUser(req.username());
 
@@ -34,9 +30,9 @@ public class LoginService {
 
             auth.createAuth(authData);
 
-        } catch (RuntimeException e){
+        } catch (DataAccessException e){
 
-            throw new ServerException("Error Creating Auth");
+            throw new DataAccessException(e.getMessage());
         }
 
         return new LoginResponse(req.username(), userToken);

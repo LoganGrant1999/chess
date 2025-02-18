@@ -1,10 +1,10 @@
 package handlers;
 
 import Service.LoginService;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.InvalidCredentialsException;
-import exceptions.ServerException;
 import request.LoginRequest;
 import response.LoginResponse;
 import spark.Request;
@@ -43,7 +43,7 @@ public class LoginHandler extends BaseHandler{
 
             return new ErrorFormatter(e).getErrorFormat();
 
-        }  catch (ServerException e) {
+        }  catch (DataAccessException e) {
 
             response.status(500);
 

@@ -1,12 +1,8 @@
 package Service;
 
-import dataaccess.AuthDAO;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import exceptions.AlreadyTakenException;
 import exceptions.MissingDataException;
-import exceptions.ServerException;
 import model.AuthData;
 import model.UserData;
 import request.RegisterRequest;
@@ -16,7 +12,7 @@ import java.util.UUID;
 
 public class RegisterService {
 
-    public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth) {
+    public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth) throws DataAccessException {
 
         if (req.username() == null || req.password() == null || req.email() == null) {
             throw new MissingDataException("User Request is missing username, password, or email");
@@ -37,9 +33,9 @@ public class RegisterService {
 
             user.createUser(userData);
 
-        } catch(RuntimeException e) {
+        } catch(DataAccessException e) {
 
-            throw new ServerException("Error Creating User");
+            throw new DataAccessException(e.getMessage());
         }
 
 
@@ -49,13 +45,12 @@ public class RegisterService {
 
         auth.createAuth(authData);
 
-        } catch (RuntimeException e){
+        } catch (DataAccessException e){
 
-            throw new ServerException("Error Creating Auth");
+            throw new DataAccessException(e.getMessage());
         }
 
         return new RegisterResponse(req.username(), userToken);
-
     }
 
 }

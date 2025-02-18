@@ -14,18 +14,27 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public void createUser(UserData userData) {
+    public void createUser(UserData userData) throws DataAccessException{
+        if (db.containsKey(userData.username())){
+            throw new DataAccessException("username already exists");
+        }
         db.put(userData.username(), userData);
     }
 
     @Override
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException{
+        if (!db.containsKey(username)){
+            throw new DataAccessException("user does not exist");
+        }
         return db.get(username);
     }
 
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException{
+        if (db.isEmpty()){
+            throw new DataAccessException("database is empty");
+        }
         db.clear();
     }
 }

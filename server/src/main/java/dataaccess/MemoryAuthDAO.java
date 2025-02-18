@@ -14,19 +14,27 @@ public class MemoryAuthDAO implements AuthDAO {
         this.db = new HashMap<>();
     }
 
-
     @Override
-    public void createAuth(AuthData authdata) {
+    public void createAuth(AuthData authdata) throws DataAccessException{
+        if (db.containsKey(authdata.authToken())){
+            throw new DataAccessException("AuthToken already created");
+        }
         db.put(authdata.authToken(), authdata);
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        if (!db.containsKey(authToken)){
+            throw new DataAccessException("authToken does not exist");
+        }
         return db.get(authToken);
     }
 
     @Override
-    public void clear() {
+    public void clear() throws DataAccessException{
+        if (db.isEmpty()){
+            throw new DataAccessException("database is empty");
+        }
         db.clear();
     }
 }
