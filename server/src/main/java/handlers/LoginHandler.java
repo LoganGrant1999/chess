@@ -13,12 +13,11 @@ import spark.Response;
 public class LoginHandler extends BaseHandler{
 
     private MemoryUserDAO user;
-
     private MemoryAuthDAO auth;
 
-    public LoginHandler() {
-        this.user = new MemoryUserDAO();
-        this.auth = new MemoryAuthDAO();
+    public LoginHandler(MemoryUserDAO user, MemoryAuthDAO auth) {
+        this.user = user;
+        this.auth = auth;
     }
 
     @Override
@@ -28,9 +27,9 @@ public class LoginHandler extends BaseHandler{
 
         try{
 
-            LoginService logService = new LoginService(user, auth);
+            LoginService logService = new LoginService();
 
-            LoginResponse resp = logService.login(req);
+            LoginResponse resp = logService.login(req, user, auth);
 
             String jsonResp = gson.toJson(resp);
 

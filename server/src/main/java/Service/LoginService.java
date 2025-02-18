@@ -1,6 +1,8 @@
 package Service;
 
 import dataaccess.AuthDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryUserDAO;
 import dataaccess.UserDAO;
 import exceptions.InvalidCredentialsException;
 import exceptions.ServerException;
@@ -14,15 +16,7 @@ import java.util.UUID;
 
 public class LoginService {
 
-    private UserDAO user;
-    private AuthDAO auth;
-
-    public LoginService(UserDAO user, AuthDAO auth) {
-        this.user = user;
-        this.auth = auth;
-    }
-
-    public LoginResponse login(LoginRequest req){
+    public LoginResponse login(LoginRequest req, MemoryUserDAO user, MemoryAuthDAO auth){
 
         UserData userData = user.getUser(req.username());
 

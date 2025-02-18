@@ -24,9 +24,9 @@ public class RegisterHandler extends BaseHandler{
     private MemoryAuthDAO auth;
 
 
-    public RegisterHandler() {
-        this.user = new MemoryUserDAO();
-        this.auth = new MemoryAuthDAO();
+    public RegisterHandler(MemoryUserDAO user, MemoryAuthDAO auth) {
+        this.user = user;
+        this.auth = auth;
     }
 
     @Override
@@ -36,9 +36,9 @@ public class RegisterHandler extends BaseHandler{
 
         try{
 
-            RegisterService regService = new RegisterService(user, auth);
+            RegisterService regService = new RegisterService();
 
-            RegisterResponse resp = regService.register(req);
+            RegisterResponse resp = regService.register(req, user, auth);
 
             String jsonResp = gson.toJson(resp);
 

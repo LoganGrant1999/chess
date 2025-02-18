@@ -16,16 +16,7 @@ import java.util.UUID;
 
 public class RegisterService {
 
-
-    private UserDAO user;
-    private AuthDAO auth;
-
-    public RegisterService(UserDAO user, AuthDAO auth) {
-        this.user = user;
-        this.auth = auth;
-    }
-
-    public RegisterResponse register(RegisterRequest req) {
+    public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth) {
 
         if (req.username() == null || req.password() == null || req.email() == null) {
             throw new MissingDataException("User Request is missing username, password, or email");
