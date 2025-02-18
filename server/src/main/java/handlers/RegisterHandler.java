@@ -1,16 +1,33 @@
 package handlers;
 
 import Service.RegisterService;
+import dataaccess.AuthDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
+import exceptions.AlreadyTakenException;
+import exceptions.MissingDataException;
+import exceptions.ServerException;
 import request.RegisterRequest;
 import response.RegisterResponse;
 import spark.Request;
 import spark.Response;
+
 
 import java.util.Map;
 
 public class RegisterHandler extends BaseHandler{
 
 
+    private MemoryUserDAO user;
+
+    private MemoryAuthDAO auth;
+
+
+    public RegisterHandler() {
+        this.user = new MemoryUserDAO();
+        this.auth = new MemoryAuthDAO();
+    }
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
@@ -19,7 +36,9 @@ public class RegisterHandler extends BaseHandler{
 
         try{
 
-            RegisterResponse resp = RegisterService.register(req);
+            RegisterService regService = new RegisterService(user, auth);
+
+            RegisterResponse resp = regService.register(req);
 
             String jsonResp = gson.toJson(resp);
 
@@ -27,7 +46,7 @@ public class RegisterHandler extends BaseHandler{
 
             return jsonResp;
 
-        } catch (BadRequestException e){
+        } catch (MissingDataException e){
 
             response.status(400);
 
