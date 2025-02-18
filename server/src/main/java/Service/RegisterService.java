@@ -21,7 +21,7 @@ public class RegisterService {
         UserData userData = new UserData(req.username(), req.password(), req.email());
 
 
-        if (user.getUser(userData.username()) != null) {
+        if (userData.username() != null) {
 
             throw new AlreadyTakenException("Username '" + req.username() + "' is already taken.");
         }
