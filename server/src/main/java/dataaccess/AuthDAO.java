@@ -10,6 +10,6 @@ public interface AuthDAO {
 
     void remove(String authToken) throws DataAccessException;
 
-    void clear() throws DataAccessException;
+    void clear();
 
 }

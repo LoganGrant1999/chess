@@ -45,7 +45,6 @@ public class LogoutHandler extends BaseHandler{
             response.status(500);
 
             return new ErrorFormatter(e).getErrorFormat();
-
         }
     }
 }

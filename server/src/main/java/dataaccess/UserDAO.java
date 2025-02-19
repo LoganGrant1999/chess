@@ -10,6 +10,6 @@ public interface UserDAO{
 
     UserData getUser(String userName)throws DataAccessException ;
 
-    void clear() throws DataAccessException;
+    void clear();
 
 }
