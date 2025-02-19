@@ -50,8 +50,6 @@ public class MemoryGameDAO implements GameDAO{
         try {
             ArrayList<ListGameData> listedGames = new ArrayList<>();
 
-
-
             for (GameData games: db.values()){
 
                 String whiteUsername;
@@ -104,6 +102,7 @@ public class MemoryGameDAO implements GameDAO{
             return updatedGame;
         }
     }
+
 
     @Override
     public void clear() {
