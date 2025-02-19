@@ -22,7 +22,10 @@ public class LogoutHandler extends BaseHandler{
         String authToken = request.headers("Authorization");
 
         if (authToken == null || auth.getAuth(authToken) == null) {
-            throw new InvalidCredentialsException("Error: unauthorized");
+
+            response.status(401);
+
+            return new InvalidCredentialsException("Error: unauthorized");
         }
 
         try{
@@ -36,12 +39,6 @@ public class LogoutHandler extends BaseHandler{
             response.status(200);
 
             return jsonResp;
-
-        } catch (InvalidCredentialsException e) {
-
-            response.status(401);
-
-            return new ErrorFormatter(e).getErrorFormat();
 
         } catch (DataAccessException e){
 

@@ -84,25 +84,40 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData updateGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException {
+    public GameData joinGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException {
+
         if (getGame(gameID) == null){
+
             throw new DataAccessException("Error: game does not exist");
+
         }
 
         GameData currGame = getGame(gameID);
 
-        if (Objects.equals(playerColor, "Black")) {
-            GameData updatedGame =  new GameData(gameID, currGame.whiteUsername(), username, gameName, currGame.game());
-            db.put(updatedGame.gameID(), updatedGame);
-            return updatedGame;
-        }
-        else {
-            GameData updatedGame = new GameData(gameID, username, currGame.blackUsername(), gameName, currGame.game());
-            db.put(updatedGame.gameID(), updatedGame);
-            return updatedGame;
+        try {
+
+            if (Objects.equals(playerColor, "Black")) {
+
+                GameData updatedGame = new GameData(gameID, currGame.whiteUsername(), username, gameName, currGame.game());
+
+                db.put(updatedGame.gameID(), updatedGame);
+
+                return updatedGame;
+
+            } else {
+
+                GameData updatedGame = new GameData(gameID, username, currGame.blackUsername(), gameName, currGame.game());
+
+                db.put(updatedGame.gameID(), updatedGame);
+
+                return updatedGame;
+            }
+
+        } catch (Exception e) {
+
+            throw new DataAccessException("Error: player could not be added to the game");
         }
     }
-
 
     @Override
     public void clear() {

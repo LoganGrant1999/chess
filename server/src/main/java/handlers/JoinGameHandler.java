@@ -1,35 +1,31 @@
 package handlers;
 
-import Service.CreateGameService;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import exceptions.AlreadyTakenException;
 import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
-import model.AuthData;
-import request.CreateGameRequest;
-import response.CreateGameResponse;
+import request.JoinGameRequest;
+import response.JoinGameResponse;
 import spark.Request;
 import spark.Response;
 
-import java.util.Objects;
+public class JoinGameHandler extends BaseHandler{
 
-public class CreateGameHandler extends BaseHandler {
-
-    private MemoryGameDAO game;
+    private MemoryUserDAO user;
     private MemoryAuthDAO auth;
+    private MemoryGameDAO game;
 
-    public CreateGameHandler(MemoryGameDAO game, MemoryAuthDAO auth) {
-        this.game = game;
+    public JoinGameHandler(MemoryUserDAO user, MemoryAuthDAO auth, MemoryGameDAO game) {
+        this.user = user;
         this.auth = auth;
+        this.game = game;
     }
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-
-        CreateGameRequest req = gson.fromJson(request.body(), CreateGameRequest.class);
-
 
         String authToken = request.headers("Authorization");
 
@@ -40,11 +36,13 @@ public class CreateGameHandler extends BaseHandler {
             return new InvalidCredentialsException("Error: unauthorized");
         }
 
+        JoinGameRequest req = gson.fromJson(request.body(), JoinGameRequest.class);
+
         try {
 
-            CreateGameService createGame = new CreateGameService();
+            JoinGameService joinService = new JoinGameService();
 
-            CreateGameResponse resp = createGame.create(req, game);
+            JoinGameResponse resp = joinService.join();
 
             String jsonResp = gson.toJson(resp);
 
@@ -58,7 +56,13 @@ public class CreateGameHandler extends BaseHandler {
 
             return new ErrorFormatter(e).getErrorFormat();
 
-        } catch (DataAccessException e) {
+        } catch (AlreadyTakenException e){
+
+            response.status(403);
+
+            return new ErrorFormatter(e).getErrorFormat();
+
+        } catch (DataAccessException e){
 
             response.status(500);
 

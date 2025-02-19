@@ -14,7 +14,7 @@ public interface GameDAO {
 
     ArrayList<ListGameData> listGames(String authToken) throws DataAccessException;
 
-    GameData updateGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException;
+    GameData joinGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException;
 
     void clear();
 }
