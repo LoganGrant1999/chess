@@ -22,7 +22,7 @@ public class LogoutService {
 
         try {
 
-            auth.clear();
+            auth.remove(authData.authToken());
 
         } catch (DataAccessException e){
 

@@ -21,7 +21,7 @@ public class Server {
 
         Spark.post("/user", new RegisterHandler(userDAO, authDAO));
         Spark.post("/session", new LoginHandler(userDAO, authDAO));
-        Spark.post("/session", new LogoutHandler(authDAO));
+        Spark.delete("/session", new LogoutHandler(authDAO));
 
         Spark.awaitInitialization();
         return Spark.port();

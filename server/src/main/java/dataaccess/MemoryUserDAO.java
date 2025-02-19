@@ -16,7 +16,7 @@ public class MemoryUserDAO implements UserDAO{
     @Override
     public void createUser(UserData userData) throws DataAccessException{
         if (db.containsKey(userData.username())){
-            throw new DataAccessException("username already exists");
+            throw new DataAccessException("Error: username already exists");
         }
         db.put(userData.username(), userData);
     }
@@ -32,9 +32,6 @@ public class MemoryUserDAO implements UserDAO{
 
     @Override
     public void clear() throws DataAccessException{
-        if (db.isEmpty()){
-            throw new DataAccessException("database is empty");
-        }
         db.clear();
     }
 }
