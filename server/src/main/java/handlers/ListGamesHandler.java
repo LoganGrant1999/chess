@@ -5,7 +5,6 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import exceptions.InvalidCredentialsException;
-import request.ListGamesRequest;
 import response.ListGamesResponse;
 import spark.Request;
 import spark.Response;
@@ -22,13 +21,17 @@ public class ListGamesHandler extends BaseHandler{
     @Override
     public Object handle(Request request, Response response) throws Exception {
 
-        ListGamesRequest req = gson.fromJson(request.body(), ListGamesRequest.class);
+        String authToken = request.headers("Authorization");
+
+        if (authToken == null || auth.getAuth(authToken) == null) {
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
 
         try{
 
             ListGamesService listService = new ListGamesService();
 
-            ListGamesResponse resp = listService.lister(req, auth, game);
+            ListGamesResponse resp = listService.lister(authToken, auth, game);
 
             String jsonResp = gson.toJson(resp);
 

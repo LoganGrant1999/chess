@@ -6,20 +6,18 @@ import dataaccess.MemoryGameDAO;
 import exceptions.InvalidCredentialsException;
 import model.AuthData;
 import model.GameData;
-import request.ListGamesRequest;
 import response.ListGamesResponse;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 
 public class ListGamesService {
 
-    public ListGamesResponse lister(ListGamesRequest req, MemoryAuthDAO auth, MemoryGameDAO game) throws DataAccessException {
+    public ListGamesResponse lister(String authToken, MemoryAuthDAO auth, MemoryGameDAO game) throws DataAccessException {
 
-        AuthData authData = auth.getAuth(req.authToken());
+        AuthData authData = auth.getAuth(authToken);
 
-        if (authData == null || !Objects.equals(req.authToken(), authData.authToken())){
+        if (authData == null || !Objects.equals(authToken, authData.authToken())){
 
             throw new InvalidCredentialsException("Error: unauthorized");
         }
