@@ -3,6 +3,7 @@ package server;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import handlers.LoginHandler;
+import handlers.LogoutHandler;
 import handlers.RegisterHandler;
 import spark.*;
 
@@ -20,9 +21,7 @@ public class Server {
 
         Spark.post("/user", new RegisterHandler(userDAO, authDAO));
         Spark.post("/session", new LoginHandler(userDAO, authDAO));
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+        Spark.post("/session", new LogoutHandler(authDAO));
 
         Spark.awaitInitialization();
         return Spark.port();

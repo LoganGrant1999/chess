@@ -26,7 +26,6 @@ public class RegisterService {
             throw new AlreadyTakenException("Username '" + req.username() + "' is already taken.");
         }
 
-
         String userToken = UUID.randomUUID().toString();
 
         try {
