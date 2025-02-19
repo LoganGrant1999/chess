@@ -3,10 +3,7 @@ package server;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
-import handlers.CreateGameHandler;
-import handlers.LoginHandler;
-import handlers.LogoutHandler;
-import handlers.RegisterHandler;
+import handlers.*;
 import model.GameData;
 import spark.*;
 
@@ -27,6 +24,7 @@ public class Server {
         Spark.post("/session", new LoginHandler(userDAO, authDAO));
         Spark.delete("/session", new LogoutHandler(authDAO));
         Spark.post("/game", new CreateGameHandler(gameDAO, authDAO));
+        Spark.get("/game", new ListGamesHandler(authDAO));
 
         Spark.awaitInitialization();
         return Spark.port();
