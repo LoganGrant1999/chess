@@ -18,7 +18,7 @@ public class LoginService {
 
         if (userData == null || !Objects.equals(req.password(), userData.password())){
 
-            throw new InvalidCredentialsException("username and/or password are incorrect");
+            throw new InvalidCredentialsException("Error: unauthorized");
 
         }
 

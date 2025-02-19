@@ -15,7 +15,7 @@ public class RegisterService {
     public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth) throws DataAccessException {
 
         if (req.username() == null || req.password() == null || req.email() == null) {
-            throw new MissingDataException("User Request is missing username, password, or email");
+            throw new MissingDataException("Error: bad request");
         }
 
         UserData userData = new UserData(req.username(), req.password(), req.email());
@@ -23,7 +23,7 @@ public class RegisterService {
 
         if (user.getUser(userData.username())!= null) {
 
-            throw new AlreadyTakenException("Username '" + req.username() + "' is already taken.");
+            throw new AlreadyTakenException("Error: already taken");
         }
 
         String userToken = UUID.randomUUID().toString();
