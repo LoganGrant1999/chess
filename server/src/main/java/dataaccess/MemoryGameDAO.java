@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 import model.UserData;
 
@@ -9,16 +10,26 @@ public class MemoryGameDAO implements GameDAO{
 
     private Map<Integer, GameData> db;
 
+    private  int gameIDCounter = 0;
+
     public MemoryGameDAO() {
         this.db = new HashMap<>();
     }
 
     @Override
-    public void CreateGame(GameData gameData) throws DataAccessException {
-        if (db.containsKey(gameData.gameID())){
-            throw new DataAccessException("Error: game already exists");
+    public int createGame(String gameName) throws DataAccessException{
+
+        if (db.values().stream().anyMatch(game -> game.gameName().equals(gameName))) {
+            throw new DataAccessException("Error: game name already taken");
         }
-        db.put(gameData.gameID(), gameData);
+
+        GameData newGame = new GameData(gameIDCounter, null, null, gameName, new ChessGame());
+
+        db.put(newGame.gameID(), newGame);
+
+        gameIDCounter = gameIDCounter + 1;
+
+        return newGame.gameID();
     }
 
     @Override
