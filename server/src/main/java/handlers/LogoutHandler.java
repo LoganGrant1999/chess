@@ -1,6 +1,6 @@
 package handlers;
 
-import Service.LogoutService;
+import service.LogoutService;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import exceptions.InvalidCredentialsException;

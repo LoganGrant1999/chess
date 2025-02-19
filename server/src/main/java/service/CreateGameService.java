@@ -1,16 +1,10 @@
-package Service;
+package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
-import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
-import model.AuthData;
-import model.GameData;
 import request.CreateGameRequest;
 import response.CreateGameResponse;
-
-import java.util.Objects;
 
 public class CreateGameService {
 

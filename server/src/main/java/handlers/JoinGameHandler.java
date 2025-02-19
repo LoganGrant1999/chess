@@ -9,6 +9,7 @@ import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
 import request.JoinGameRequest;
 import response.JoinGameResponse;
+import service.JoinGameService;
 import spark.Request;
 import spark.Response;
 
@@ -42,7 +43,7 @@ public class JoinGameHandler extends BaseHandler{
 
             JoinGameService joinService = new JoinGameService();
 
-            JoinGameResponse resp = joinService.join();
+            JoinGameResponse resp = joinService.join(req, user, auth, game, authToken);
 
             String jsonResp = gson.toJson(resp);
 
@@ -67,7 +68,6 @@ public class JoinGameHandler extends BaseHandler{
             response.status(500);
 
             return new ErrorFormatter(e).getErrorFormat();
-
         }
     }
 }

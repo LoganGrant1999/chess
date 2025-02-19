@@ -1,6 +1,6 @@
 package handlers;
 
-import Service.ListGamesService;
+import service.ListGamesService;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;

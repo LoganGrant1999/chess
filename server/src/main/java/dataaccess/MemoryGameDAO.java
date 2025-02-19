@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import exceptions.AlreadyTakenException;
 import model.GameData;
 import model.ListGameData;
 import model.UserData;
@@ -11,7 +12,7 @@ public class MemoryGameDAO implements GameDAO{
 
     private Map<Integer, GameData> db;
 
-    private  int gameIDCounter = 0;
+    private  int gameIDCounter = 1;
 
     public MemoryGameDAO() {
         this.db = new HashMap<>();
@@ -94,9 +95,18 @@ public class MemoryGameDAO implements GameDAO{
 
         GameData currGame = getGame(gameID);
 
+        if (Objects.equals(playerColor, "BLACK") && currGame.blackUsername() != null){
+
+            throw new AlreadyTakenException("Error: already taken");
+
+        } else if(Objects.equals(playerColor, "WHITE") && currGame.whiteUsername() != null){
+
+            throw new AlreadyTakenException("Error: already taken");
+        }
+
         try {
 
-            if (Objects.equals(playerColor, "Black")) {
+            if (Objects.equals(playerColor, "BLACK")) {
 
                 GameData updatedGame = new GameData(gameID, currGame.whiteUsername(), username, gameName, currGame.game());
 

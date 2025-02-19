@@ -1,6 +1,6 @@
 package handlers;
 
-import Service.RegisterService;
+import service.RegisterService;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;

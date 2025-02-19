@@ -1,6 +1,6 @@
 package handlers;
 
-import Service.LoginService;
+import service.LoginService;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;

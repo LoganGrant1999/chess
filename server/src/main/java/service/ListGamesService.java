@@ -1,11 +1,10 @@
-package Service;
+package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import exceptions.InvalidCredentialsException;
 import model.AuthData;
-import model.GameData;
 import model.ListGameData;
 import response.ListGamesResponse;
 

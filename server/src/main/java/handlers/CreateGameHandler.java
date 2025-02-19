@@ -1,19 +1,15 @@
 package handlers;
 
-import Service.CreateGameService;
+import service.CreateGameService;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
 import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
-import model.AuthData;
 import request.CreateGameRequest;
 import response.CreateGameResponse;
 import spark.Request;
 import spark.Response;
-
-import java.util.Objects;
 
 public class CreateGameHandler extends BaseHandler {
 
