@@ -1,7 +1,9 @@
 package dataaccess;
 
 import model.GameData;
+import model.ListGameData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public interface GameDAO {
@@ -10,7 +12,7 @@ public interface GameDAO {
 
     GameData getGame(int gameID) throws DataAccessException;
 
-    Collection<GameData> listGames(String authToken) throws DataAccessException;
+    ArrayList<ListGameData> listGames(String authToken) throws DataAccessException;
 
     GameData updateGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException;
 

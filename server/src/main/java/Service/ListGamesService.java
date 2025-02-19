@@ -6,6 +6,7 @@ import dataaccess.MemoryGameDAO;
 import exceptions.InvalidCredentialsException;
 import model.AuthData;
 import model.GameData;
+import model.ListGameData;
 import response.ListGamesResponse;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class ListGamesService {
 
         try{
 
-            ArrayList<GameData> games = game.listGames(authData.authToken());
+            ArrayList<ListGameData> games = game.listGames(authData.authToken());
 
             return new ListGamesResponse(games);
 

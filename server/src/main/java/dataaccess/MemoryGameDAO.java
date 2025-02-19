@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.GameData;
+import model.ListGameData;
 import model.UserData;
 
 import java.util.*;
@@ -41,13 +42,43 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public ArrayList<GameData> listGames(String authToken) throws DataAccessException {
+    public ArrayList<ListGameData> listGames(String authToken) throws DataAccessException {
         if (db.isEmpty()){
             return new ArrayList<>();
         }
 
         try {
-            return new ArrayList<>(db.values());
+            ArrayList<ListGameData> listedGames = new ArrayList<>();
+
+
+
+            for (GameData games: db.values()){
+
+                String whiteUsername;
+                String blackUsername;
+
+                if (games.whiteUsername() == null){
+
+                    whiteUsername = "";
+
+                } else{
+
+                    whiteUsername = games.whiteUsername();
+                }
+
+                if (games.blackUsername() == null){
+
+                    blackUsername = "";
+                } else {
+
+                    blackUsername = games.blackUsername();
+                }
+
+                ListGameData gameData = new ListGameData(games.gameID(), whiteUsername, blackUsername, games.gameName());
+                listedGames.add(gameData);
+            }
+
+            return listedGames;
 
         } catch (Exception e){
             throw new DataAccessException("Error: listGames did not return ArrayList of GameData");
