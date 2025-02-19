@@ -50,6 +50,5 @@ public class LoginHandler extends BaseHandler{
             return new ErrorFormatter(e).getErrorFormat();
 
         }
-
     }
 }
