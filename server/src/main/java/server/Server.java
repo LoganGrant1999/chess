@@ -24,7 +24,7 @@ public class Server {
         Spark.post("/session", new LoginHandler(userDAO, authDAO));
         Spark.delete("/session", new LogoutHandler(authDAO));
         Spark.post("/game", new CreateGameHandler(gameDAO, authDAO));
-        Spark.get("/game", new ListGamesHandler(authDAO));
+        Spark.get("/game", new ListGamesHandler(authDAO, gameDAO));
 
         Spark.awaitInitialization();
         return Spark.port();

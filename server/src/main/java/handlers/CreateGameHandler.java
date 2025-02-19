@@ -7,10 +7,13 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
+import model.AuthData;
 import request.CreateGameRequest;
 import response.CreateGameResponse;
 import spark.Request;
 import spark.Response;
+
+import java.util.Objects;
 
 public class CreateGameHandler extends BaseHandler {
 
@@ -27,11 +30,18 @@ public class CreateGameHandler extends BaseHandler {
 
         CreateGameRequest req = gson.fromJson(request.body(), CreateGameRequest.class);
 
+
+        String authToken = request.headers("Authorization");
+
+        if (authToken == null || auth.getAuth(authToken) == null) {
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
+
         try {
 
             CreateGameService createGame = new CreateGameService();
 
-            CreateGameResponse resp = createGame.create(req, game, auth);
+            CreateGameResponse resp = createGame.create(req, game);
 
             String jsonResp = gson.toJson(resp);
 

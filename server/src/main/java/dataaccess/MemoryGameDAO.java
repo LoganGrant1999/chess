@@ -41,11 +41,17 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public Collection<GameData> listGames(String authToken) throws DataAccessException {
+    public ArrayList<GameData> listGames(String authToken) throws DataAccessException {
         if (db.isEmpty()){
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
-        return new ArrayList<>(db.values());
+
+        try {
+            return new ArrayList<>(db.values());
+
+        } catch (Exception e){
+            throw new DataAccessException("Error: listGames did not return ArrayList of GameData");
+        }
     }
 
     @Override

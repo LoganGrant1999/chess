@@ -14,15 +14,10 @@ import java.util.Objects;
 
 public class CreateGameService {
 
-    public CreateGameResponse create(CreateGameRequest req, MemoryGameDAO game, MemoryAuthDAO auth) throws DataAccessException {
-
-        AuthData authData = auth.getAuth(req.authToken());
-
-        if (authData == null || !Objects.equals(req.authToken(), authData.authToken())) {
-            throw new InvalidCredentialsException("Error: unauthorized");
-        }
+    public CreateGameResponse create(CreateGameRequest req, MemoryGameDAO game) throws DataAccessException {
 
         if (req.gameName() == null){
+
             throw new MissingDataException("Error: bad request");
         }
 

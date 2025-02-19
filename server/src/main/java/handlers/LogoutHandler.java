@@ -22,11 +22,17 @@ public class LogoutHandler extends BaseHandler{
 
         LogoutRequest req = gson.fromJson(request.body(), LogoutRequest.class);
 
+        String authToken = request.headers("Authorization");
+
+        if (authToken == null || auth.getAuth(authToken) == null) {
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
+
         try{
 
             LogoutService logService = new LogoutService();
 
-            LogoutResponse resp = logService.logout(req, auth);
+            LogoutResponse resp = logService.logout(req, authToken, auth);
 
             String jsonResp = gson.toJson(resp);
 
