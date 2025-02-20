@@ -34,9 +34,7 @@ public class JoinGameHandler extends BaseHandler{
 
             response.status(401);
 
-            ErrorFormatter errorResp= new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized"));
-
-            String jsonResp = gson.toJson(errorResp.getErrorFormat());
+            String jsonResp = new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized")).getErrorFormat();
 
             return jsonResp;
         }
@@ -59,19 +57,25 @@ public class JoinGameHandler extends BaseHandler{
 
             response.status(400);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new MissingDataException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
 
         } catch (AlreadyTakenException e){
 
             response.status(403);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new AlreadyTakenException(e.getMessage())).getErrorFormat();
 
-        } catch (DataAccessException e){
+            return jsonResp;
+
+        } catch (DataAccessException e) {
 
             response.status(500);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
         }
     }
 }

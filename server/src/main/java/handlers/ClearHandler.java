@@ -4,6 +4,7 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import exceptions.InvalidCredentialsException;
 import response.ClearResponse;
 import service.ClearService;
 import spark.Request;
@@ -41,7 +42,9 @@ public class ClearHandler extends BaseHandler{
 
             response.status(500);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
         }
     }
 }

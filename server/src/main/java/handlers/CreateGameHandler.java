@@ -65,7 +65,6 @@ public class CreateGameHandler extends BaseHandler {
             String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
 
             return jsonResp;
-
         }
     }
 }
