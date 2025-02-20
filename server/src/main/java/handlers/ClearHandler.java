@@ -29,11 +29,13 @@ public class ClearHandler extends BaseHandler{
 
             ClearService clearService = new ClearService();
 
-            clearService.clearer(auth, game, user);
+            ClearResponse resp = clearService.clearer(auth, game, user);
+
+            String jsonResp = gson.toJson(resp);
 
             response.status(200);
 
-            return new ClearResponse();
+            return jsonResp;
 
         } catch (DataAccessException e){
 
