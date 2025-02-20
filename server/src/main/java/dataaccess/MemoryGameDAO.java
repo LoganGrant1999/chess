@@ -53,27 +53,8 @@ public class MemoryGameDAO implements GameDAO{
 
             for (GameData games: db.values()){
 
-                String whiteUsername;
-                String blackUsername;
 
-                if (games.whiteUsername() == null){
-
-                    whiteUsername = "";
-
-                } else{
-
-                    whiteUsername = games.whiteUsername();
-                }
-
-                if (games.blackUsername() == null){
-
-                    blackUsername = "";
-                } else {
-
-                    blackUsername = games.blackUsername();
-                }
-
-                ListGameData gameData = new ListGameData(games.gameID(), whiteUsername, blackUsername, games.gameName());
+                ListGameData gameData = new ListGameData(games.gameID(), games.whiteUsername(), games.blackUsername(), games.gameName());
                 listedGames.add(gameData);
             }
 
