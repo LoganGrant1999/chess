@@ -130,7 +130,13 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear() {
-        db.clear();
+    public void clear() throws DataAccessException{
+        try {
+            db.clear();
+
+        } catch (Exception e) {
+
+            throw new DataAccessException("Error: couldn't clear the database");
+        }
     }
 }

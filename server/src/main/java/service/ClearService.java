@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -13,10 +14,19 @@ public class ClearService {
 
     public ClearResponse clearer(MemoryAuthDAO auth, MemoryGameDAO game, MemoryUserDAO user) throws Exception{
 
-        return null;
+        try{
+
+            auth.clear();
+            game.clear();
+            user.clear();
+
+        } catch (DataAccessException e) {
+
+            throw new DataAccessException(e.getMessage());
+        }
+
+
 
     }
-
-
 
 }
