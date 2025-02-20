@@ -42,11 +42,13 @@ public class LogoutHandler extends BaseHandler{
 
             return jsonResp;
 
-        } catch (DataAccessException e){
+        } catch (DataAccessException e) {
 
             response.status(500);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
         }
     }
 }

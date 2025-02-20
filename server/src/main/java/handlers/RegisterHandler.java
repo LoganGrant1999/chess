@@ -45,20 +45,25 @@ public class RegisterHandler extends BaseHandler{
 
             response.status(400);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new MissingDataException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
 
         } catch (AlreadyTakenException e){
 
             response.status(403);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new AlreadyTakenException(e.getMessage())).getErrorFormat();
 
-        } catch (DataAccessException e){
+            return jsonResp;
+
+        } catch (DataAccessException e) {
 
             response.status(500);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
 
+            return jsonResp;
         }
     }
 }

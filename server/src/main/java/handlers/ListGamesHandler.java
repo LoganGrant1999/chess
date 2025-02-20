@@ -27,7 +27,9 @@ public class ListGamesHandler extends BaseHandler{
 
             response.status(401);
 
-            return new InvalidCredentialsException("Error: unauthorized");
+            String jsonResp = new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized")).getErrorFormat();
+
+            return jsonResp;
         }
 
         try{
@@ -42,11 +44,13 @@ public class ListGamesHandler extends BaseHandler{
 
             return jsonResp;
 
-        } catch (DataAccessException e){
+        } catch (DataAccessException e) {
 
             response.status(500);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
         }
     }
 }

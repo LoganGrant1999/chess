@@ -41,14 +41,17 @@ public class LoginHandler extends BaseHandler{
 
             response.status(401);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized")).getErrorFormat();
+
+            return jsonResp;
 
         }  catch (DataAccessException e) {
 
             response.status(500);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
 
+            return jsonResp;
         }
     }
 }
