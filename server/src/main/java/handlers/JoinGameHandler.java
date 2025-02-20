@@ -34,7 +34,11 @@ public class JoinGameHandler extends BaseHandler{
 
             response.status(401);
 
-            return new InvalidCredentialsException("Error: unauthorized");
+            ErrorFormatter errorResp= new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized"));
+
+            String jsonResp = gson.toJson(errorResp.getErrorFormat());
+
+            return jsonResp;
         }
 
         JoinGameRequest req = gson.fromJson(request.body(), JoinGameRequest.class);

@@ -6,8 +6,7 @@ import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 
-public class ErrorFormatter{
-
+public class ErrorFormatter {
 
     private Map<String, String> errorFormat;
     private String errorMessage;
@@ -15,15 +14,19 @@ public class ErrorFormatter{
 
     public ErrorFormatter(Exception e) {
         this.errorFormat = new HashMap<>();
-        this.errorMessage = e.getMessage();
-        String message = "message";
-        errorFormat.put(message, errorMessage);
 
+        this.errorMessage = e.getMessage();
+
+        String message = "message";
+
+        errorFormat.put(message, errorMessage);
     }
 
     public String getErrorFormat() {
-        final Gson gson = new Gson();
-        String jsonError = gson.toJson(errorFormat);
-        return jsonError;
+
+        Gson gson = new Gson();
+
+        return gson.toJson(errorFormat);
     }
+
 }

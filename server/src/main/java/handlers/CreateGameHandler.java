@@ -33,7 +33,9 @@ public class CreateGameHandler extends BaseHandler {
 
             response.status(401);
 
-            return new InvalidCredentialsException("Error: unauthorized");
+            String jsonResp = new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized")).getErrorFormat();
+
+            return jsonResp;
         }
 
         try {
@@ -52,13 +54,17 @@ public class CreateGameHandler extends BaseHandler {
 
             response.status(400);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new MissingDataException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
 
         } catch (DataAccessException e) {
 
             response.status(500);
 
-            return new ErrorFormatter(e).getErrorFormat();
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
+
+            return jsonResp;
 
         }
     }

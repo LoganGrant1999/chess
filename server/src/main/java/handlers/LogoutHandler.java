@@ -25,7 +25,9 @@ public class LogoutHandler extends BaseHandler{
 
             response.status(401);
 
-            return new InvalidCredentialsException("Error: unauthorized");
+            String jsonResp = new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized")).getErrorFormat();
+
+            return jsonResp;
         }
 
         try{
