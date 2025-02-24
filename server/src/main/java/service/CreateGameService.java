@@ -8,7 +8,7 @@ import response.CreateGameResponse;
 
 public class CreateGameService {
 
-    public CreateGameResponse create(CreateGameRequest req, MemoryGameDAO game) throws DataAccessException {
+    public CreateGameResponse createGame(CreateGameRequest req, MemoryGameDAO game) throws DataAccessException {
 
         if (req.gameName() == null){
 

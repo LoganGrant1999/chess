@@ -42,7 +42,7 @@ public class CreateGameHandler extends BaseHandler {
 
             CreateGameService createGame = new CreateGameService();
 
-            CreateGameResponse resp = createGame.create(req, game);
+            CreateGameResponse resp = createGame.createGame(req, game);
 
             String jsonResp = gson.toJson(resp);
 

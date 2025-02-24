@@ -6,7 +6,6 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.AlreadyTakenException;
 import exceptions.MissingDataException;
-import handlers.ErrorFormatter;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -15,8 +14,8 @@ import response.JoinGameResponse;
 
 public class JoinGameService {
 
-    public JoinGameResponse join(JoinGameRequest req, MemoryUserDAO user, MemoryAuthDAO auth,
-                                 MemoryGameDAO game, String authToken) throws Exception {
+    public JoinGameResponse joinGame(JoinGameRequest req, MemoryUserDAO user, MemoryAuthDAO auth,
+                                     MemoryGameDAO game, String authToken) throws Exception {
 
 
         if (req.playerColor() == null || req.gameID() == 0 || !(req.playerColor().equals("WHITE") || req.playerColor().equals("BLACK"))) {

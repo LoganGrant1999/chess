@@ -45,7 +45,7 @@ public class JoinGameHandler extends BaseHandler{
 
             JoinGameService joinService = new JoinGameService();
 
-            JoinGameResponse resp = joinService.join(req, user, auth, game, authToken);
+            JoinGameResponse resp = joinService.joinGame(req, user, auth, game, authToken);
 
             String jsonResp = gson.toJson(resp);
 

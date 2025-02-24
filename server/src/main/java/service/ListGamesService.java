@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class ListGamesService {
 
-    public ListGamesResponse lister(String authToken, MemoryAuthDAO auth, MemoryGameDAO game) throws DataAccessException {
+    public ListGamesResponse listGames(String authToken, MemoryAuthDAO auth, MemoryGameDAO game) throws DataAccessException {
 
         AuthData authData = auth.getAuth(authToken);
 

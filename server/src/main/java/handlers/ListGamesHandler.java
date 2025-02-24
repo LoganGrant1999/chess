@@ -36,7 +36,7 @@ public class ListGamesHandler extends BaseHandler{
 
             ListGamesService listService = new ListGamesService();
 
-            ListGamesResponse resp = listService.lister(authToken, auth, game);
+            ListGamesResponse resp = listService.listGames(authToken, auth, game);
 
             String jsonResp = gson.toJson(resp);
 

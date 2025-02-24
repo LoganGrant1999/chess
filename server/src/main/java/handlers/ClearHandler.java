@@ -4,7 +4,6 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
-import exceptions.InvalidCredentialsException;
 import response.ClearResponse;
 import service.ClearService;
 import spark.Request;
@@ -30,7 +29,7 @@ public class ClearHandler extends BaseHandler{
 
             ClearService clearService = new ClearService();
 
-            ClearResponse resp = clearService.clearer(auth, game, user);
+            ClearResponse resp = clearService.clearAllData(auth, game, user);
 
             String jsonResp = gson.toJson(resp);
 

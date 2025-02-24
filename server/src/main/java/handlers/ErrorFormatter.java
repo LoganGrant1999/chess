@@ -13,6 +13,7 @@ public class ErrorFormatter {
 
 
     public ErrorFormatter(Exception e) {
+
         this.errorFormat = new HashMap<>();
 
         this.errorMessage = e.getMessage();
@@ -28,5 +29,4 @@ public class ErrorFormatter {
 
         return gson.toJson(errorFormat);
     }
-
 }
