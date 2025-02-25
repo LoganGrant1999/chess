@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class RegisterService {
 
-    public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth) throws DataAccessException {
+    public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth)  throws Exception{
 
         if (req.username() == null || req.password() == null || req.email() == null) {
             throw new MissingDataException("Error: bad request");
