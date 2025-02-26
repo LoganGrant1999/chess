@@ -10,8 +10,17 @@ import response.LoginResponse;
 import spark.Request;
 import spark.Response;
 
+
+/*
+    Class used to Handle Login Requests, call LoginService, and to
+    return LoginResponse objects or errors based on results of calling LoginService
+ */
+
 public class LoginHandler extends BaseHandler{
 
+    /*initializes MemoryAuthDAO and MemoryGameDAO objects to make calling their
+    class methods easier
+    */
     private MemoryUserDAO user;
     private MemoryAuthDAO auth;
 
@@ -25,6 +34,9 @@ public class LoginHandler extends BaseHandler{
 
         LoginRequest req = gson.fromJson(request.body(), LoginRequest.class);
 
+        /*Attempts to call login from LoginService. If successful, sets status to 200 and returns
+        json of resulting LoginResponse object.
+         */
         try{
 
             LoginService logService = new LoginService();
@@ -37,6 +49,9 @@ public class LoginHandler extends BaseHandler{
 
             return jsonResp;
 
+            /* if InvalidCredentialsException is thrown from calling login method,  catches it,
+            sets status to 401 and returns json of InvalidCredentialsException and its message
+             */
         } catch (InvalidCredentialsException e){
 
             response.status(401);
@@ -45,6 +60,10 @@ public class LoginHandler extends BaseHandler{
 
             return jsonResp;
 
+            /*
+            catches DataAccessException thrown by ListGamesService, sets status to 500, and returns json
+            of Exception and message
+             */
         }  catch (DataAccessException e) {
 
             response.status(500);

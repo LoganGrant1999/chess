@@ -13,7 +13,9 @@ import spark.Response;
 
 public class RegisterHandler extends BaseHandler{
 
-
+    /*initializes MemoryAuthDAO and MemoryGameDAO objects to make calling their
+    class methods easier
+    */
     private MemoryUserDAO user;
 
     private MemoryAuthDAO auth;
@@ -29,6 +31,10 @@ public class RegisterHandler extends BaseHandler{
 
         RegisterRequest req = gson.fromJson(request.body(), RegisterRequest.class);
 
+
+        /*Attempts to call register from RegisterService. If successful, sets status to 200 and returns
+        json of resulting RegisterResponse object.
+         */
         try{
 
             RegisterService regService = new RegisterService();
@@ -41,6 +47,9 @@ public class RegisterHandler extends BaseHandler{
 
             return jsonResp;
 
+            /*if call to register results in MissingDataException, catches the exception, sets status at 400, and
+            returns json of the MissingDataException and its message.
+             */
         } catch (MissingDataException e){
 
             response.status(400);
@@ -49,6 +58,9 @@ public class RegisterHandler extends BaseHandler{
 
             return jsonResp;
 
+              /*if call to register results in AlreadyTakenException, catches the exception, sets status to 403, and
+            returns json of the AlreadyTakenException and its message
+             */
         } catch (AlreadyTakenException e){
 
             response.status(403);
@@ -57,6 +69,10 @@ public class RegisterHandler extends BaseHandler{
 
             return jsonResp;
 
+            /*
+            catches DataAccessException thrown by ListGamesService, sets status to 500, and returns json
+            of Exception and message
+             */
         } catch (DataAccessException e) {
 
             response.status(500);

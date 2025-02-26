@@ -10,6 +10,8 @@ import spark.Response;
 
 public class LogoutHandler extends BaseHandler{
 
+    //initializes MemoryAuthDAO object to make calling its class methods easier
+
     private MemoryAuthDAO auth;
 
     public LogoutHandler(MemoryAuthDAO auth) {
@@ -21,6 +23,10 @@ public class LogoutHandler extends BaseHandler{
 
         String authToken = request.headers("Authorization");
 
+        /*
+        checks to see if authToken is null or absent from map storage. If so, sets status at 401 and returns json
+        of InvalidCredentialsException that's thrown along with its message
+         */
         if (authToken == null || auth.getAuth(authToken) == null) {
 
             response.status(401);
@@ -30,6 +36,10 @@ public class LogoutHandler extends BaseHandler{
             return jsonResp;
         }
 
+
+        /*Attempts to call logout from LoginService. If successful, sets status to 200 and returns
+        json of resulting LogoutResponse object.
+         */
         try{
 
             LogoutService logService = new LogoutService();
@@ -42,6 +52,10 @@ public class LogoutHandler extends BaseHandler{
 
             return jsonResp;
 
+            /*
+            catches DataAccessException thrown by ListGamesService, sets status to 500, and returns json
+            of Exception and message
+             */
         } catch (DataAccessException e) {
 
             response.status(500);

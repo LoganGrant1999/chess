@@ -9,7 +9,16 @@ import service.ClearService;
 import spark.Request;
 import spark.Response;
 
+/*
+    Class used to Handle Clear Requests, call ClearService, and to
+    return ClearResponse objects or errors based on results of calling ClearService
+ */
+
 public class ClearHandler extends BaseHandler{
+
+    /*initializes MemoryAuthDAO, MemoryGameDAO, and MemoryUserDAO objects to make calling their
+    class methods easier
+    */
 
     private MemoryAuthDAO auth;
     private MemoryGameDAO game;
@@ -25,6 +34,9 @@ public class ClearHandler extends BaseHandler{
     @Override
     public Object handle(Request request, Response response) throws Exception {
 
+        /*Attempts to call clearService. If there are no exceptions thrown,
+        returns json version of ClearResponse object returned and sets status at 200
+         */
         try {
 
             ClearService clearService = new ClearService();
@@ -37,6 +49,9 @@ public class ClearHandler extends BaseHandler{
 
             return jsonResp;
 
+            /*catches DataAccessException thrown by clearService, sets status to 500, and returns json
+            of Exception and message
+             */
         } catch (DataAccessException e){
 
             response.status(500);

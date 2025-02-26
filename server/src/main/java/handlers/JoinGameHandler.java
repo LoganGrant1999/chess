@@ -13,8 +13,16 @@ import service.JoinGameService;
 import spark.Request;
 import spark.Response;
 
+/*
+    Class used to Handle JoinGame Requests, call JoinGameService, and to
+    return JoinGameResponse objects or errors based on results of calling JoinGameService
+ */
+
 public class JoinGameHandler extends BaseHandler{
 
+    /*initializes MemoryAuthDAO, MemoryGameDAO, and MemoryUserDAO objects to make calling their
+    class methods easier
+    */
     private MemoryUserDAO user;
     private MemoryAuthDAO auth;
     private MemoryGameDAO game;
@@ -30,6 +38,9 @@ public class JoinGameHandler extends BaseHandler{
 
         String authToken = request.headers("Authorization");
 
+        /*checks to see if authToken is null or absent from map storage. If so, sets status at 401 and returns json
+        of InvalidCredentialsException that's thrown along with its message
+         */
         if (authToken == null || auth.getAuth(authToken) == null) {
 
             response.status(401);
@@ -41,6 +52,9 @@ public class JoinGameHandler extends BaseHandler{
 
         JoinGameRequest req = gson.fromJson(request.body(), JoinGameRequest.class);
 
+        /*Attempts to call joinGame from JoinGameService. If successful, sets status to 200 and returns
+        json of resulting JoinGameResponse object.
+         */
         try {
 
             JoinGameService joinService = new JoinGameService();
@@ -53,6 +67,10 @@ public class JoinGameHandler extends BaseHandler{
 
             return jsonResp;
 
+
+            /*if call to joinGame results in MissingDataException, catches the exception, sets status at 400, and
+            returns json of the MissingDataException and its message.
+             */
         } catch (MissingDataException e) {
 
             response.status(400);
@@ -61,6 +79,9 @@ public class JoinGameHandler extends BaseHandler{
 
             return jsonResp;
 
+            /*if call to joinGame results in AlreadyTakenException, catches the exception, sets status to 403, and
+            returns json of the AlreadyTakenException and its message
+             */
         } catch (AlreadyTakenException e){
 
             response.status(403);
@@ -69,6 +90,9 @@ public class JoinGameHandler extends BaseHandler{
 
             return jsonResp;
 
+             /*catches DataAccessException thrown by JoinGameService, sets status to 500, and returns json
+            of Exception and message
+             */
         } catch (DataAccessException e) {
 
             response.status(500);
