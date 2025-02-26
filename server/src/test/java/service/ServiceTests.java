@@ -4,11 +4,13 @@ import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
 import org.junit.jupiter.api.*;
 import request.LoginRequest;
 import request.RegisterRequest;
 import response.LoginResponse;
+import response.LogoutResponse;
 import response.RegisterResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +24,10 @@ public class ServiceTests {
     private static RegisterResponse resp;
 
 
+    /* Before each test, this makes sure that there is a MemoryAuthDAO object, a MemoryUserDAO object,
+    a MemoryGameDAO object, a username, a password, and an authToken that can be used to ensure valid
+    credentials in each test
+     */
     @BeforeAll
     public static void setup() throws Exception {
 
@@ -42,6 +48,10 @@ public class ServiceTests {
     }
 
 
+    /*
+    Test designed to confirm RegisterService is able to successfully return a RegisterResponse object with correct data,
+    enters the new UserData in MemoryUserDAO, and enters the new AuthData in MemoryAuthDAO
+     */
     @Test
     @Order(1)
     @DisplayName("Successful Registration")
@@ -53,17 +63,23 @@ public class ServiceTests {
 
         RegisterResponse response = registerService.register(req, user, auth);
 
-        assertNotNull(user.getUser(req.username()));
+        assertNotNull(user.getUser(req.username()), "username not stored in Map/Database");
 
         assertNotNull(response, "RegisterResponse returned null");
 
-        assertEquals(req.username(), response.username(), "username provided didn't match the username in the RegisterResponse");
+        assertEquals(req.username(), response.username(), "usernames don't match");
 
         assertNotNull(response.authToken(), "authToken in RegisterResponse returned null");
+
+        assertNotNull(auth.getAuth(response.authToken()), "AuthData not stored in Map/Database");
 
     }
 
 
+    /*
+    Test designed to confirm that RegisterService throws a MissingDataException if one of the attributes of
+    RegisterRequest is null
+     */
     @Test
     @Order(2)
     @DisplayName("Registration Bad Request")
@@ -78,10 +94,14 @@ public class ServiceTests {
     }
 
 
+    /*
+     Test designed to confirm that LoginService successfully returns a LoginResponse object with the correct data
+     and that an authToken is created for the user and stored in the MemoryAuthDAO map
+    */
     @Test
     @Order(3)
     @DisplayName("Successful Login")
-    void login() throws Exception {
+    void successfulLogin() throws Exception {
 
         LoginRequest req = new LoginRequest(resp.username(), password);
 
@@ -95,14 +115,63 @@ public class ServiceTests {
 
         assertNotNull(response.authToken(), "LoginResponse authToken is null");
 
-        assertNotNull(auth.getAuth(response.username()), "AuthToken not stored");
+        assertNotNull(auth.getAuth(response.authToken()), "AuthData not stored in Map/Database");
 
     }
 
 
+    /*
+    Test designed to confirm that LoginService throws a InvalidCredentialsException when a user enters a password
+    that is incorrect for a given username
+     */
     @Test
-    void logout() {
+    @Order(4)
+    @DisplayName("Login Unauthorized")
+    void unauthorizedLogin() {
+
+        LoginRequest req = new LoginRequest(resp.username(), "badPassword");
+
+        LoginService loginService = new LoginService();
+
+        assertThrows(InvalidCredentialsException.class,() -> loginService.login(req, user, auth),"Not Thrown");
+
     }
+
+    /*
+    Test designed to confirm that LogoutService returns a valid LogoutResponse object and that AuthData doesn't
+    persist in MemoryAuthDAO after a user logs out
+     */
+    @Test
+    @Order(5)
+    @DisplayName("Successful Logout")
+    void successfulLogout() throws DataAccessException {
+
+        LogoutService logoutService = new LogoutService();
+
+        LogoutResponse response = logoutService.logout(resp.authToken(), auth);
+
+        assertNotNull(response, "LogoutResponse is null");
+
+        assertNull(auth.getAuth(resp.authToken()), "AuthData still in Map/Database");
+
+    }
+
+    /*
+    Test designed to confirm that LogoutService throws an InvalidCredentialsException when given an authtoken
+    that isn't valid/in MemoryAuthDAO
+     */
+    @Test
+    @Order(6)
+    @DisplayName("Logout Unauthorized")
+    void unauthorizedLogout(){
+
+        LogoutService logoutService = new LogoutService();
+
+        assertThrows(InvalidCredentialsException.class, ()-> logoutService.logout("badToken", auth));
+
+    }
+
+
 
     @Test
     void createGame() {

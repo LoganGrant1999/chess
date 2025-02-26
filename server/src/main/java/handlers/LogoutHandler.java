@@ -23,24 +23,11 @@ public class LogoutHandler extends BaseHandler{
 
         String authToken = request.headers("Authorization");
 
-        /*
-        checks to see if authToken is null or absent from map storage. If so, sets status at 401 and returns json
-        of InvalidCredentialsException that's thrown along with its message
-         */
-        if (authToken == null || auth.getAuth(authToken) == null) {
-
-            response.status(401);
-
-            String jsonResp = new ErrorFormatter(new InvalidCredentialsException("Error: unauthorized")).getErrorFormat();
-
-            return jsonResp;
-        }
-
 
         /*Attempts to call logout from LoginService. If successful, sets status to 200 and returns
         json of resulting LogoutResponse object.
          */
-        try{
+        try {
 
             LogoutService logService = new LogoutService();
 
@@ -49,6 +36,18 @@ public class LogoutHandler extends BaseHandler{
             String jsonResp = gson.toJson(resp);
 
             response.status(200);
+
+            return jsonResp;
+
+            /*
+            catches InvalidCredentialsException thrown by ListGamesService, sets status to 500, and returns json
+            of Exception and message
+             */
+        } catch(InvalidCredentialsException e){
+
+            response.status(401);
+
+            String jsonResp = new ErrorFormatter(new DataAccessException(e.getMessage())).getErrorFormat();
 
             return jsonResp;
 
