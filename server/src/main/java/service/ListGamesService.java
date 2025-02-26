@@ -13,6 +13,11 @@ import java.util.Objects;
 
 public class ListGamesService {
 
+    /* this method attempts to return a ListGamesResponse object containing ListGameData for each game
+    in the MemoryGameDAO map. If successful, it returns this ListGamesResponse object. If the AuthData
+     provided is null or the authToken provided isn't in the MemoryAuthDAO map, it throws a new
+     InvalidCredentialsException. If it catches a DataAccessException, it throws a new one*/
+
     public ListGamesResponse listGames(String authToken, MemoryAuthDAO auth, MemoryGameDAO game) throws DataAccessException {
 
         AuthData authData = auth.getAuth(authToken);

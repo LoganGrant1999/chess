@@ -8,6 +8,8 @@ import response.ClearResponse;
 
 public class ClearService {
 
+    /* method trys to clear all data from each of the MemoryDAO maps. If a DataAccessException is caught
+    * it throws a new DataAccessException*/
 
     public ClearResponse clearAllData(MemoryAuthDAO auth, MemoryGameDAO game, MemoryUserDAO user) throws Exception{
 

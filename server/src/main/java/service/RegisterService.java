@@ -12,7 +12,13 @@ import java.util.UUID;
 
 public class RegisterService {
 
-    public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth)  throws Exception{
+    /* This method attempts to return a new RegisterResponse object and to enter a new user's UserData
+    * in the MemoryUserDAO map. If successful, it returns a new RegisterResponse object. If any of the
+    * UserData fields provided are null, it throws a new MissingDataException. If the entered username
+    * already exists in the MemoryUserDAO map, it returns a new AlreadyTakenException. If it catches a
+    * DataAccessException, it throws a new one*/
+
+    public RegisterResponse register(RegisterRequest req, MemoryUserDAO user, MemoryAuthDAO auth)  throws Exception {
 
         if (req.username() == null || req.password() == null || req.email() == null) {
             throw new MissingDataException("Error: bad request");
