@@ -1,7 +1,7 @@
 package exceptions;
 
 /**
- * Indicates the client tried to register a new user with an existing username
+ * Indicates the client did not provide sufficient data to carry out an action
  */
 
 public class MissingDataException extends RuntimeException {
