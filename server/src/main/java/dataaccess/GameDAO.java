@@ -6,6 +6,14 @@ import model.ListGameData;
 import java.util.ArrayList;
 import java.util.Collection;
 
+
+/* Interface used to create a data storage class that stores Game data, either in storage or in a database.
+ * Classes that import this interface inherit a createGame method used to store new game data,
+ * a getGame method that can be used to retrieve GameData from where it is being stored, a
+ * listGames method that can be used to return a list of all games stored in the database, a joinGame
+ * method that enables a user to join an existing game, and a clear method used to wipe all data from where it
+ * is being stored */
+
 public interface GameDAO {
 
     int createGame(String gameName) throws DataAccessException;
