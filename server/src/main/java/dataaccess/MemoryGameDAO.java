@@ -8,16 +8,24 @@ import model.UserData;
 
 import java.util.*;
 
+/* Class creates a Map that stores Game data and implements methods from GameDAO
+interface for interacting with the data stored in the map
+ */
+
 public class MemoryGameDAO implements GameDAO{
 
+    //initializes map where AuthData will be stored
     private Map<Integer, GameData> db;
 
+    //initializes a counter used to assign unique gameID to each game
     private  int gameIDCounter = 1;
 
     public MemoryGameDAO() {
+
         this.db = new HashMap<>();
     }
 
+    //method for creating a new Game and entering GameData into the map
     @Override
     public int createGame(String gameName) throws DataAccessException{
 
@@ -34,6 +42,8 @@ public class MemoryGameDAO implements GameDAO{
         return newGame.gameID();
     }
 
+
+    //Method for retrieving GameData from the map for an existing game given game's gameID
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         if (!db.containsKey(gameID)){
@@ -42,6 +52,7 @@ public class MemoryGameDAO implements GameDAO{
         return db.get(gameID);
     }
 
+    //Method used to return a list of the GameData for all the games stored in the map
     @Override
     public ArrayList<ListGameData> listGames(String authToken) throws DataAccessException {
         if (db.isEmpty()){
@@ -65,6 +76,7 @@ public class MemoryGameDAO implements GameDAO{
         }
     }
 
+    //Method used to enable a user to join an existing game in the map
     @Override
     public GameData joinGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException {
 
@@ -110,6 +122,7 @@ public class MemoryGameDAO implements GameDAO{
         }
     }
 
+    //method used to clear all data from the map
     @Override
     public void clear() throws DataAccessException{
         try {
