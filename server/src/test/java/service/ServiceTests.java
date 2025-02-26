@@ -7,29 +7,29 @@ import dataaccess.MemoryUserDAO;
 import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
 import org.junit.jupiter.api.*;
+import request.CreateGameRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
-import response.LoginResponse;
-import response.LogoutResponse;
-import response.RegisterResponse;
+import response.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTests {
 
+    //instantiate static variables so that setup can access them and can be used to fill data needs in tests
     private static MemoryAuthDAO auth;
     private static MemoryUserDAO user;
     private static String password;
     private static MemoryGameDAO game;
     private static RegisterResponse resp;
-
+    private static CreateGameResponse gameResp;
 
     /* Before each test, this makes sure that there is a MemoryAuthDAO object, a MemoryUserDAO object,
     a MemoryGameDAO object, a username, a password, and an authToken that can be used to ensure valid
     credentials in each test
      */
-    @BeforeAll
-    public static void setup() throws Exception {
+    @BeforeEach
+    public void setup() throws Exception {
 
         auth = new MemoryAuthDAO();
 
@@ -45,8 +45,13 @@ public class ServiceTests {
 
         resp = registerService.register(req, user, auth);
 
-    }
+        CreateGameRequest gameReq = new CreateGameRequest("game1");
 
+        CreateGameService createGameService = new CreateGameService();
+
+        gameResp = createGameService.createGame(gameReq, game);
+
+    }
 
     /*
     Test designed to confirm RegisterService is able to successfully return a RegisterResponse object with correct data,
@@ -75,7 +80,6 @@ public class ServiceTests {
 
     }
 
-
     /*
     Test designed to confirm that RegisterService throws a MissingDataException if one of the attributes of
     RegisterRequest is null
@@ -92,7 +96,6 @@ public class ServiceTests {
         assertThrows(MissingDataException.class, () -> registerService.register(req, user, auth),"Not Thrown");
 
     }
-
 
     /*
      Test designed to confirm that LoginService successfully returns a LoginResponse object with the correct data
@@ -111,14 +114,13 @@ public class ServiceTests {
 
         assertNotNull(response, "LoginResponse returned null");
 
-        assertEquals(response.username(), resp.username(), "Response username doesn't equal login username");
+        assertEquals(response.username(), req.username(), "Response username doesn't equal login username");
 
         assertNotNull(response.authToken(), "LoginResponse authToken is null");
 
         assertNotNull(auth.getAuth(response.authToken()), "AuthData not stored in Map/Database");
 
     }
-
 
     /*
     Test designed to confirm that LoginService throws a InvalidCredentialsException when a user enters a password
@@ -142,7 +144,7 @@ public class ServiceTests {
     persist in MemoryAuthDAO after a user logs out
      */
     @Test
-    @Order(5)
+    @Order(9)
     @DisplayName("Successful Logout")
     void successfulLogout() throws DataAccessException {
 
@@ -157,34 +159,97 @@ public class ServiceTests {
     }
 
     /*
-    Test designed to confirm that LogoutService throws an InvalidCredentialsException when given an authtoken
+    Test designed to confirm that LogoutService throws an InvalidCredentialsException when given an authToken
     that isn't valid/in MemoryAuthDAO
      */
     @Test
-    @Order(6)
+    @Order(5)
     @DisplayName("Logout Unauthorized")
     void unauthorizedLogout(){
 
-        LogoutService logoutService = new LogoutService();
+        LogoutService test = new LogoutService();
 
-        assertThrows(InvalidCredentialsException.class, ()-> logoutService.logout("badToken", auth));
+        assertThrows(InvalidCredentialsException.class,()-> test.logout("bad", auth),"Not thrown");
 
     }
 
 
-
+    /*
+    Test designed to confirm that CreateGameService successfully creates a CreateGameResponse object with
+    valid data, and that it stores the new GameData in the MemoryGameDAO map
+     */
     @Test
-    void createGame() {
+    @Order(6)
+    @DisplayName("Successful CreateGame")
+    void successfulCreateGame() throws DataAccessException {
+
+        CreateGameRequest req = new CreateGameRequest("test");
+
+        CreateGameService createGameService = new CreateGameService();
+
+        CreateGameResponse response = createGameService.createGame(req, game);
+
+        assertNotNull(response, "CreateGameResponse returned null");
+
+        assertNotEquals(0, response.gameID(), "gameId returned as 0/null");
+
+        assertNotNull(game.getGame(response.gameID()), "GameData not stored");
+
     }
 
-
+    /*
+    Test designed to confirm that CreateGameService throws a MissingDataException when given a null
+    gameName in the CreateGameRequest
+     */
     @Test
-    void listGames() {
+    @Order(7)
+    @DisplayName("Create Game Bad Request")
+    void badRequestCreateGame(){
+
+        CreateGameRequest req = new CreateGameRequest(null);
+
+        CreateGameService createGameService = new CreateGameService();
+
+        assertThrows(MissingDataException.class, ()-> createGameService.createGame(req, game), "Not thrown");
+
+    }
+
+    /*
+    Test is designed to confirm that ListGamesService returns a valid/not null ListGamesResponse object
+     */
+    @Test
+    @Order(8)
+    @DisplayName("Successful ListGames")
+    void successfulListGames() throws DataAccessException {
+
+        ListGamesService listGamesService = new ListGamesService();
+
+        ListGamesResponse response = listGamesService.listGames(resp.authToken(), auth, game);
+
+        assertNotNull(response, "ListGamesResponse returned null");
+
+        assertNotNull(response.games(), "The ArrayList of games in ListGamesResponse returned null");
+
+    }
+
+    /*
+    Test designed to confirm that ListGames throws an InvalidCredentialsException when ListGamesRequest contains
+    and invalid authToken
+     */
+    @Test
+    @Order(9)
+    @DisplayName("ListGames Unauthorized")
+    void unauthorizedListGames(){
+
+        ListGamesService test = new ListGamesService();
+
+        assertThrows(InvalidCredentialsException.class,()->test.listGames("1",auth,game),"No Throw");
     }
 
 
     @Test
     void joinGame() {
+
     }
 
 

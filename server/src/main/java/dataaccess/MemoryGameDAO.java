@@ -72,6 +72,7 @@ public class MemoryGameDAO implements GameDAO{
             return listedGames;
 
         } catch (Exception e){
+
             throw new DataAccessException("Error: listGames did not return ArrayList of GameData");
         }
     }
