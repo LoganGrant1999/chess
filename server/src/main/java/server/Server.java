@@ -9,6 +9,9 @@ import spark.*;
 
 public class Server {
 
+    /*initializes MemoryAuthDAO, MemoryGameDAO, and MemoryUserDAO objects to make calling their
+    class methods easier
+    */
     private MemoryUserDAO userDAO = new MemoryUserDAO();
     private MemoryAuthDAO authDAO = new MemoryAuthDAO();
     private MemoryGameDAO gameDAO = new MemoryGameDAO();
