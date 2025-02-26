@@ -10,13 +10,15 @@ import java.util.Collection;
 
 public class RookMovesCalculator implements PieceMovesCalculator {
 
+    /** Method creates all possible ChessMove objects for a piece with type ROOK and adds them to a collection */
+
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos) {
 
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessPiece curr = board.getPiece(pos);
 
-        // Going down
+        // moves Rook down on the board if WHITE, and up on the board if BLACK
         for (int i = 1; i < 9; i++) {
 
             ChessPosition oneDown = new ChessPosition(pos.getRow() + i, pos.getColumn());
@@ -34,7 +36,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             }
         }
 
-        // Going up
+        // Moves ROOK up on the board if WHITE, and down on the board if BLACK
         for (int i = 1; i < 9; i++) {
 
             ChessPosition oneUp = new ChessPosition(pos.getRow() - i, pos.getColumn());
@@ -52,7 +54,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             }
         }
 
-        // Going right
+        // Moves ROOK right on the board
         for (int i = 1; i < 9; i++) {
 
             ChessPosition oneRight = new ChessPosition(pos.getRow(), pos.getColumn() + i);
@@ -71,7 +73,7 @@ public class RookMovesCalculator implements PieceMovesCalculator {
             }
         }
 
-        //Going Left
+        //Moves ROOK left on the board
         for (int i = 1; i < 9; i++) {
 
             ChessPosition oneLeft = new ChessPosition(pos.getRow(), pos.getColumn() - i);

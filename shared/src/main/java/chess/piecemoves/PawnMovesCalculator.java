@@ -12,11 +12,16 @@ import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
 public class PawnMovesCalculator implements PieceMovesCalculator {
+
+    /* Method creates all possible ChessMove objects for a piece with type PAWN for each
+     * color and adds them to a collection */
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos) {
         ChessPiece curr = board.getPiece(pos);
 
         ArrayList<ChessMove> moves = new ArrayList<>();
+
+        /* Creates collection for all possible WHITE PAWN chess moves */
 
         if (curr.getTeamColor() == WHITE) {
 

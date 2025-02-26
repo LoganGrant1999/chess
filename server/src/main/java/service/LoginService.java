@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class LoginService {
 
-    public LoginResponse login(LoginRequest req, MemoryUserDAO user, MemoryAuthDAO auth) throws DataAccessException {
+    public LoginResponse login(LoginRequest req, MemoryUserDAO user, MemoryAuthDAO auth) throws Exception {
 
         UserData userData = user.getUser(req.username());
 

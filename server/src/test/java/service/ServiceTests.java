@@ -1,15 +1,46 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.MissingDataException;
 import org.junit.jupiter.api.*;
+import request.LoginRequest;
 import request.RegisterRequest;
+import response.LoginResponse;
 import response.RegisterResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTests {
+
+    private static MemoryAuthDAO auth;
+    private static MemoryUserDAO user;
+    private static String password;
+    private static MemoryGameDAO game;
+    private static RegisterResponse resp;
+
+
+    @BeforeAll
+    public static void setup() throws Exception {
+
+        auth = new MemoryAuthDAO();
+
+        user = new MemoryUserDAO();
+
+        game = new MemoryGameDAO();
+
+        password = "password";
+
+        RegisterRequest req = new RegisterRequest("testUser", "password", "email");
+
+        RegisterService registerService = new RegisterService();
+
+        resp = registerService.register(req, user, auth);
+
+    }
+
 
     @Test
     @Order(1)
@@ -18,21 +49,17 @@ public class ServiceTests {
 
         RegisterRequest req = new RegisterRequest("username", "password", "email");
 
-        MemoryUserDAO user = new MemoryUserDAO();
-
-        MemoryAuthDAO auth = new MemoryAuthDAO();
-
         RegisterService registerService = new RegisterService();
 
-        RegisterResponse resp = registerService.register(req, user, auth);
+        RegisterResponse response = registerService.register(req, user, auth);
 
         assertNotNull(user.getUser(req.username()));
 
-        assertNotNull(resp, "RegisterResponse returned null");
+        assertNotNull(response, "RegisterResponse returned null");
 
-        assertEquals(req.username(), resp.username(), "username provided didn't match the username in the RegisterResponse");
+        assertEquals(req.username(), response.username(), "username provided didn't match the username in the RegisterResponse");
 
-        assertNotNull(resp.authToken(), "authToken in RegisterResponse returned null");
+        assertNotNull(response.authToken(), "authToken in RegisterResponse returned null");
 
     }
 
@@ -40,13 +67,9 @@ public class ServiceTests {
     @Test
     @Order(2)
     @DisplayName("Registration Bad Request")
-    void badRequestRegister() throws Exception {
+    void badRequestRegister(){
 
         RegisterRequest req = new RegisterRequest(null, "password", "email");
-
-        MemoryUserDAO user = new MemoryUserDAO();
-
-        MemoryAuthDAO auth = new MemoryAuthDAO();
 
         RegisterService registerService = new RegisterService();
 
@@ -55,11 +78,25 @@ public class ServiceTests {
     }
 
 
-
-
-
     @Test
-    void login() {
+    @Order(3)
+    @DisplayName("Successful Login")
+    void login() throws Exception {
+
+        LoginRequest req = new LoginRequest(resp.username(), password);
+
+        LoginService loginService = new LoginService();
+
+        LoginResponse response = loginService.login(req, user, auth);
+
+        assertNotNull(response, "LoginResponse returned null");
+
+        assertEquals(response.username(), resp.username(), "Username in response doesn't equal username used to login");
+
+        assertNotNull(response.authToken(), "LoginResponse authToken is null");
+
+        assertNotNull(auth.getAuth(response.username()), "AuthToken not stored");
+
     }
 
 

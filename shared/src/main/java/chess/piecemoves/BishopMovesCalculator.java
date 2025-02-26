@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class BishopMovesCalculator implements PieceMovesCalculator {
+
+    /* Method creates all possible ChessMove objects for a piece with type BISHOP and adds them to a collection */
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition pos) {
 

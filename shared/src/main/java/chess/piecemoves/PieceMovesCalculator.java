@@ -8,6 +8,10 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/*This interface makes it so that all piecemoves classes inherit the inbounds method and promoter method so that
+it is easier to  check if a piece is/will be inbounds with a move and if pawns need to be
+promoted to other piece types*/
+
 public interface PieceMovesCalculator {
 
     public Collection<ChessMove> calculateMoves (ChessBoard board, ChessPosition pos);
