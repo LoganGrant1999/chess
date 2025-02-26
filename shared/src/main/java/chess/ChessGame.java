@@ -23,6 +23,7 @@ public class ChessGame {
         this.teamTurn = TeamColor.WHITE;
     }
 
+    // additional constructor that makes a copy of current ChessBoard so that moves can be simulated
     public ChessGame(ChessGame oldGame) {
         this.board = new ChessBoard(oldGame.board);
         this.teamTurn = oldGame.teamTurn;
@@ -100,13 +101,13 @@ public class ChessGame {
 
         if (board.getPiece(startPos) == null
                 || board.getPiece(startPos).getTeamColor() != getTeamTurn()){
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Invalid Move Attempted");
         }
 
         Collection<ChessMove> moves = validMoves(startPos);
 
         if (!moves.contains(move)){
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Invalid Move Attempted");
         }
 
         if (promote == null){
@@ -156,7 +157,7 @@ public class ChessGame {
         return false;
     }
 
-
+    // Identifies and returns the current position of the KING for a given team's color
     public ChessPosition kingPos(TeamColor color) {
 
         for (int x = 1; x < 9; x++) {
@@ -248,6 +249,7 @@ public class ChessGame {
         return board;
     }
 
+    // Override methods to ensure no equals or hashCode issues and to improve debugging
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

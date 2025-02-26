@@ -11,14 +11,16 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
+    //initializes an array of ChessPiece objects
     private ChessPiece[][] board;
 
     public ChessBoard() {
+        //sets the array of ChessPiece objects as an 8X8 array
         this.board = new ChessPiece[8][8];
     }
 
+    // Additional constructor added to make it easier to create a copy of the board for imitating moves in ChessGame
     public ChessBoard(ChessBoard oldBoard) {
-
         this.board = new ChessPiece[8][8];
 
         for (int x = 0; x < 8; ++x) {
@@ -34,6 +36,7 @@ public class ChessBoard {
             }
         }
     }
+
 
     /**
      * Adds a chess piece to the chessboard
@@ -88,6 +91,7 @@ public class ChessBoard {
         }
     }
 
+    // Override methods to ensure no equals or hashCode issues
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

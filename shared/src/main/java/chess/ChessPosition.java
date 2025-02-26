@@ -34,6 +34,8 @@ public class ChessPosition {
         return column;
     }
 
+    // Override methods to ensure no equals or hashCode issues
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
