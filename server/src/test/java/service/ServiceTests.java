@@ -91,7 +91,7 @@ public class ServiceTests {
 
         assertNotNull(response, "LoginResponse returned null");
 
-        assertEquals(response.username(), resp.username(), "Username in response doesn't equal username used to login");
+        assertEquals(response.username(), resp.username(), "Response username doesn't equal login username");
 
         assertNotNull(response.authToken(), "LoginResponse authToken is null");
 
