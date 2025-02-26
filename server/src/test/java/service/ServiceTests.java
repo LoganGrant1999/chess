@@ -73,7 +73,7 @@ public class ServiceTests {
 
         RegisterService registerService = new RegisterService();
 
-        assertThrows(MissingDataException.class, () ->  registerService.register(req, user, auth), "MissingDataException Not Thrown when username is null");
+        assertThrows(MissingDataException.class, () -> registerService.register(req, user, auth),"Not Thrown");
 
     }
 
