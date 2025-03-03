@@ -1,9 +1,7 @@
 package handlers;
 
+import dataaccess.*;
 import service.RegisterService;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
 import exceptions.AlreadyTakenException;
 import exceptions.MissingDataException;
 import request.RegisterRequest;
@@ -13,15 +11,15 @@ import spark.Response;
 
 public class RegisterHandler extends BaseHandler{
 
-    /*initializes MemoryAuthDAO and MemoryGameDAO objects to make calling their
+    /*initializes AuthDAO and GameDAO objects to make calling their
     class methods easier
     */
-    private MemoryUserDAO user;
+    private UserDAO user;
 
-    private MemoryAuthDAO auth;
+    private AuthDAO auth;
 
 
-    public RegisterHandler(MemoryUserDAO user, MemoryAuthDAO auth) {
+    public RegisterHandler(UserDAO user, AuthDAO auth) {
         this.user = user;
         this.auth = auth;
     }

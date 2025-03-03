@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import exceptions.AlreadyTakenException;
 import exceptions.MissingDataException;
 import model.AuthData;
@@ -14,13 +11,13 @@ import response.JoinGameResponse;
 
 public class JoinGameService {
 
-    /*This method attempts to enable a user to join an existing game in the MemoryGameDAO map. If successful
+    /*This method attempts to enable a user to join an existing game in the GameDAO database. If successful
      it returns a JoinGameResponse object. If any of the GameData passed into the method is null or not valid,
       it throws a new MissingDataException. If an AlreadyTakenException is caught, it throws a new one. If
       a DataAccessException is caught, it throws a new one*/
 
-    public JoinGameResponse joinGame(JoinGameRequest req, MemoryUserDAO user, MemoryAuthDAO auth,
-                                     MemoryGameDAO game, String authToken) throws Exception {
+    public JoinGameResponse joinGame(JoinGameRequest req, UserDAO user, AuthDAO auth,
+                                     GameDAO game, String authToken) throws Exception {
 
         if (req.playerColor() == null || req.gameID() == 0 || !(req.playerColor().equals("WHITE") || req.playerColor().equals("BLACK"))) {
 

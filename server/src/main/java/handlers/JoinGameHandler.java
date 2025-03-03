@@ -1,9 +1,6 @@
 package handlers;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import exceptions.AlreadyTakenException;
 import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
@@ -20,14 +17,14 @@ import spark.Response;
 
 public class JoinGameHandler extends BaseHandler{
 
-    /*initializes MemoryAuthDAO, MemoryGameDAO, and MemoryUserDAO objects to make calling their
+    /*initializes AuthDAO, GameDAO, and UserDAO objects to make calling their
     class methods easier
     */
-    private MemoryUserDAO user;
-    private MemoryAuthDAO auth;
-    private MemoryGameDAO game;
+    private UserDAO user;
+    private AuthDAO auth;
+    private GameDAO game;
 
-    public JoinGameHandler(MemoryUserDAO user, MemoryAuthDAO auth, MemoryGameDAO game) {
+    public JoinGameHandler(UserDAO user, AuthDAO auth, GameDAO game) {
         this.user = user;
         this.auth = auth;
         this.game = game;

@@ -1,9 +1,7 @@
 package handlers;
 
+import dataaccess.*;
 import service.LoginService;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
 import exceptions.InvalidCredentialsException;
 import request.LoginRequest;
 import response.LoginResponse;
@@ -18,13 +16,13 @@ import spark.Response;
 
 public class LoginHandler extends BaseHandler{
 
-    /*initializes MemoryAuthDAO and MemoryGameDAO objects to make calling their
+    /*initializes AuthDAO and GameDAO objects to make calling their
     class methods easier
     */
-    private MemoryUserDAO user;
-    private MemoryAuthDAO auth;
+    private UserDAO user;
+    private AuthDAO auth;
 
-    public LoginHandler(MemoryUserDAO user, MemoryAuthDAO auth) {
+    public LoginHandler(UserDAO user, AuthDAO auth) {
         this.user = user;
         this.auth = auth;
     }

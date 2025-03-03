@@ -1,9 +1,7 @@
 package handlers;
 
+import dataaccess.*;
 import service.CreateGameService;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
 import exceptions.InvalidCredentialsException;
 import exceptions.MissingDataException;
 import request.CreateGameRequest;
@@ -18,13 +16,13 @@ import spark.Response;
 
 public class CreateGameHandler extends BaseHandler {
 
-    /*initializes MemoryAuthDAO and MemoryGameDAO objects to make calling their
+    /*initializes AuthDAO and GameDAO objects to make calling their
     class methods easier
     */
-    private MemoryGameDAO game;
-    private MemoryAuthDAO auth;
+    private GameDAO game;
+    private AuthDAO auth;
 
-    public CreateGameHandler(MemoryGameDAO game, MemoryAuthDAO auth) {
+    public CreateGameHandler(GameDAO game, AuthDAO auth) {
         this.game = game;
         this.auth = auth;
     }

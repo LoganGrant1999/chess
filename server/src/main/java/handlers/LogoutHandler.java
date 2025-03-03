@@ -1,8 +1,8 @@
 package handlers;
 
+import dataaccess.AuthDAO;
 import service.LogoutService;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
 import exceptions.InvalidCredentialsException;
 import response.LogoutResponse;
 import spark.Request;
@@ -10,11 +10,11 @@ import spark.Response;
 
 public class LogoutHandler extends BaseHandler{
 
-    //initializes MemoryAuthDAO object to make calling its class methods easier
+    //initializes AuthDAO object to make calling its class methods easier
 
-    private MemoryAuthDAO auth;
+    private AuthDAO auth;
 
-    public LogoutHandler(MemoryAuthDAO auth) {
+    public LogoutHandler(AuthDAO auth) {
         this.auth = auth;
     }
 

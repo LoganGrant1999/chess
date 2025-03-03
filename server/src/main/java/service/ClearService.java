@@ -1,17 +1,14 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import response.ClearResponse;
 
 public class ClearService {
 
-    /* method trys to clear all data from each of the MemoryDAO maps. If a DataAccessException is caught
+    /* method trys to clear all data from each of the DAO databases/maps. If a DataAccessException is caught
     * it throws a new DataAccessException*/
 
-    public ClearResponse clearAllData(MemoryAuthDAO auth, MemoryGameDAO game, MemoryUserDAO user) throws Exception{
+    public ClearResponse clearAllData(AuthDAO auth, GameDAO game, UserDAO user) throws Exception{
 
         try {
 

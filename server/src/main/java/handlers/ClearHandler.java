@@ -1,9 +1,6 @@
 package handlers;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import response.ClearResponse;
 import service.ClearService;
 import spark.Request;
@@ -16,16 +13,16 @@ import spark.Response;
 
 public class ClearHandler extends BaseHandler{
 
-    /*initializes MemoryAuthDAO, MemoryGameDAO, and MemoryUserDAO objects to make calling their
+    /*initializes AuthDAO, GameDAO, and UserDAO objects to make calling their
     class methods easier
     */
 
-    private MemoryAuthDAO auth;
-    private MemoryGameDAO game;
-    private MemoryUserDAO user;
+    private AuthDAO auth;
+    private GameDAO game;
+    private UserDAO user;
 
 
-    public ClearHandler(MemoryAuthDAO auth, MemoryGameDAO game, MemoryUserDAO user) {
+    public ClearHandler(AuthDAO auth, GameDAO game, UserDAO user) {
         this.auth = auth;
         this.game = game;
         this.user = user;
