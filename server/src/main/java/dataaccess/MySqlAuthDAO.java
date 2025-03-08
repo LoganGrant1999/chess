@@ -7,9 +7,10 @@ import java.sql.Statement;
 
 import static java.sql.Types.NULL;
 
-//Placeholder class for Phase4 when I'll interact with the database and store AuthData there
+// DAO class that interacts with auth table in database
 public class MySqlAuthDAO implements AuthDAO {
 
+    // Method that takes in a SQL statement and parameters and executes updates within the auth table directly
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
 
         try(var conn = DatabaseManager.getConnection()){
@@ -44,6 +45,7 @@ public class MySqlAuthDAO implements AuthDAO {
         }
     }
 
+    // Method designed to create a new record of auth data in the auth table
     @Override
     public void createAuth(AuthData authdata) throws DataAccessException {
 
@@ -59,6 +61,7 @@ public class MySqlAuthDAO implements AuthDAO {
         }
     }
 
+    // Method designed to retrieve AuthData from the auth table given a valid authToken
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()) {
@@ -87,6 +90,7 @@ public class MySqlAuthDAO implements AuthDAO {
         return null;
     }
 
+    //Method designed to remove an existing record of AuthData from the database given a valid authToken
     @Override
     public void remove(String authToken) throws DataAccessException {
 
@@ -102,6 +106,7 @@ public class MySqlAuthDAO implements AuthDAO {
         }
     }
 
+    //Method designed to truncate auth table from chess database
     @Override
     public void clear() throws DataAccessException {
 

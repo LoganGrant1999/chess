@@ -9,10 +9,10 @@ import java.sql.Statement;
 import static java.sql.Types.NULL;
 
 
-//Placeholder class for Phase4 when I'll interact with the database and store UserData there
+//DAO class that interacts with user data in the database
 public class MySqlUserDAO implements UserDAO {
 
-
+    // Method that takes in a SQL statement and parameters and executes updates within the user table directly
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
 
         try(var conn = DatabaseManager.getConnection()){
@@ -46,6 +46,7 @@ public class MySqlUserDAO implements UserDAO {
         }
     }
 
+    //Method designed to create a new record of user data in the user table
     @Override
     public void createUser(UserData userData) throws DataAccessException {
 
@@ -61,6 +62,7 @@ public class MySqlUserDAO implements UserDAO {
         }
     }
 
+    //Method designed to retrieve user data from the user table given a valid username
     @Override
     public UserData getUser(String userName) throws DataAccessException {
 
@@ -90,6 +92,7 @@ public class MySqlUserDAO implements UserDAO {
         return null;
     }
 
+    //Method designed to truncate user table from chess database
     @Override
     public void clear() throws DataAccessException {
 
