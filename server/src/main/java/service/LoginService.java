@@ -4,6 +4,7 @@ import dataaccess.*;
 import exceptions.InvalidCredentialsException;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import request.LoginRequest;
 import response.LoginResponse;
 
@@ -23,7 +24,7 @@ public class LoginService {
 
         UserData userData = user.getUser(req.username());
 
-        if (userData == null || !Objects.equals(req.password(), userData.password())){
+        if (userData == null || !BCrypt.checkpw(req.password(), userData.password())) {
 
             throw new InvalidCredentialsException("Error: unauthorized");
 

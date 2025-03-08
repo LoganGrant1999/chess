@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public class MySqlUserDAO implements UserDAO {
     // Method that takes in a SQL statement and parameters and executes updates within the user table directly
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
 
-        try(var conn = DatabaseManager.getConnection()){
+        try (var conn = DatabaseManager.getConnection()){
 
             try(var prepStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
 
@@ -54,7 +55,9 @@ public class MySqlUserDAO implements UserDAO {
 
             var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
 
-            executeUpdate(statement, userData.username(), userData.password(), userData.email());
+            String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+
+            executeUpdate(statement, userData.username(), hashedPassword, userData.email());
 
         } catch (DataAccessException e) {
 
