@@ -1,5 +1,7 @@
 package dataaccess;
 
+import jdk.dynalink.beans.StaticClass;
+
 import java.sql.*;
 import java.util.Properties;
 
@@ -48,6 +50,15 @@ public class DatabaseManager {
         }
     }
 
+    //static block that trys to configure the database and tables when server starts up
+    static{
+        try{
+            configureDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should
@@ -69,6 +80,7 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
+
 
     //SQL code that configureDatabase uses to create tables if they don't exist at startup
     private static final String[] createStatements = {
@@ -105,7 +117,7 @@ public class DatabaseManager {
     /* Method that configures the database and tables upon server start up
      ensuring they exist or throwing a DataAccessException
      */
-    static void configureDatabase() throws Exception{
+    static void configureDatabase() throws DataAccessException{
         createDatabase();
         try (var conn = getConnection()){
             for (var statement: createStatements) {
@@ -117,5 +129,4 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
-
 }
