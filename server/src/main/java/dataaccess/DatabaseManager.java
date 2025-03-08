@@ -50,14 +50,6 @@ public class DatabaseManager {
         }
     }
 
-    //static block that trys to configure the database and tables when server starts up
-    static{
-        try{
-            configureDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 
     /**
      * Create a connection to the database and sets the catalog based upon the
@@ -117,7 +109,7 @@ public class DatabaseManager {
     /* Method that configures the database and tables upon server start up
      ensuring they exist or throwing a DataAccessException
      */
-    static void configureDatabase() throws DataAccessException{
+    public static void configureDatabase() throws Exception{
         createDatabase();
         try (var conn = getConnection()){
             for (var statement: createStatements) {
@@ -126,7 +118,7 @@ public class DatabaseManager {
                 }
             }
         } catch (SQLException e){
-            throw new DataAccessException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
