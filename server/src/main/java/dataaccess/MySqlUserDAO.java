@@ -11,17 +11,26 @@ import java.sql.Statement;
 public class MySqlUserDAO implements UserDAO {
 
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException{
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+
         try(var conn = DatabaseManager.getConnection()){
+
             try(var prepStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+
                 for (var i = 0; i < params.length; i++){
+
                     var param = params[i];
+
                     if (param instanceof String p) prepStatement.setString(i + 1, p);
+
                 }
+
                 prepStatement.executeUpdate();
 
                 var keys = prepStatement.getGeneratedKeys();
+
                 if (keys.next()){
+
                     return keys.getInt(1);
                 }
 
@@ -38,10 +47,12 @@ public class MySqlUserDAO implements UserDAO {
     public void createUser(UserData userData) throws DataAccessException {
 
         try {
+
             var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+
             executeUpdate(statement, userData.username(), userData.password(), userData.email());
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
 
             throw new DataAccessException(e.getMessage());
         }

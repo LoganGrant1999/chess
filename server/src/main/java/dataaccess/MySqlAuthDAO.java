@@ -10,19 +10,30 @@ import static java.sql.Types.NULL;
 //Placeholder class for Phase4 when I'll interact with the database and store AuthData there
 public class MySqlAuthDAO implements AuthDAO {
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException{
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+
         try(var conn = DatabaseManager.getConnection()){
+
             try(var prepStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+
                 for (var i = 0; i < params.length; i++){
+
                     var param = params[i];
+
                     if (param instanceof String p) prepStatement.setString(i + 1, p);
+
                     else if (param instanceof Integer p) prepStatement.setInt(i + 1, p);
+
                     else if (param == null) prepStatement.setNull(i + 1, NULL);
+
                 }
+
                 prepStatement.executeUpdate();
 
                 var keys = prepStatement.getGeneratedKeys();
+
                 if (keys.next()){
+
                     return keys.getInt(1);
                 }
 
@@ -39,7 +50,16 @@ public class MySqlAuthDAO implements AuthDAO {
     @Override
     public void createAuth(AuthData authdata) throws DataAccessException {
 
+        try {
 
+            var statement = "INSERT INTO auth (authToken, username) values (?, ?)";
+
+            executeUpdate(statement, authdata.authToken(), authdata.username());
+
+        } catch (DataAccessException e){
+
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
