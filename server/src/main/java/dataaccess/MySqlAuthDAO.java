@@ -44,7 +44,6 @@ public class MySqlAuthDAO implements AuthDAO {
         }
     }
 
-
     @Override
     public void createAuth(AuthData authdata) throws DataAccessException {
 
@@ -88,7 +87,6 @@ public class MySqlAuthDAO implements AuthDAO {
         return null;
     }
 
-
     @Override
     public void remove(String authToken) throws DataAccessException {
 
@@ -107,6 +105,9 @@ public class MySqlAuthDAO implements AuthDAO {
     @Override
     public void clear() throws DataAccessException {
 
+        var statement = "TRUNCATE auth";
 
+        executeUpdate(statement);
     }
+
 }
