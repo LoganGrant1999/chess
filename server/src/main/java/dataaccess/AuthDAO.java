@@ -2,6 +2,8 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.sql.SQLException;
+
 /* Interface used to create a data storage class that stores Authentication data, either in storage or in a database.
 * Classes that import this interface inherit a createAuth method used to store new authentication data,
 * a getAuth method that can be used to retrieve AuthData from where it is being stored, a remove method that
@@ -12,7 +14,7 @@ public interface AuthDAO {
 
     void createAuth(AuthData authdata) throws DataAccessException;
 
-    AuthData getAuth(String authToken) throws DataAccessException;
+    AuthData getAuth(String authToken) throws DataAccessException, SQLException;
 
     void remove(String authToken) throws DataAccessException;
 

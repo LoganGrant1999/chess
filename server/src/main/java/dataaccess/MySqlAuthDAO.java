@@ -22,8 +22,6 @@ public class MySqlAuthDAO implements AuthDAO {
 
                     if (param instanceof String p) prepStatement.setString(i + 1, p);
 
-                    else if (param instanceof Integer p) prepStatement.setInt(i + 1, p);
-
                     else if (param == null) prepStatement.setNull(i + 1, NULL);
 
                 }
@@ -63,7 +61,30 @@ public class MySqlAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(String authToken) throws DataAccessException{
+        try (var conn = DatabaseManager.getConnection()) {
+
+            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
+
+            try (var ps = conn.prepareStatement(statement)){
+
+                ps.setString(1, "authToken");
+
+                try (var rs = ps.executeQuery()){
+
+                    if (rs.next()) {
+
+                        return new AuthData(rs.getString("authToken"),
+                                rs.getString("username"));
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+
+            throw new DataAccessException(e.getMessage());
+        }
+
         return null;
     }
 
