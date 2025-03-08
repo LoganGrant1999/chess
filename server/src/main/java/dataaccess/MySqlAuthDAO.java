@@ -70,7 +70,7 @@ public class MySqlAuthDAO implements AuthDAO {
 
             try (var ps = conn.prepareStatement(statement)){
 
-                ps.setString(1, "authToken");
+                ps.setString(1, authToken);
 
                 try (var rs = ps.executeQuery()){
 
@@ -114,5 +114,4 @@ public class MySqlAuthDAO implements AuthDAO {
 
         executeUpdate(statement);
     }
-
 }

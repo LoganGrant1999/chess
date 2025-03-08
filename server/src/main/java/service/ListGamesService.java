@@ -6,6 +6,7 @@ import model.AuthData;
 import model.ListGameData;
 import response.ListGamesResponse;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -16,22 +17,30 @@ public class ListGamesService {
      provided is null or the authToken provided isn't in the AuthDAO database, it throws a new
      InvalidCredentialsException. If it catches a DataAccessException, it throws a new one*/
 
-    public ListGamesResponse listGames(String authToken, AuthDAO auth, GameDAO game) throws DataAccessException {
+    public ListGamesResponse listGames(String authToken, AuthDAO auth, GameDAO game) throws DataAccessException{
 
-        AuthData authData = auth.getAuth(authToken);
+        try {
 
-        if (authData == null || !Objects.equals(authToken, authData.authToken())){
+            AuthData authData = auth.getAuth(authToken);
 
-            throw new InvalidCredentialsException("Error: unauthorized");
-        }
 
-        try{
+            if (authData == null || !Objects.equals(authToken, authData.authToken())) {
 
-            ArrayList<ListGameData> games = game.listGames(authData.authToken());
+                throw new InvalidCredentialsException("Error: unauthorized");
+            }
 
-            return new ListGamesResponse(games);
+            try{
 
-        } catch (DataAccessException e){
+                ArrayList<ListGameData> games = game.listGames(authData.authToken());
+
+                return new ListGamesResponse(games);
+
+            } catch (DataAccessException e){
+
+                throw new DataAccessException(e.getMessage());
+            }
+
+        } catch (SQLException e) {
 
             throw new DataAccessException(e.getMessage());
         }

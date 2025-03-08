@@ -3,8 +3,9 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import exceptions.InvalidCredentialsException;
-import handlers.ErrorFormatter;
 import response.LogoutResponse;
+
+import java.sql.SQLException;
 
 public class LogoutService {
 
@@ -20,18 +21,25 @@ public class LogoutService {
         checks to see if authToken is null or absent from map storage. If so, sets status at 401 and returns json
         of InvalidCredentialsException that's thrown along with its message
          */
-        if (authToken == null || auth.getAuth(authToken) == null) {
-
-            throw new InvalidCredentialsException("Error: not authorized");
-        }
-
         try {
 
-            auth.remove(authToken);
+            if (authToken == null || auth.getAuth(authToken) == null) {
 
-            return new LogoutResponse();
+                throw new InvalidCredentialsException("Error: not authorized");
+            }
 
-        } catch (DataAccessException e){
+            try {
+
+                auth.remove(authToken);
+
+                return new LogoutResponse();
+
+            } catch (DataAccessException e) {
+
+                throw new DataAccessException(e.getMessage());
+            }
+
+        } catch (SQLException e) {
 
             throw new DataAccessException(e.getMessage());
         }
