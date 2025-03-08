@@ -88,13 +88,25 @@ public class MySqlAuthDAO implements AuthDAO {
         return null;
     }
 
+
     @Override
     public void remove(String authToken) throws DataAccessException {
 
+        try {
+
+            var statement = "DELETE FROM auth WHERE authToken=?";
+
+            executeUpdate(statement, authToken);
+
+        } catch (DataAccessException e){
+
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     @Override
     public void clear() throws DataAccessException {
+
 
     }
 }
