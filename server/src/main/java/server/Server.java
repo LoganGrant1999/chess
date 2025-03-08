@@ -2,8 +2,6 @@ package server;
 
 import dataaccess.*;
 import handlers.*;
-import model.AuthData;
-import model.GameData;
 import spark.*;
 
 public class Server {
@@ -16,9 +14,9 @@ public class Server {
     private GameDAO gameDAO;
 
     public Server() {
-        this.userDAO = new DBUserDAO();
-        this.gameDAO = new DBGameDAO();
-        this.authDAO = new DBAuthDAO();
+        this.userDAO = new MySqlUserDAO();
+        this.gameDAO = new MySqlGameDAO();
+        this.authDAO = new MySqlAuthDAO();
     }
 
     public int run(int desiredPort) {

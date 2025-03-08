@@ -6,7 +6,7 @@ import model.ListGameData;
 import java.util.ArrayList;
 
 //Placeholder class for Phase4 when I'll interact with the database and store GameData there
-public class DBGameDAO implements GameDAO {
+public class MySqlGameDAO implements GameDAO {
     @Override
     public int createGame(String gameName) throws DataAccessException {
         return 0;

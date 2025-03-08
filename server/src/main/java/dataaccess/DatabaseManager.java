@@ -69,4 +69,53 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    //SQL code that configureDatabase uses to create tables if they don't exist at startup
+    private static final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS user(
+            	username varchar(50) NOT NULL,
+                password varchar(60) NOT NULL,
+                email varchar(50) NOT NULL,
+                PRIMARY KEY(username)
+            );
+            """,
+
+            """
+            
+            CREATE TABLE IF NOT EXISTS auth(
+            	authToken varchar(36) NOT NULL,
+                username varchar(50) NOT NULL,
+                PRIMARY KEY(authToken)
+            );
+            """,
+
+            """
+           CREATE TABLE IF NOT EXISTS game(
+                gameID int NOT NULL AUTO_INCREMENT,
+                whiteUsername varchar(50),
+                blackUsername varchar(50),
+                gameName varchar(50) NOT NULL,
+                chessGame longtext NOT NULL,
+                PRIMARY KEY(gameID)
+            );
+           """
+    };
+
+    /* Method that configures the database and tables upon server start up
+     ensuring they exist or throwing a DataAccessException
+     */
+    static void configureDatabase() throws Exception{
+        createDatabase();
+        try (var conn = getConnection()){
+            for (var statement: createStatements) {
+                try(var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
 }
