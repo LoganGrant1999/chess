@@ -14,7 +14,6 @@ import static java.sql.Types.NULL;
 //Placeholder class for Phase4 when I'll interact with the database and store GameData there
 public class MySqlGameDAO implements GameDAO {
 
-
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
 
         try (var conn = DatabaseManager.getConnection()) {
@@ -53,7 +52,6 @@ public class MySqlGameDAO implements GameDAO {
         }
     }
 
-
     @Override
     public int createGame(String gameName) throws DataAccessException {
 
@@ -67,13 +65,72 @@ public class MySqlGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
+
+        try (var conn = DatabaseManager.getConnection()) {
+
+            var statement = "SELECT * FROM game WHERE id=?";
+
+            try (var ps = conn.prepareStatement(statement)) {
+
+                ps.setInt(1, gameID);
+
+                try(var rs = ps.executeQuery()){
+
+                    if (rs.next()){
+
+                        int id = rs.getInt("gameID");
+
+                        String white = rs.getString("whiteUsername");
+
+                        String black = rs.getString("blackUsername");
+
+                        String gameName = rs.getString("gameName");
+
+                        String chessGame = rs.getString("chessGame");
+
+                        ChessGame game = new Gson().fromJson(chessGame, ChessGame.class);
+
+                        return new GameData(id, white, black, gameName, game);
+                    }
+                }
+            }
+        } catch (SQLException e){
+
+            throw new DataAccessException(e.getMessage());
+        }
+
         return null;
     }
 
+
     @Override
     public ArrayList<ListGameData> listGames(String authToken) throws DataAccessException {
-        return null;
+        var result = new ArrayList<ListGameData>();
+
+        try (var conn = DatabaseManager.getConnection()) {
+
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName FROM game";
+
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+
+                        ListGameData listGameData = new ListGameData(rs.getInt("gameID"),
+                                rs.getString("whiteUsername"), rs.getString("blackUsername"),
+                                rs.getString("gameName"));
+
+                        result.add(listGameData);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+
+            throw new DataAccessException(e.getMessage());
+        }
+
+        return result;
     }
+
 
     @Override
     public GameData joinGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException {
