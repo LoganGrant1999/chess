@@ -93,7 +93,7 @@ public class MemoryGameDAO implements GameDAO{
 
             throw new AlreadyTakenException("Error: already taken");
 
-        } else if(Objects.equals(playerColor, "WHITE") && currGame.whiteUsername() != null){
+        } else if (Objects.equals(playerColor, "WHITE") && currGame.whiteUsername() != null){
 
             throw new AlreadyTakenException("Error: already taken");
         }
