@@ -5,7 +5,6 @@ import model.AuthData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static java.sql.Types.NULL;
 
 // DAO class that interacts with auth table in database
 public class MySqlAuthDAO implements AuthDAO {
@@ -22,8 +21,6 @@ public class MySqlAuthDAO implements AuthDAO {
                     var param = params[i];
 
                     if (param instanceof String p) prepStatement.setString(i + 1, p);
-
-                    else if (param == null) prepStatement.setNull(i + 1, NULL);
 
                 }
 
