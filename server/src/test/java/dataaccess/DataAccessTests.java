@@ -13,12 +13,11 @@ import server.Server;
 import service.ClearService;
 
 import java.util.ArrayList;
-
-import static chess.ChessGame.TeamColor.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DataAccessTests {
 
+    //Creates private static variables to be instantiated before each test in setup method
     private static MySqlAuthDAO auth;
     private static MySqlGameDAO game;
     private static MySqlUserDAO user;
@@ -30,6 +29,10 @@ public class DataAccessTests {
     private static GameData newGameData;
     private static String gameName;
 
+
+    /*Creates objects and variables needed for the unit tests that are all instantiated before each test runs
+    Also starts server and clears database before each test
+     */
     @BeforeEach
     public void setup() throws Exception {
 
@@ -68,12 +71,14 @@ public class DataAccessTests {
         newGameData = game.joinGame(1, userData.username(), "BLACK", "testGame1");
     }
 
+    //stops test server after each test
     @AfterEach
     public void stopServer(){
 
         server.stop();
     }
 
+    //Tests that userdata can be correctly stored in user table and that it persists after server stops/restarts
     @Test
     @Order(1)
     @DisplayName("Successful Create User Test")
@@ -97,6 +102,8 @@ public class DataAccessTests {
                 storedUserData.password()), "Password not stored correctly");
     }
 
+
+    //throws DataAccessException when username field is null in a call to createUser
     @Test
     @Order(2)
     @DisplayName("Unsuccessful Create User Test")
@@ -108,6 +115,7 @@ public class DataAccessTests {
 
     }
 
+    //shows that user information persists after server stops/restarts and that it can be retrieved with getUser
     @Test
     @Order(3)
     @DisplayName("Successful Get User Test")
@@ -127,6 +135,7 @@ public class DataAccessTests {
                 "password not stored correctly");
     }
 
+    //Shows that MissingDataException is thrown when null username is passed into getUser
     @Test
     @Order(4)
     @DisplayName("Unsuccessful Get User Test")
@@ -135,6 +144,7 @@ public class DataAccessTests {
         assertThrows(MissingDataException.class, () -> user.getUser(null), "Not Thrown");
     }
 
+    //tests that user table can be cleared of all existing data with clear method
     @Test
     @Order(5)
     @DisplayName("Successful User Clear")
@@ -156,6 +166,7 @@ public class DataAccessTests {
 
     }
 
+    //Shows that createAuth successfully stores data that persists when server stops/restarts
     @Test
     @Order(6)
     @DisplayName("Successful createAuth")
@@ -176,6 +187,7 @@ public class DataAccessTests {
         assertEquals(storedAuthData.username(), testAuthData.username(), "username stored incorrectly");
     }
 
+    //Shows that DataAccessException is thrown when null values are passed into createAuth
     @Test
     @Order(7)
     @DisplayName("Unsuccessful createAuth")
@@ -186,6 +198,7 @@ public class DataAccessTests {
         assertThrows(DataAccessException.class, () -> auth.createAuth(testAuthData), "Not Thrown");
     }
 
+    // Shows that data persists when server stops/restarts and that getAuth can successfully retrieve it
     @Test
     @Order(8)
     @DisplayName("Successful getAuth")
@@ -206,6 +219,7 @@ public class DataAccessTests {
         assertNotNull(storedAuthData.authToken(), "AuthToken not stored persistently");
     }
 
+    //Shows that MissingDataException is thrown when getAuth is passed null AuthToken
     @Test
     @Order(9)
     @DisplayName("Unsuccessful getAuth")
@@ -214,6 +228,7 @@ public class DataAccessTests {
         assertThrows(MissingDataException.class, () -> auth.getAuth(null), "Not Thrown");
     }
 
+    //Shows that remove auth successfully removes records from auth table
     @Test
     @Order(10)
     @DisplayName("Successful Remove Auth")
@@ -226,6 +241,7 @@ public class DataAccessTests {
         assertNull(auth.getAuth(authData.authToken()), "AuthData not removed");
     }
 
+    //shows that DataAccessException is thrown when null authToken is passed to removeAuth
     @Test
     @Order(11)
     @DisplayName("Unsuccessful Remove Auth")
@@ -234,7 +250,7 @@ public class DataAccessTests {
         assertThrows(DataAccessException.class, () -> auth.remove(null), "Not Thrown");
     }
 
-
+    //shows that auth table is successfully truncated with clear call in MySqlAuthDAO
     @Test
     @Order(12)
     @DisplayName("Successful Clear Auth Table")
@@ -255,6 +271,7 @@ public class DataAccessTests {
         assertNull(auth.getAuth(authData.authToken()), "AuthData not cleared");
     }
 
+    //Shows that createGame successfully stores gameData in database, and it persists when server stops/restarts
     @Test
     @Order(13)
     @DisplayName("Successful Create Game")
@@ -275,6 +292,7 @@ public class DataAccessTests {
         assertEquals(testGameName, storedGameData.gameName(), "Game not stored persistently");
     }
 
+    //Shows that DataAccessException is thrown when createGame receives a null game name
     @Test
     @Order(14)
     @DisplayName("Unsuccessful Create Game")
@@ -284,6 +302,9 @@ public class DataAccessTests {
     }
 
 
+    /*Shows that getGame successfully retrieves game data from game
+    table and that data persists when server stops/restarts
+     */
     @Test
     @Order(15)
     @DisplayName("Successful getGame")
@@ -298,6 +319,7 @@ public class DataAccessTests {
         assertEquals(gameName, storedGameData.gameName(), "Correct Game Not Retrieved");
     }
 
+    //Shows that MissingDataException is thrown when gameID = 0 is passed into getGame
     @Test
     @Order(16)
     @DisplayName("Unsuccessful getGame")
@@ -306,6 +328,7 @@ public class DataAccessTests {
         assertThrows(MissingDataException.class, () -> game.getGame(0), "Not Thrown");
     }
 
+    //Shows that listGames successfully returns a list of all games and that data persists when server stop/restarts
     @Test
     @Order(17)
     @DisplayName("Successful listGames")
@@ -326,6 +349,7 @@ public class DataAccessTests {
         assertEquals(testList, testPersistList, "Data didn't properly persist in storage");
     }
 
+    //Shows that MissingDataException is thrown when null authToken is passed into listGames
     @Test
     @Order(18)
     @DisplayName("Unsuccessful listGames")
@@ -334,6 +358,9 @@ public class DataAccessTests {
         assertThrows(MissingDataException.class, () -> game.listGames(null), "Not Thrown");
     }
 
+    /*Shows that joinGame successfully updates an existing game with a new gameName and black or white username
+    and that the stored data and updates persist when server stops/restarts
+     */
     @Test
     @Order(19)
     @DisplayName("Successful joinGame")
@@ -341,7 +368,7 @@ public class DataAccessTests {
 
         GameData updatedGame = game.joinGame(1, userData.username(), "WHITE", gameData.gameName());
 
-        assertEquals(gameData.blackUsername(), updatedGame.blackUsername(), "blackUser not stored correctly");
+        assertEquals(newGameData.blackUsername(), updatedGame.blackUsername(), "blackUser not stored correctly");
 
         assertEquals(updatedGame.whiteUsername(), userData.username(), "Game did not update");
 
@@ -360,6 +387,7 @@ public class DataAccessTests {
         assertEquals(updatedGame.gameName(), gameData.gameName(), "Data did not persist");
     }
 
+    //Shows that AlreadyTakenException is thrown when user tries to joinGame where another user is already playing
     @Test
     @Order(20)
     @DisplayName("Unsuccessful joinGame")
@@ -369,8 +397,21 @@ public class DataAccessTests {
                 "fake", "BLACK", "test2"), "Not Thrown");
     }
 
-
+    //Shows that game table truncates when clear is called in MySqlGameDAO
     @Test
-    void clearGameTable() {
+    void clearGameTable() throws DataAccessException {
+
+        game.createGame("test2");
+
+        assertNotNull(game.getGame(1), "Game not stored correctly");
+
+        assertNotNull(game.getGame(2), "Game not stored correctly");
+
+        game.clear();
+
+        assertNull(game.getGame(1), "Game table not truncated");
+
+        assertNull(game.getGame(2), "Game table not truncated");
+
     }
 }
