@@ -12,15 +12,18 @@ public class MySqlAuthDAO implements AuthDAO {
     // Method that takes in a SQL statement and parameters and executes updates within the auth table directly
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
 
-        try(var conn = DatabaseManager.getConnection()){
+        try (var conn = DatabaseManager.getConnection()) {
 
-            try(var prepStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+            try (var prepStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 
                 for (var i = 0; i < params.length; i++){
 
                     var param = params[i];
 
-                    if (param instanceof String p) prepStatement.setString(i + 1, p);
+                    if (param instanceof String p) {
+
+                        prepStatement.setString(i + 1, p);
+                    }
 
                 }
 
@@ -28,7 +31,7 @@ public class MySqlAuthDAO implements AuthDAO {
 
                 var keys = prepStatement.getGeneratedKeys();
 
-                if (keys.next()){
+                if (keys.next()) {
 
                     return keys.getInt(1);
                 }

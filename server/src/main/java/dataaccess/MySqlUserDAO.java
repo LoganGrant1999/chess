@@ -18,22 +18,28 @@ public class MySqlUserDAO implements UserDAO {
 
         try (var conn = DatabaseManager.getConnection()){
 
-            try(var prepStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+            try(var prepStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
 
-                for (var i = 0; i < params.length; i++){
+                for (var i = 0; i < params.length; i++) {
 
                     var param = params[i];
 
-                    if (param instanceof String p) prepStatement.setString(i + 1, p);
+                    if (param instanceof String p) {
 
-                    else if (param == null) prepStatement.setNull(i + 1, NULL);
+                        prepStatement.setString(i + 1, p);
+                    }
+
+                    else if (param == null) {
+
+                        prepStatement.setNull(i + 1, NULL);
+                    }
                 }
 
                 prepStatement.executeUpdate();
 
                 var keys = prepStatement.getGeneratedKeys();
 
-                if (keys.next()){
+                if (keys.next()) {
 
                     return keys.getInt(1);
                 }
