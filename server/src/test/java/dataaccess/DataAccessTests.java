@@ -118,8 +118,6 @@ public class DataAccessTests {
     @DisplayName("Unsuccessful Get User Test")
     void unsuccessfulGetUser() {
 
-        server.stop();
-
         assertThrows(MissingDataException.class, () -> user.getUser(null), "Not Thrown");
     }
 
@@ -193,6 +191,18 @@ public class DataAccessTests {
 
         assertNotNull(storedAuthData.authToken(), "AuthToken not stored persistently");
     }
+
+    @Test
+    @Order(9)
+    @DisplayName("Unsuccessful getAuth")
+    void unsuccessfulGetAuth(){
+
+        assertThrows(MissingDataException.class, () -> auth.getAuth(null), "Not Thrown");
+    }
+
+
+
+
 
     @Test
     void remove() {

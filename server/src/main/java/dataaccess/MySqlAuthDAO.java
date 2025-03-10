@@ -1,5 +1,6 @@
 package dataaccess;
 
+import exceptions.MissingDataException;
 import model.AuthData;
 
 import java.sql.SQLException;
@@ -63,7 +64,13 @@ public class MySqlAuthDAO implements AuthDAO {
 
     // Method designed to retrieve AuthData from the auth table given a valid authToken
     @Override
-    public AuthData getAuth(String authToken) throws DataAccessException{
+    public AuthData getAuth(String authToken) throws DataAccessException {
+
+        if (authToken == null){
+
+            throw new MissingDataException("Error: Bad Request");
+        }
+
         try (var conn = DatabaseManager.getConnection()) {
 
             var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
