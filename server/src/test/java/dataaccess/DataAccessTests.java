@@ -72,7 +72,16 @@ public class DataAccessTests {
     }
 
 
+    @Test
+    @Order(2)
+    @DisplayName("Unsuccessful Create User Test")
+    void unsuccessfulCreateUser() {
 
+        UserData userData = new UserData(null, "password", "email");
+
+        assertThrows(DataAccessException.class, () -> user.createUser(userData), "Not Thrown");
+
+    }
 
 
 
