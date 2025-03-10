@@ -10,7 +10,7 @@ import java.sql.Statement;
 import static java.sql.Types.NULL;
 
 
-//DAO class that interacts with user data in the database
+//DAO class that interacts with user table in the database
 public class MySqlUserDAO implements UserDAO {
 
     // Method that takes in a SQL statement and parameters and executes updates within the user table directly

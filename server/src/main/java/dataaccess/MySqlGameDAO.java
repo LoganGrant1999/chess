@@ -13,9 +13,10 @@ import java.util.Objects;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
-//Placeholder class for Phase4 when I'll interact with the database and store GameData there
+//DAO class that interacts with game table in the database
 public class MySqlGameDAO implements GameDAO {
 
+    // Method that takes in a SQL statement and parameters and executes updates within the user table directly
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
 
         try (var conn = DatabaseManager.getConnection()) {
@@ -66,7 +67,7 @@ public class MySqlGameDAO implements GameDAO {
         }
     }
 
-
+    //method designed to create a new record of game data in the game table
     @Override
     public int createGame(String gameName) throws DataAccessException {
 
@@ -78,7 +79,7 @@ public class MySqlGameDAO implements GameDAO {
 
     }
 
-
+    //Method designed to retrieve game data for a game given a valid gameID
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
 
@@ -118,7 +119,7 @@ public class MySqlGameDAO implements GameDAO {
         return null;
     }
 
-
+    //Method designed to return a list of all the games in the game table given a valid authToken
     @Override
     public ArrayList<ListGameData> listGames(String authToken) throws DataAccessException {
         var result = new ArrayList<ListGameData>();
@@ -152,7 +153,7 @@ public class MySqlGameDAO implements GameDAO {
         return result;
     }
 
-
+    //Method designed to enable user's with a valid username to join a game in the game table as a specified team color
     @Override
     public GameData joinGame(int gameID, String username, String playerColor, String gameName) throws DataAccessException {
 
@@ -192,7 +193,7 @@ public class MySqlGameDAO implements GameDAO {
         }
     }
 
-
+    //method designed to truncate the game table
     @Override
     public void clear() throws DataAccessException {
 
