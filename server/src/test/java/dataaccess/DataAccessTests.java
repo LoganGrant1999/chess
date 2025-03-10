@@ -1,5 +1,6 @@
 package dataaccess;
 
+import exceptions.MissingDataException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
@@ -82,7 +83,6 @@ public class DataAccessTests {
         assertTrue(BCrypt.checkpw(testUserData.password(), storedUserData.password()));
     }
 
-
     @Test
     @Order(2)
     @DisplayName("Unsuccessful Create User Test")
@@ -93,7 +93,6 @@ public class DataAccessTests {
         assertThrows(DataAccessException.class, () -> user.createUser(userData), "Not Thrown");
 
     }
-
 
     @Test
     @Order(3)
@@ -112,26 +111,36 @@ public class DataAccessTests {
 
         assertTrue(BCrypt.checkpw(userData.password(), storedUserData.password()),
                 "password not stored correctly");
-
     }
 
+    @Test
+    @Order(4)
+    @DisplayName("Unsuccessful Get User Test")
+    void unsuccessfulGetUser() {
 
+        server.stop();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        assertThrows(MissingDataException.class, () -> user.getUser(null), "Not Thrown");
+    }
 
     @Test
-    void clear() {
+    @Order(5)
+    @DisplayName("Successful Clear")
+    void clear() throws DataAccessException {
+
+        UserData testUser = new UserData("testUser", "password", "email@email.com");
+
+        user.createUser(testUser);
+
+        assertNotNull(user.getUser(testUser.username()));
+
+        assertNotNull(user.getUser(userData.username()));
+
+        user.clear();
+
+        assertNull(user.getUser(testUser.username()), "Table not truncated");
+
+        assertNull(user.getUser(authData.username()));
+
     }
 }

@@ -23,7 +23,9 @@ public class MemoryUserDAO implements UserDAO{
     //Method used to add new UserData to the map, usually when a new user registers
     @Override
     public void createUser(UserData userData) throws DataAccessException{
+
         if (db.containsKey(userData.username())){
+
             throw new DataAccessException("Error: username already exists");
         }
         String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
@@ -35,8 +37,10 @@ public class MemoryUserDAO implements UserDAO{
 
     //Method used to retrieve the UserData of a user in the map given the User's username
     @Override
-    public UserData getUser(String username) throws DataAccessException{
+    public UserData getUser(String username) throws DataAccessException {
+
         if (!db.containsKey(username)){
+
             return null;
         }
         return db.get(username);

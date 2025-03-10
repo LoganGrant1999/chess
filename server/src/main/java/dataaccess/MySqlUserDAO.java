@@ -1,5 +1,6 @@
 package dataaccess;
 
+import exceptions.MissingDataException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -74,6 +75,11 @@ public class MySqlUserDAO implements UserDAO {
     //Method designed to retrieve user data from the user table given a valid username
     @Override
     public UserData getUser(String userName) throws DataAccessException {
+
+        if (userName == null){
+
+            throw new MissingDataException("Error: bad request");
+        }
 
         try (var conn = DatabaseManager.getConnection()) {
 
