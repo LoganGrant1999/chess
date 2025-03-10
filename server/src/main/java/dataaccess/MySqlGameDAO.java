@@ -60,7 +60,7 @@ public class MySqlGameDAO implements GameDAO {
 
         var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)";
 
-        var json = new Gson().toJson(new ChessGame());
+        var json  = new Gson().toJson(new ChessGame());
 
         return executeUpdate(statement, null, null, gameName, json);
 
@@ -72,7 +72,7 @@ public class MySqlGameDAO implements GameDAO {
 
         try (var conn = DatabaseManager.getConnection()) {
 
-            var statement = "SELECT * FROM game WHERE id=?";
+            var statement = "SELECT * FROM game WHERE gameID=?";
 
             try (var ps = conn.prepareStatement(statement)) {
 
