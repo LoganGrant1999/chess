@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import exceptions.AlreadyTakenException;
+import exceptions.MissingDataException;
 import model.GameData;
 import model.ListGameData;
 import com.google.gson.Gson;
@@ -83,6 +84,11 @@ public class MySqlGameDAO implements GameDAO {
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
 
+        if (gameID == 0) {
+
+            throw new MissingDataException("Error: Bad Request");
+        }
+
         try (var conn = DatabaseManager.getConnection()) {
 
             var statement = "SELECT * FROM game WHERE gameID=?";
@@ -122,6 +128,7 @@ public class MySqlGameDAO implements GameDAO {
     //Method designed to return a list of all the games in the game table given a valid authToken
     @Override
     public ArrayList<ListGameData> listGames(String authToken) throws DataAccessException {
+
         var result = new ArrayList<ListGameData>();
 
         try (var conn = DatabaseManager.getConnection()) {

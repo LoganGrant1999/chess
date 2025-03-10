@@ -1,7 +1,9 @@
 package dataaccess;
 
+import chess.ChessGame;
 import exceptions.MissingDataException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
@@ -123,8 +125,8 @@ public class DataAccessTests {
 
     @Test
     @Order(5)
-    @DisplayName("Successful Clear")
-    void clear() throws DataAccessException {
+    @DisplayName("Successful User Clear")
+    void clearUserTable() throws DataAccessException {
 
         UserData testUser = new UserData("testUser", "password", "email@email.com");
 
@@ -222,7 +224,9 @@ public class DataAccessTests {
 
 
     @Test
-    void testClear() throws DataAccessException {
+    @Order(12)
+    @DisplayName("Successful Clear Auth Table")
+    void clearAuthTable() throws DataAccessException {
 
         AuthData testAuth = new AuthData("fakeAuthToken", "FakeUsername");
 
@@ -240,6 +244,68 @@ public class DataAccessTests {
 
     }
 
+    @Test
+    @Order(13)
+    @DisplayName("Successful Create Game")
+    void successfulCreateGame() throws DataAccessException {
+
+        String testGameName = "testGameName";
+
+        game.createGame(testGameName);
+
+        server.stop();
+
+        server.run(0);
+
+        GameData storedGameData = game.getGame(2);
+
+        assertEquals(gameName, game.getGame(1).gameName(), "Game not stored persistently");
+
+        assertEquals(testGameName, storedGameData.gameName(), "Game not stored persistently");
+    }
+
+    @Test
+    @Order(14)
+    @DisplayName("Unsuccessful Create Game")
+    void unsuccessfulCreateGame() {
+
+        assertThrows(DataAccessException.class, () -> game.createGame(null));
+    }
 
 
+    @Test
+    @Order(15)
+    @DisplayName("Successful getGame")
+    void successfulGetGame() throws DataAccessException {
+
+        server.stop();
+
+        server.run(0);
+
+        GameData storedGameData = game.getGame(1);
+
+        assertEquals(gameName, storedGameData.gameName());
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("Unsuccessful getGame")
+    void unsuccessfulGetGame() {
+
+        assertThrows(MissingDataException.class, () -> game.getGame(0));
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("Successful listGames")
+    void listGames() {
+    }
+
+    @Test
+    void joinGame() {
+    }
+
+    @Test
+    void clearGameTable() {
+    }
 }
