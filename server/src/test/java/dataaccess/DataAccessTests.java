@@ -52,7 +52,6 @@ public class DataAccessTests {
         user.createUser(userData);
 
         game.createGame(gameName);
-
     }
 
     @AfterEach
@@ -80,7 +79,8 @@ public class DataAccessTests {
 
         assertEquals(testUserData.email(), storedUserData.email(), "Email not stored correctly");
 
-        assertTrue(BCrypt.checkpw(testUserData.password(), storedUserData.password()));
+        assertTrue(BCrypt.checkpw(testUserData.password(),
+                storedUserData.password()), "Password not stored correctly");
     }
 
     @Test
@@ -132,15 +132,78 @@ public class DataAccessTests {
 
         user.createUser(testUser);
 
-        assertNotNull(user.getUser(testUser.username()));
+        assertNotNull(user.getUser(testUser.username()), "Create User Didn't Work");
 
-        assertNotNull(user.getUser(userData.username()));
+        assertNotNull(user.getUser(userData.username()), "Create User Didn't Work");
 
         user.clear();
 
         assertNull(user.getUser(testUser.username()), "Table not truncated");
 
-        assertNull(user.getUser(authData.username()));
+        assertNull(user.getUser(authData.username()), "Table not truncated");
 
     }
+
+    @Test
+    @Order(6)
+    @DisplayName("Successful createAuth")
+    void successfulCreateAuth() throws DataAccessException {
+
+        AuthData testAuthData = new AuthData("fakeAuthToken", "testUser");
+
+        auth.createAuth(testAuthData);
+
+        server.stop();
+
+        server.run(0);
+
+        AuthData storedAuthData = auth.getAuth(testAuthData.authToken());
+
+        assertEquals(storedAuthData.authToken(), testAuthData.authToken(), "authToken stored incorrectly");
+
+        assertEquals(storedAuthData.username(), testAuthData.username(), "username stored incorrectly");
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Unsuccessful createAuth")
+    void unsuccessfulCreateAuth() {
+
+        AuthData testAuthData = new AuthData(null, null);
+
+        assertThrows(DataAccessException.class, () -> auth.createAuth(testAuthData), "Not Thrown");
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Successful getAuth")
+    void successfulGetAuth() throws DataAccessException {
+
+        server.stop();
+
+        server.run(0);
+
+        AuthData storedAuthData = auth.getAuth(authData.authToken());
+
+        assertEquals(authData.authToken(), storedAuthData.authToken(), "AuthToken not retrieved correctly");
+
+        assertEquals(authData.username(), storedAuthData.username(), "Username not retrieved correctly");
+
+        assertNotNull(storedAuthData.username(), "Username not stored persistently");
+
+        assertNotNull(storedAuthData.authToken(), "AuthToken not stored persistently");
+    }
+
+    @Test
+    void remove() {
+    }
+
+    @Test
+    void testClear() {
+    }
+
+
+
+
+
 }
