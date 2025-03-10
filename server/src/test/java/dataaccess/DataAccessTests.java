@@ -200,19 +200,45 @@ public class DataAccessTests {
         assertThrows(MissingDataException.class, () -> auth.getAuth(null), "Not Thrown");
     }
 
-
-
-
-
     @Test
-    void remove() {
+    @Order(10)
+    @DisplayName("Successful Remove Auth")
+    void successfulRemove() throws DataAccessException {
+
+        assertEquals(authData, auth.getAuth(authData.authToken()));
+
+        auth.remove(authData.authToken());
+
+        assertNull(auth.getAuth(authData.authToken()));
     }
 
     @Test
-    void testClear() {
+    @Order(11)
+    @DisplayName("Unsuccessful Remove Auth")
+    void unsuccessfulRemove() {
+
+        assertThrows(DataAccessException.class, () -> auth.remove(null));
     }
 
 
+    @Test
+    void testClear() throws DataAccessException {
+
+        AuthData testAuth = new AuthData("fakeAuthToken", "FakeUsername");
+
+        auth.createAuth(testAuth);
+
+        assertNotNull(auth.getAuth(testAuth.authToken()), "AuthToken not stored correctly");
+
+        assertNotNull(auth.getAuth(authData.authToken()), "AuthToken not stored correctly");
+
+        auth.clear();
+
+        assertNull(auth.getAuth(testAuth.authToken()));
+
+        assertNull(auth.getAuth(authData.authToken()));
+
+    }
 
 
 
