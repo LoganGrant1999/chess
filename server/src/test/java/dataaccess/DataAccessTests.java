@@ -4,11 +4,15 @@ import chess.ChessGame;
 import exceptions.MissingDataException;
 import model.AuthData;
 import model.GameData;
+import model.ListGameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
 import server.Server;
 import service.ClearService;
+
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DataAccessTests {
@@ -207,11 +211,11 @@ public class DataAccessTests {
     @DisplayName("Successful Remove Auth")
     void successfulRemove() throws DataAccessException {
 
-        assertEquals(authData, auth.getAuth(authData.authToken()));
+        assertEquals(authData, auth.getAuth(authData.authToken()), "AuthData not stored correctly");
 
         auth.remove(authData.authToken());
 
-        assertNull(auth.getAuth(authData.authToken()));
+        assertNull(auth.getAuth(authData.authToken()), "AuthData not removed");
     }
 
     @Test
@@ -219,7 +223,7 @@ public class DataAccessTests {
     @DisplayName("Unsuccessful Remove Auth")
     void unsuccessfulRemove() {
 
-        assertThrows(DataAccessException.class, () -> auth.remove(null));
+        assertThrows(DataAccessException.class, () -> auth.remove(null), "Not Thrown");
     }
 
 
@@ -238,10 +242,9 @@ public class DataAccessTests {
 
         auth.clear();
 
-        assertNull(auth.getAuth(testAuth.authToken()));
+        assertNull(auth.getAuth(testAuth.authToken()), "AuthData not cleared");
 
-        assertNull(auth.getAuth(authData.authToken()));
-
+        assertNull(auth.getAuth(authData.authToken()), "AuthData not cleared");
     }
 
     @Test
@@ -269,7 +272,7 @@ public class DataAccessTests {
     @DisplayName("Unsuccessful Create Game")
     void unsuccessfulCreateGame() {
 
-        assertThrows(DataAccessException.class, () -> game.createGame(null));
+        assertThrows(DataAccessException.class, () -> game.createGame(null), "Not Thrown");
     }
 
 
@@ -284,7 +287,7 @@ public class DataAccessTests {
 
         GameData storedGameData = game.getGame(1);
 
-        assertEquals(gameName, storedGameData.gameName());
+        assertEquals(gameName, storedGameData.gameName(), "Correct Game Not Retrieved");
     }
 
     @Test
@@ -292,17 +295,41 @@ public class DataAccessTests {
     @DisplayName("Unsuccessful getGame")
     void unsuccessfulGetGame() {
 
-        assertThrows(MissingDataException.class, () -> game.getGame(0));
+        assertThrows(MissingDataException.class, () -> game.getGame(0), "Not Thrown");
     }
 
     @Test
     @Order(17)
     @DisplayName("Successful listGames")
-    void listGames() {
+    void successfulListGames() throws DataAccessException {
+
+        ArrayList<ListGameData> testList = game.listGames(authData.authToken());
+
+        assertNotNull(testList, "ListGames returned null");
+
+        server.stop();
+
+        server.run(0);
+
+        ArrayList<ListGameData> testPersistList = game.listGames(authData.authToken());
+
+        assertNotNull(testPersistList, "ListGames returned null");
+
+        assertEquals(testList, testPersistList, "Data didn't properly persist in storage");
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("Unsuccessful listGames")
+    void unsuccessfulListGames() {
+
+        assertThrows(MissingDataException.class, () -> game.listGames(null), "Not Thrown");
     }
 
     @Test
     void joinGame() {
+
+
     }
 
     @Test

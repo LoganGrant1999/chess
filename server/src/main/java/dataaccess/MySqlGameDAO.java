@@ -129,6 +129,11 @@ public class MySqlGameDAO implements GameDAO {
     @Override
     public ArrayList<ListGameData> listGames(String authToken) throws DataAccessException {
 
+        if (authToken == null){
+
+            throw new MissingDataException("Error: Bad Request");
+        }
+
         var result = new ArrayList<ListGameData>();
 
         try (var conn = DatabaseManager.getConnection()) {
@@ -143,7 +148,9 @@ public class MySqlGameDAO implements GameDAO {
 
                         ListGameData listGameData = new ListGameData(rs.getInt("gameID"),
 
-                                rs.getString("whiteUsername"), rs.getString("blackUsername"),
+                                rs.getString("whiteUsername"),
+
+                                rs.getString("blackUsername"),
 
                                 rs.getString("gameName"));
 
