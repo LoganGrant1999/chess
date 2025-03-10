@@ -1,14 +1,12 @@
 package dataaccess;
 
-import handlers.ClearHandler;
+import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
 import server.Server;
 import service.ClearService;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 
 public class DataAccessTests {
 
@@ -17,6 +15,9 @@ public class DataAccessTests {
     private static MySqlUserDAO user;
     private static Server server;
     private static ClearService clearer;
+    private static UserData userData;
+    private static AuthData authData;
+    private static String gameName;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -26,6 +27,12 @@ public class DataAccessTests {
         game = new MySqlGameDAO();
 
         user = new MySqlUserDAO();
+
+        userData = new UserData("test", "password", "email@email");
+
+        authData = new AuthData("testAuthToken", "password");
+
+        gameName = "game";
 
         server = new Server();
 
@@ -39,8 +46,13 @@ public class DataAccessTests {
 
         DatabaseManager.configureDatabase();
 
-    }
+        auth.createAuth(authData);
 
+        user.createUser(userData);
+
+        game.createGame(gameName);
+
+    }
 
     @AfterEach
     public void stopServer(){
@@ -48,27 +60,26 @@ public class DataAccessTests {
         server.stop();
     }
 
-
     @Test
     @Order(1)
     @DisplayName("Successful Create User Test")
     void successfulCreateUser() throws DataAccessException {
 
-        UserData userData = new UserData("username", "password", "email@email.com");
+        UserData testUserData = new UserData("username", "password", "email@email.com");
 
-        user.createUser(userData);
+        user.createUser(testUserData);
 
         server.stop();
 
         server.run(0);
 
-        UserData storedUserData = user.getUser(userData.username());
+        UserData storedUserData = user.getUser(testUserData.username());
 
-        assertEquals(userData.username(), storedUserData.username(), "Username not stored correctly");
+        assertEquals(testUserData.username(), storedUserData.username(), "Username not stored correctly");
 
-        assertEquals(userData.email(), storedUserData.email(), "Email not stored correctly");
+        assertEquals(testUserData.email(), storedUserData.email(), "Email not stored correctly");
 
-        assertTrue(BCrypt.checkpw(userData.password(), storedUserData.password()));
+        assertTrue(BCrypt.checkpw(testUserData.password(), storedUserData.password()));
     }
 
 
@@ -84,18 +95,41 @@ public class DataAccessTests {
     }
 
 
-
-
-
-
-
-
-
-
-
     @Test
-    void getUser() {
+    @Order(3)
+    @DisplayName("Successful Get User Test")
+    void successfulGetUser() throws DataAccessException {
+
+        server.stop();
+
+        server.run(0);
+
+        UserData storedUserData = user.getUser(userData.username());
+
+        assertEquals(storedUserData.username(), userData.username(), "Username not stored correctly");
+
+        assertEquals(storedUserData.email(), userData.email(), "Email not stored correctly");
+
+        assertTrue(BCrypt.checkpw(userData.password(), storedUserData.password()),
+                "password not stored correctly");
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     void clear() {
