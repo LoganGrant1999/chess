@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,11 @@ public class MemoryUserDAO implements UserDAO{
         if (db.containsKey(userData.username())){
             throw new DataAccessException("Error: username already exists");
         }
-        db.put(userData.username(), userData);
+        String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+
+        UserData userData1 = new UserData(userData.username(), hashedPassword, userData.email());
+
+        db.put(userData1.username(), userData1);
     }
 
     //Method used to retrieve the UserData of a user in the map given the User's username
