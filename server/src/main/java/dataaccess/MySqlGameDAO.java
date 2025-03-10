@@ -174,7 +174,6 @@ public class MySqlGameDAO implements GameDAO {
         if (getGame(gameID) == null) {
 
             throw new DataAccessException("Error: game does not exist");
-
         }
 
         GameData currGame = getGame(gameID);

@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import exceptions.AlreadyTakenException;
 import exceptions.MissingDataException;
 import model.AuthData;
 import model.GameData;
@@ -13,6 +14,7 @@ import service.ClearService;
 
 import java.util.ArrayList;
 
+import static chess.ChessGame.TeamColor.WHITE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DataAccessTests {
@@ -24,6 +26,8 @@ public class DataAccessTests {
     private static ClearService clearer;
     private static UserData userData;
     private static AuthData authData;
+    private static GameData gameData;
+    private static GameData newGameData;
     private static String gameName;
 
     @BeforeEach
@@ -58,6 +62,10 @@ public class DataAccessTests {
         user.createUser(userData);
 
         game.createGame(gameName);
+
+        gameData = game.getGame(1);
+
+        newGameData = game.joinGame(1, userData.username(), "BLACK", "testGame1");
     }
 
     @AfterEach
@@ -327,10 +335,40 @@ public class DataAccessTests {
     }
 
     @Test
-    void joinGame() {
+    @Order(19)
+    @DisplayName("Successful joinGame")
+    void successfulJoinGame() throws DataAccessException {
 
+        GameData updatedGame = game.joinGame(1, userData.username(), "WHITE", gameData.gameName());
 
+        assertEquals(gameData.blackUsername(), updatedGame.blackUsername(), "blackUser not stored correctly");
+
+        assertEquals(updatedGame.whiteUsername(), userData.username(), "Game did not update");
+
+        assertEquals(gameData.gameID(), updatedGame.gameID(), "Game incorrectly changed gameID");
+
+        assertEquals(updatedGame.gameName(), gameData.gameName(), "gameName not updated");
+
+        server.stop();
+
+        server.run(0);
+
+        assertEquals(updatedGame.whiteUsername(), userData.username(), "Data did not persist");
+
+        assertEquals(gameData.gameID(), updatedGame.gameID(), "Data did not persist");
+
+        assertEquals(updatedGame.gameName(), gameData.gameName(), "Data did not persist");
     }
+
+    @Test
+    @Order(20)
+    @DisplayName("Unsuccessful joinGame")
+    void unsuccessfulJoinGame() {
+
+        assertThrows(AlreadyTakenException.class, () -> game.joinGame(1,
+                "fake", "BLACK", "test2"), "Not Thrown");
+    }
+
 
     @Test
     void clearGameTable() {
