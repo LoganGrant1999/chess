@@ -75,7 +75,8 @@ public class DatabaseManager {
 
 
     //SQL code that configureDatabase uses to create tables if they don't exist at startup
-    private static final String[] createStatements = {
+    private static final String[] CREATESTATEMENTS = {
+
             """
             CREATE TABLE IF NOT EXISTS user(
             	username varchar(50) NOT NULL,
@@ -112,7 +113,7 @@ public class DatabaseManager {
     public static void configureDatabase() throws Exception{
         createDatabase();
         try (var conn = getConnection()){
-            for (var statement: createStatements) {
+            for (var statement: CREATESTATEMENTS) {
                 try(var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
