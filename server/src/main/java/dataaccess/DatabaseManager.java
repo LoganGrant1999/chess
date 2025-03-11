@@ -50,6 +50,19 @@ public class DatabaseManager {
         }
     }
 
+    //drops the database if it already exists
+    static void dropDatabase() throws DataAccessException {
+        try {
+            var statement = "DROP DATABASE IF EXISTS " + DATABASE_NAME;
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
 
     /**
      * Create a connection to the database and sets the catalog based upon the
@@ -117,7 +130,11 @@ public class DatabaseManager {
      ensuring they exist or throwing a DataAccessException
      */
     public static void configureDatabase() throws Exception{
+
+        dropDatabase();
+
         createDatabase();
+
         try (var conn = getConnection()){
             for (var statement: CREATESTATEMENTS) {
                 try(var preparedStatement = conn.prepareStatement(statement)) {
