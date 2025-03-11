@@ -4,6 +4,8 @@ import dataaccess.*;
 import handlers.*;
 import spark.*;
 
+import static dataaccess.DatabaseManager.configureDatabase;
+
 public class Server {
 
     /*initializes AuthDAO, GameDAO, and UserDAO objects to make calling their
@@ -13,7 +15,18 @@ public class Server {
     private AuthDAO authDAO;
     private GameDAO gameDAO;
 
+
     public Server() {
+
+        //configures database whenever a server is started
+        try {
+            configureDatabase();
+
+        } catch (DataAccessException e) {
+
+            throw new RuntimeException(e);
+        }
+
         this.userDAO = new MySqlUserDAO();
         this.gameDAO = new MySqlGameDAO();
         this.authDAO = new MySqlAuthDAO();

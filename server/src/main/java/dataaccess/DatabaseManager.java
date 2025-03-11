@@ -1,6 +1,5 @@
 package dataaccess;
 
-import jdk.dynalink.beans.StaticClass;
 
 import java.sql.*;
 import java.util.Properties;
@@ -50,19 +49,6 @@ public class DatabaseManager {
         }
     }
 
-    //drops the database if it already exists
-    static void dropDatabase() throws DataAccessException {
-        try {
-            var statement = "DROP DATABASE IF EXISTS " + DATABASE_NAME;
-            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
-    }
-
 
     /**
      * Create a connection to the database and sets the catalog based upon the
@@ -89,12 +75,6 @@ public class DatabaseManager {
 
     //SQL code that configureDatabase uses to create tables if they don't exist at startup
     private static final String[] CREATESTATEMENTS = {
-
-            """
-            DROP TABLE IF EXISTS user;
-            DROP TABLE IF EXISTS auth;
-            DROP TABLE IF EXISTS game;
-            """,
 
             """
             CREATE TABLE IF NOT EXISTS user(
@@ -129,19 +109,19 @@ public class DatabaseManager {
     /* Method that configures the database and tables upon server start up
      ensuring they exist or throwing a DataAccessException
      */
-    public static void configureDatabase() throws Exception{
-
-        dropDatabase();
+    public static void configureDatabase() throws DataAccessException {
 
         createDatabase();
 
-        try (var conn = getConnection()){
+        try (var conn = getConnection()) {
+
             for (var statement: CREATESTATEMENTS) {
                 try(var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
             }
         } catch (SQLException e){
+
             throw new RuntimeException(e.getMessage());
         }
     }
