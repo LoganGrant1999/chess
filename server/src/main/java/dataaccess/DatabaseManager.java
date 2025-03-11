@@ -107,7 +107,7 @@ public class DatabaseManager {
     };
 
     /* Method that configures the database and tables upon server start up
-     ensuring they exist or throwing a DataAccessException
+     ensuring they exist or throwing a RuntimeException
      */
     public static void configureDatabase() throws DataAccessException {
 
