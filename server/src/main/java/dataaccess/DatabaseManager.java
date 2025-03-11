@@ -77,6 +77,9 @@ public class DatabaseManager {
     //SQL code that configureDatabase uses to create tables if they don't exist at startup
     private static final String[] CREATESTATEMENTS = {
 
+            "USE " + DATABASE_NAME + ";"
+            ,
+
             """
             CREATE TABLE IF NOT EXISTS user(
             	username varchar(50) NOT NULL,
