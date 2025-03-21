@@ -51,7 +51,14 @@ public class ServerFacadeTests {
         assertTrue(resp.authToken().length() > 10);
     }
 
+    @Test
+    @Order(2)
+    @DisplayName("Unsuccessful Registration")
+    public void unsuccessfulRegistration() {
 
+        RegisterRequest req = new RegisterRequest(null, null, null);
 
+        assertThrows(NetworkException.class, () -> facade.register(req), "Not Thrown");
+    }
 
 }
