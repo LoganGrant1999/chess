@@ -1,13 +1,25 @@
 package ui;
 
+import java.util.Objects;
 import java.util.Scanner;
 public class Repl {
 
     private final PreLoginClient prelogin;
 
+    private PostLoginClient postLogin;
+
+    private GameplayClient gameplay;
+
+    private State state = State.PRELOGIN;
+
+    private final String serverUrl;
+
     public Repl(String serverUrl) {
 
+        this.serverUrl = serverUrl;
+
         prelogin = new PreLoginClient(serverUrl);
+
     }
 
     public void run() {
@@ -28,9 +40,31 @@ public class Repl {
 
             try {
 
-                result = prelogin.eval(line);
+                if (state == State.PRELOGIN) {
 
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_RED + result);
+                    result = prelogin.eval(line);
+
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
+
+                    if (prelogin.getAuthToken() != null){
+
+                        setState(State.POSTLOGIN);
+
+                        postLogin = new PostLoginClient(serverUrl, prelogin.getAuthToken());
+                    }
+
+                } else if (state == State.POSTLOGIN) {
+
+                    result = postLogin.eval(line);
+
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
+
+                } else if (state == State.GAMEPLAY){
+
+                    result = gameplay.eval(line);
+
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
+                }
 
             } catch (Throwable e)  {
 
@@ -44,9 +78,12 @@ public class Repl {
         }
     }
 
+    private void setState(State newState){
+        this.state = newState;
+    }
 
     private void printPrompt() {
 
-        System.out.print("\n" + EscapeSequences.RESET_TEXT_COLOR+ ">>> " + EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        System.out.print("\n" + EscapeSequences.RESET_TEXT_COLOR+ ">>> " + EscapeSequences.SET_TEXT_COLOR_BLUE);
     }
 }

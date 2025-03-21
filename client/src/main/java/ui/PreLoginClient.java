@@ -12,8 +12,9 @@ import java.util.Locale;
 
 public class PreLoginClient {
 
-
     private final ServerFacade server;
+
+    private String authToken;
 
     private final String serverUrl;
 
@@ -62,6 +63,8 @@ public class PreLoginClient {
 
             LoginResponse resp = server.login(req);
 
+            this.authToken = resp.authToken();
+
             return String.format("You signed in as %s!", resp.username());
         }
 
@@ -76,10 +79,17 @@ public class PreLoginClient {
 
             RegisterResponse resp = server.register(req);
 
+            this.authToken = resp.authToken();
+
             return String.format("Successfully registered as %s!", resp.username());
         }
 
         throw new NetworkException(400, "Expected: <username>, <password>, <email>");
+    }
+
+    public String getAuthToken() {
+
+        return authToken;
     }
 
 }
