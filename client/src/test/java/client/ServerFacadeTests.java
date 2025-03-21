@@ -2,8 +2,10 @@ package client;
 
 import exceptions.NetworkException;
 import org.junit.jupiter.api.*;
+import request.CreateGameRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
+import response.CreateGameResponse;
 import response.LoginResponse;
 import response.LogoutResponse;
 import response.RegisterResponse;
@@ -48,7 +50,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @Order(1)
     @DisplayName("Successful Registration")
     public void successfulRegistration() throws NetworkException {
 
@@ -64,7 +65,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @Order(2)
     @DisplayName("Unsuccessful Registration")
     public void unsuccessfulRegistration() {
 
@@ -74,7 +74,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @Order(3)
     @DisplayName("Successful Login")
     public void successfulLogin() throws NetworkException {
 
@@ -90,7 +89,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @Order(4)
     @DisplayName("Unsuccessful Login")
     public void unsuccessfulLogin(){
 
@@ -100,7 +98,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @Order(5)
     @DisplayName("Successful Logout")
     public void successfulLogout() throws NetworkException {
 
@@ -110,13 +107,22 @@ public class ServerFacadeTests {
     }
 
     @Test
-    @Order(6)
     @DisplayName("Unsuccessful Logout")
     public void unsuccessfulLogout(){
 
         assertThrows(NetworkException.class, () -> facade.logout(null));
     }
 
+    @Test
+    @DisplayName("Successful Create Game")
+    public void successfulCreateGame() throws NetworkException {
+
+        CreateGameRequest request = new CreateGameRequest("testGame");
+
+        CreateGameResponse response = facade.createGame(request, resp.authToken());
+
+        assertNotNull(response.gameID());
+    }
 
 
 

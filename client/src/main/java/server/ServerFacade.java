@@ -64,18 +64,24 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
-
             if (authToken != null){
                 http.addRequestProperty("Authorization", authToken);
             }
 
+            writeBody(request, http);
+
             http.connect();
+
             throwIfNotSuccessful(http);
+
             return readBody(http, responseClass);
+
         } catch (NetworkException ex) {
+
             throw ex;
+
         } catch (Exception ex) {
+
             throw new NetworkException(500, ex.getMessage());
         }
     }
