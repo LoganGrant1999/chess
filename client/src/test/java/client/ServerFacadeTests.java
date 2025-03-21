@@ -1,8 +1,13 @@
 package client;
 
+import exceptions.NetworkException;
 import org.junit.jupiter.api.*;
+import request.RegisterRequest;
+import response.RegisterResponse;
 import server.Server;
 import server.ServerFacade;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -25,9 +30,28 @@ public class ServerFacadeTests {
     }
 
 
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    @BeforeEach
+    public void clearDB() throws NetworkException {
+        facade.clear();
     }
+
+    @Test
+    @Order(1)
+    @DisplayName("Successful Registration")
+    public void successfulRegistration() throws NetworkException {
+
+        RegisterRequest req = new RegisterRequest("test", "test", "test@test.com");
+
+        RegisterResponse resp = facade.register(req);
+
+        assertNotNull(resp.username());
+
+        assertNotNull(resp.authToken());
+
+        assertTrue(resp.authToken().length() > 10);
+    }
+
+
+
 
 }
