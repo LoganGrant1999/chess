@@ -2,7 +2,9 @@ package client;
 
 import exceptions.NetworkException;
 import org.junit.jupiter.api.*;
+import request.LoginRequest;
 import request.RegisterRequest;
+import response.LoginResponse;
 import response.RegisterResponse;
 import server.Server;
 import server.ServerFacade;
@@ -13,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServerFacadeTests {
 
     private static Server server;
+
+    private static RegisterRequest req;
 
     static ServerFacade facade;
 
@@ -32,7 +36,13 @@ public class ServerFacadeTests {
 
     @BeforeEach
     public void clearDB() throws NetworkException {
+
         facade.clear();
+
+        req = new RegisterRequest("testUser", "password", "email");
+
+        facade.register(req);
+
     }
 
     @Test
@@ -42,13 +52,13 @@ public class ServerFacadeTests {
 
         RegisterRequest req = new RegisterRequest("test", "test", "test@test.com");
 
-        RegisterResponse resp = facade.register(req);
+        RegisterResponse response = facade.register(req);
 
-        assertNotNull(resp.username());
+        assertNotNull(response.username());
 
-        assertNotNull(resp.authToken());
+        assertNotNull(response.authToken());
 
-        assertTrue(resp.authToken().length() > 10);
+        assertTrue(response.authToken().length() > 10);
     }
 
     @Test
@@ -61,4 +71,20 @@ public class ServerFacadeTests {
         assertThrows(NetworkException.class, () -> facade.register(req), "Not Thrown");
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("Successful Login")
+    public void successfulLogin() throws NetworkException {
+
+        LoginRequest request = new LoginRequest(req.username(), req.password());
+
+        LoginResponse response = facade.login(request);
+
+        assertNotNull(response.authToken());
+
+        assertTrue(response.authToken().length() > 10);
+
+        assertNotNull(response.username());
+
+    }
 }
