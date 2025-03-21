@@ -66,9 +66,9 @@ public class ServerFacadeTests {
     @DisplayName("Unsuccessful Registration")
     public void unsuccessfulRegistration() {
 
-        RegisterRequest req = new RegisterRequest(null, null, null);
+        RegisterRequest request = new RegisterRequest(null, null, null);
 
-        assertThrows(NetworkException.class, () -> facade.register(req), "Not Thrown");
+        assertThrows(NetworkException.class, () -> facade.register(request), "Not Thrown");
     }
 
     @Test
@@ -87,4 +87,16 @@ public class ServerFacadeTests {
         assertNotNull(response.username());
 
     }
+
+    @Test
+    @Order(4)
+    @DisplayName("Unsuccessful Login")
+    public void unsuccessfulLogin(){
+
+        LoginRequest request = new LoginRequest(null, null);
+
+        assertThrows(NetworkException.class, () -> facade.login(request));
+
+    }
+
 }
