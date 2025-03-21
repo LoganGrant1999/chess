@@ -2,6 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import exceptions.NetworkException;
+import request.LoginRequest;
+import request.RegisterRequest;
+import response.LoginResponse;
+import response.RegisterResponse;
 
 import java.io.*;
 import java.net.*;
@@ -12,6 +16,21 @@ public class ServerFacade {
 
     public ServerFacade(String url) {
         serverUrl = url;
+    }
+
+
+    public RegisterResponse register(RegisterRequest req) throws NetworkException {
+
+        var path = "/user";
+
+        return this.makeRequest("POST", path, req, RegisterResponse.class);
+    }
+
+    public LoginResponse login(LoginRequest req) throws NetworkException {
+
+        var path = "/session";
+
+        return this.makeRequest("POST", path, req, LoginResponse.class);
     }
 
 
