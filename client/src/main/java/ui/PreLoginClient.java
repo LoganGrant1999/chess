@@ -93,4 +93,8 @@ public class PreLoginClient {
         return authToken;
     }
 
+    public void setAuthTokenNull() {
+
+        this.authToken = null;
+    }
 }

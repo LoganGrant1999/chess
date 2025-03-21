@@ -8,7 +8,6 @@ public class Repl {
 
     private PostLoginClient postLogin;
 
-    private GameplayClient gameplay;
 
     private State state = State.PRELOGIN;
 
@@ -42,6 +41,8 @@ public class Repl {
 
                 if (state == State.PRELOGIN) {
 
+                    prelogin.setAuthTokenNull();
+
                     result = prelogin.eval(line);
 
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
@@ -59,9 +60,14 @@ public class Repl {
 
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
 
+                    if (Objects.equals(result, "Successfully Logged out!")) {
+
+                        setState(State.PRELOGIN);
+                    }
+
                 } else if (state == State.GAMEPLAY){
 
-                    result = gameplay.eval(line);
+
 
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
                 }
@@ -78,7 +84,8 @@ public class Repl {
         }
     }
 
-    private void setState(State newState){
+    public void setState(State newState) {
+
         this.state = newState;
     }
 

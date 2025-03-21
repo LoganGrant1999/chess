@@ -37,13 +37,13 @@ public class PostLoginClient {
 
                 case "help" -> help();
 
-                case "create" -> createGame(params);
+                //case "create" -> createGame(params);
 
-                case "list" -> listGames(params);
+                //case "list" -> listGames(params);
 
-                case "play" -> playGame(params);
+                //case "play" -> playGame(params);
 
-                case "observe" -> observeGame(params);
+                //case "observe" -> observeGame(params);
 
                 case "logout" -> logout(params);
 
@@ -59,6 +59,21 @@ public class PostLoginClient {
     }
 
 
+
+
+    public String logout(String... params) throws NetworkException {
+
+        if (params.length == 0){
+
+            server.logout(authToken);
+
+            return "Successfully Logged out!";
+
+        }
+
+        throw new NetworkException(400, "Expected no inputs!");
+    }
+
     public String help() {
 
         return """
@@ -71,11 +86,5 @@ public class PostLoginClient {
                 - Quit
                 """;
     }
-
-
-
-
-
-
 
 }
