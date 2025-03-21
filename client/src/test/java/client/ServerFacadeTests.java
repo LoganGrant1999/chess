@@ -124,6 +124,13 @@ public class ServerFacadeTests {
         assertNotNull(response.gameID());
     }
 
+    @Test
+    @DisplayName("Unsuccessful Create Game")
+    public void unsuccessfulCreateGame() {
+
+        assertThrows(NetworkException.class, () -> facade.createGame(null, null));
+    }
+
 
 
 }
