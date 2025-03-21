@@ -132,7 +132,6 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Successful List Games")
-
     public void successfulListGames() throws NetworkException {
 
         ListGamesResponse response = assertDoesNotThrow( () ->  facade.listGames(resp.authToken()));
@@ -140,6 +139,15 @@ public class ServerFacadeTests {
         assertNotNull(response);
 
     }
+
+    @Test
+    @DisplayName("Unsuccessful List Games")
+    public void unsuccessfulListGames() {
+
+        assertThrows(NetworkException.class, () -> facade.listGames(null));
+    }
+
+
 
 
 }
