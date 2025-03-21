@@ -109,6 +109,14 @@ public class ServerFacadeTests {
         assertNull(response);
     }
 
+    @Test
+    @Order(6)
+    @DisplayName("Unsuccessful Logout")
+    public void unsuccessfulLogout(){
+
+        assertThrows(NetworkException.class, () -> facade.logout(null));
+    }
+
 
 
 
