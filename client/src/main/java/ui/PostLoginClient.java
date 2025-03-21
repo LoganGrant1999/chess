@@ -1,6 +1,7 @@
 package ui;
 
 import exceptions.NetworkException;
+import request.CreateGameRequest;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -37,7 +38,7 @@ public class PostLoginClient {
 
                 case "help" -> help();
 
-                //case "create" -> createGame(params);
+                case "create" -> createGame(params);
 
                 //case "list" -> listGames(params);
 
@@ -59,6 +60,22 @@ public class PostLoginClient {
     }
 
 
+
+    public String createGame(String... params) throws NetworkException {
+
+        if (params.length == 1) {
+
+            CreateGameRequest req = new CreateGameRequest(params[0]);
+
+            server.createGame(req, authToken);
+
+            return String.format("Successfully created %s", params[0]);
+
+        }
+
+        throw new NetworkException(400, "Expected: <name>");
+
+    }
 
 
     public String logout(String... params) throws NetworkException {
