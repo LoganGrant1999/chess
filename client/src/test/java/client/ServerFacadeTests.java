@@ -5,12 +5,11 @@ import org.junit.jupiter.api.*;
 import request.CreateGameRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
-import response.CreateGameResponse;
-import response.LoginResponse;
-import response.LogoutResponse;
-import response.RegisterResponse;
+import response.*;
 import server.Server;
 import server.ServerFacade;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -101,7 +100,7 @@ public class ServerFacadeTests {
     @DisplayName("Successful Logout")
     public void successfulLogout() throws NetworkException {
 
-        LogoutResponse response = assertDoesNotThrow(() -> facade.logout(resp.authToken()));
+        LogoutResponse response = assertDoesNotThrow( () -> facade.logout(resp.authToken()));
 
         assertNull(response);
     }
@@ -131,6 +130,16 @@ public class ServerFacadeTests {
         assertThrows(NetworkException.class, () -> facade.createGame(null, null));
     }
 
+    @Test
+    @DisplayName("Successful List Games")
+
+    public void successfulListGames() throws NetworkException {
+
+        ListGamesResponse response = assertDoesNotThrow( () ->  facade.listGames(resp.authToken()));
+
+        assertNotNull(response);
+
+    }
 
 
 }
