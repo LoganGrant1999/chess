@@ -3,13 +3,12 @@ package client;
 import exceptions.NetworkException;
 import org.junit.jupiter.api.*;
 import request.CreateGameRequest;
+import request.JoinGameRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
 import response.*;
 import server.Server;
 import server.ServerFacade;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +21,8 @@ public class ServerFacadeTests {
 
     private static RegisterResponse resp;
 
+    private static CreateGameRequest gamereq;
+
     static ServerFacade facade;
 
     @BeforeAll
@@ -31,6 +32,7 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade("http://localhost:" + port);
     }
+
 
     @AfterAll
     static void stopServer() {
@@ -46,7 +48,12 @@ public class ServerFacadeTests {
         req = new RegisterRequest("testUser", "password", "email");
 
         resp =  facade.register(req);
+
+        gamereq = new CreateGameRequest("testGame");
+
+        facade.createGame(gamereq, resp.authToken());
     }
+
 
     @Test
     @DisplayName("Successful Registration")
@@ -63,6 +70,7 @@ public class ServerFacadeTests {
         assertTrue(response.authToken().length() > 10);
     }
 
+
     @Test
     @DisplayName("Unsuccessful Registration")
     public void unsuccessfulRegistration() {
@@ -71,6 +79,7 @@ public class ServerFacadeTests {
 
         assertThrows(NetworkException.class, () -> facade.register(request), "Not Thrown");
     }
+
 
     @Test
     @DisplayName("Successful Login")
@@ -87,6 +96,7 @@ public class ServerFacadeTests {
         assertNotNull(response.username());
     }
 
+
     @Test
     @DisplayName("Unsuccessful Login")
     public void unsuccessfulLogin(){
@@ -95,6 +105,7 @@ public class ServerFacadeTests {
 
         assertThrows(NetworkException.class, () -> facade.login(request));
     }
+
 
     @Test
     @DisplayName("Successful Logout")
@@ -105,12 +116,14 @@ public class ServerFacadeTests {
         assertNull(response);
     }
 
+
     @Test
     @DisplayName("Unsuccessful Logout")
     public void unsuccessfulLogout(){
 
         assertThrows(NetworkException.class, () -> facade.logout(null));
     }
+
 
     @Test
     @DisplayName("Successful Create Game")
@@ -123,12 +136,14 @@ public class ServerFacadeTests {
         assertNotNull(response.gameID());
     }
 
+
     @Test
     @DisplayName("Unsuccessful Create Game")
     public void unsuccessfulCreateGame() {
 
         assertThrows(NetworkException.class, () -> facade.createGame(null, null));
     }
+
 
     @Test
     @DisplayName("Successful List Games")
@@ -140,6 +155,7 @@ public class ServerFacadeTests {
 
     }
 
+
     @Test
     @DisplayName("Unsuccessful List Games")
     public void unsuccessfulListGames() {
@@ -148,6 +164,35 @@ public class ServerFacadeTests {
     }
 
 
+    @Test
+    @DisplayName("Successful Join Game")
+    public void successfulJoinGame(){
+
+        JoinGameRequest request = new JoinGameRequest("WHITE", 1);
+
+        JoinGameResponse response = assertDoesNotThrow(() -> facade.joinGame(request, resp.authToken()));
+
+        assertNotNull(response);
+
+    }
 
 
+    @Test
+    @DisplayName("Unsuccessful Join Game")
+    public void unsuccessfulJoinGame() {
+
+        JoinGameRequest request = new JoinGameRequest(null, 0);
+
+        assertThrows(NetworkException.class, () -> facade.joinGame(request, null));
+
+    }
+
+
+    @Test
+    @DisplayName("Successful Clear Test")
+    public void successfulClear() {
+
+        assertDoesNotThrow( () -> facade.clear());
+
+    }
 }

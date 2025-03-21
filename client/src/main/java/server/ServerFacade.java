@@ -17,15 +17,17 @@ public class ServerFacade {
     private final String serverUrl;
 
     public ServerFacade(String url) {
-        serverUrl = url;
-    }
 
+        serverUrl = url;
+
+    }
 
     public RegisterResponse register(RegisterRequest req) throws NetworkException {
 
         var path = "/user";
 
         return this.makeRequest("POST", path, req, RegisterResponse.class, null);
+
     }
 
     public LoginResponse login(LoginRequest req) throws NetworkException {
@@ -33,6 +35,7 @@ public class ServerFacade {
         var path = "/session";
 
         return this.makeRequest("POST", path, req, LoginResponse.class, null);
+
     }
 
     public LogoutResponse logout(String authToken) throws NetworkException {
@@ -108,6 +111,7 @@ public class ServerFacade {
         } catch (Exception ex) {
 
             throw new NetworkException(500, ex.getMessage());
+
         }
     }
 
@@ -123,6 +127,7 @@ public class ServerFacade {
             try (OutputStream reqBody = http.getOutputStream()) {
 
                 reqBody.write(reqData.getBytes());
+
             }
         }
     }
@@ -142,6 +147,7 @@ public class ServerFacade {
             }
 
             throw new NetworkException(status, "other failure: " + status);
+
         }
     }
 
@@ -162,11 +168,13 @@ public class ServerFacade {
             }
         }
         return response;
+
     }
 
     private boolean isSuccessful(int status) {
 
         return status / 100 == 2;
+
     }
 }
 
