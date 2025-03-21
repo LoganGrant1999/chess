@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import exceptions.NetworkException;
 import request.CreateGameRequest;
+import request.JoinGameRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
 import response.*;
@@ -57,6 +58,15 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ListGamesResponse.class, authToken);
 
     }
+
+    public JoinGameResponse joinGame(JoinGameRequest req, String authToken) throws NetworkException {
+
+        var path = "/game";
+
+        return this.makeRequest("PUT", path, req, JoinGameResponse.class, authToken);
+
+    }
+
 
     public ClearResponse clear() throws NetworkException {
 
