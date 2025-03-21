@@ -37,15 +37,17 @@ public class PostLoginClient {
 
                 case "help" -> help();
 
+                case "create" -> createGame(params);
+
+                case "list" -> listGames(params);
+
+                case "play" -> playGame(params);
+
+                case "observe" -> observeGame(params);
+
                 case "logout" -> logout(params);
 
-                case "create game" -> createGame(params);
-
-                case "list games" -> listGames(params);
-
-                case "play game" -> playGame(params);
-
-                case "observe game" -> observeGame(params);
+                case "quit" -> "quit";
 
                 default -> "Command unknown. Type 'help' to see all valid commands";
             };
@@ -54,6 +56,20 @@ public class PostLoginClient {
 
             return e.getMessage();
         }
+    }
+
+
+    public String help() {
+
+        return """
+                - Help
+                - Create <name>
+                - List
+                - Play <ID> <WHITE|BLACK>
+                - Observe
+                - Logout
+                - Quit
+                """;
     }
 
 
