@@ -39,6 +39,7 @@ public class PreLoginClient {
                 case "register" -> register(params);
                 default -> "Command unknown. Type 'help' to see all valid commands";
             };
+
         } catch (NetworkException e) {
 
             return e.getMessage();
