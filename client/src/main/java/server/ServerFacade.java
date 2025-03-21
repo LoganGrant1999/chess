@@ -24,25 +24,25 @@ public class ServerFacade {
 
         var path = "/user";
 
-        return this.makeRequest("POST", path, req, RegisterResponse.class);
+        return this.makeRequest("POST", path, req, RegisterResponse.class, null);
     }
 
     public LoginResponse login(LoginRequest req) throws NetworkException {
 
         var path = "/session";
 
-        return this.makeRequest("POST", path, req, LoginResponse.class);
+        return this.makeRequest("POST", path, req, LoginResponse.class, null);
     }
 
     public ClearResponse clear() throws NetworkException {
 
         var path = "/db";
 
-        return this.makeRequest("DELETE", path, null, ClearResponse.class);
+        return this.makeRequest("DELETE", path, null, ClearResponse.class, null);
 
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws NetworkException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws NetworkException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -50,6 +50,11 @@ public class ServerFacade {
             http.setDoOutput(true);
 
             writeBody(request, http);
+
+            if (authToken != null){
+                http.addRequestProperty("Authorization", authToken);
+            }
+
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
