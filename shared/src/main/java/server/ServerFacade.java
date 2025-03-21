@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import exceptions.NetworkException;
 import request.LoginRequest;
 import request.RegisterRequest;
+import response.ClearResponse;
 import response.LoginResponse;
 import response.RegisterResponse;
 
@@ -33,6 +34,13 @@ public class ServerFacade {
         return this.makeRequest("POST", path, req, LoginResponse.class);
     }
 
+    public ClearResponse clear() throws NetworkException {
+
+        var path = "/db";
+
+        return this.makeRequest("DELETE", path, null, ClearResponse.class);
+
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws NetworkException {
         try {
