@@ -6,6 +6,7 @@ import request.LoginRequest;
 import request.RegisterRequest;
 import response.ClearResponse;
 import response.LoginResponse;
+import response.LogoutResponse;
 import response.RegisterResponse;
 
 import java.io.*;
@@ -33,6 +34,15 @@ public class ServerFacade {
 
         return this.makeRequest("POST", path, req, LoginResponse.class, null);
     }
+
+    public LogoutResponse logout(String authToken) throws NetworkException {
+
+        var path = "/session";
+
+        return this.makeRequest("DELETE", path, null, null, authToken);
+
+    }
+
 
     public ClearResponse clear() throws NetworkException {
 

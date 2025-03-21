@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import request.LoginRequest;
 import request.RegisterRequest;
 import response.LoginResponse;
+import response.LogoutResponse;
 import response.RegisterResponse;
 import server.Server;
 import server.ServerFacade;
@@ -17,6 +18,8 @@ public class ServerFacadeTests {
     private static Server server;
 
     private static RegisterRequest req;
+
+    private static RegisterResponse resp;
 
     static ServerFacade facade;
 
@@ -41,8 +44,7 @@ public class ServerFacadeTests {
 
         req = new RegisterRequest("testUser", "password", "email");
 
-        facade.register(req);
-
+        resp =  facade.register(req);
     }
 
     @Test
@@ -85,7 +87,6 @@ public class ServerFacadeTests {
         assertTrue(response.authToken().length() > 10);
 
         assertNotNull(response.username());
-
     }
 
     @Test
@@ -96,7 +97,19 @@ public class ServerFacadeTests {
         LoginRequest request = new LoginRequest(null, null);
 
         assertThrows(NetworkException.class, () -> facade.login(request));
-
     }
+
+    @Test
+    @Order(5)
+    @DisplayName("Successful Logout")
+    public void successfulLogout() throws NetworkException {
+
+        LogoutResponse response = assertDoesNotThrow(() -> facade.logout(resp.authToken()));
+
+        assertNull(response);
+    }
+
+
+
 
 }
