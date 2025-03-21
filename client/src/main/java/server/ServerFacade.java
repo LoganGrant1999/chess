@@ -2,12 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import exceptions.NetworkException;
+import request.CreateGameRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
-import response.ClearResponse;
-import response.LoginResponse;
-import response.LogoutResponse;
-import response.RegisterResponse;
+import response.*;
 
 import java.io.*;
 import java.net.*;
@@ -43,6 +41,13 @@ public class ServerFacade {
 
     }
 
+    public CreateGameResponse createGame(CreateGameRequest req, String authToken) throws NetworkException {
+
+        var path = "/game";
+
+        return this.makeRequest("POST", path, req, CreateGameResponse.class, authToken);
+
+    }
 
     public ClearResponse clear() throws NetworkException {
 
