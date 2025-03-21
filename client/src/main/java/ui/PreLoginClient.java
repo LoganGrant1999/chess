@@ -2,7 +2,9 @@ package ui;
 
 import exceptions.NetworkException;
 import request.LoginRequest;
+import request.RegisterRequest;
 import response.LoginResponse;
+import response.RegisterResponse;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -66,11 +68,18 @@ public class PreLoginClient {
         throw new NetworkException(400, "Expected: <username> <password>");
     }
 
-    public String register(String... params) {
+    public String register(String... params) throws NetworkException {
 
-        return null;
+        if (params.length == 3) {
+
+            RegisterRequest req = new RegisterRequest(params[0], params[1], params[2]);
+
+            RegisterResponse resp = server.register(req);
+
+            return String.format("Successfully registered as %s!", resp.username());
+        }
+
+        throw new NetworkException(400, "Expected: <username>, <password>, <email>");
     }
-
-
 
 }

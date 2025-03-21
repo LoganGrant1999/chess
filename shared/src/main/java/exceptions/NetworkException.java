@@ -16,14 +16,16 @@ public class NetworkException extends Exception {
     }
 
     public String toJson() {
+
         return new Gson().toJson(Map.of("message", getMessage(), "status", statusCode));
     }
 
     public static NetworkException fromJson(InputStream stream) {
         var map = new Gson().fromJson(new InputStreamReader(stream), HashMap.class);
-        var status = ((Double)map.get("status")).intValue();
-        String message = map.get("message").toString();
-        return new NetworkException(status, message);
+        Object status = map.get("status");
+        int stat = (status instanceof Double d) ? d.intValue() : 500;
+        String msg = map.get("message").toString();
+        return new NetworkException(stat, msg);
     }
 
     public int StatusCode() {
