@@ -147,7 +147,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("Successful List Games")
-    public void successfulListGames() throws NetworkException {
+    public void successfulListGames() {
 
         ListGamesResponse response = assertDoesNotThrow( () ->  facade.listGames(resp.authToken()));
 
@@ -160,7 +160,7 @@ public class ServerFacadeTests {
     @DisplayName("Unsuccessful List Games")
     public void unsuccessfulListGames() {
 
-        assertThrows(NetworkException.class, () -> facade.listGames(null));
+        assertThrows(NetworkException.class, () -> facade.listGames(null), "Doesn't Throw" );
     }
 
 
@@ -170,9 +170,10 @@ public class ServerFacadeTests {
 
         JoinGameRequest request = new JoinGameRequest("WHITE", 1);
 
-        JoinGameResponse response = assertDoesNotThrow(() -> facade.joinGame(request, resp.authToken()));
+        JoinGameResponse response = assertDoesNotThrow(
+                () -> facade.joinGame(request, resp.authToken()), "Throws");
 
-        assertNotNull(response);
+        assertNotNull(response, "Returned Null");
 
     }
 
@@ -183,7 +184,7 @@ public class ServerFacadeTests {
 
         JoinGameRequest request = new JoinGameRequest(null, 0);
 
-        assertThrows(NetworkException.class, () -> facade.joinGame(request, null));
+        assertThrows(NetworkException.class, () -> facade.joinGame(request, null), "Doesn't throw");
 
     }
 
@@ -192,7 +193,7 @@ public class ServerFacadeTests {
     @DisplayName("Successful Clear Test")
     public void successfulClear() {
 
-        assertDoesNotThrow( () -> facade.clear());
+        assertDoesNotThrow( () -> facade.clear(), "throws");
 
     }
 }

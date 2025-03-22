@@ -1,9 +1,12 @@
 package ui;
 
 import exceptions.NetworkException;
+import model.ListGameData;
 import request.CreateGameRequest;
+import response.ListGamesResponse;
 import server.ServerFacade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PostLoginClient {
@@ -40,7 +43,7 @@ public class PostLoginClient {
 
                 case "create" -> createGame(params);
 
-                //case "list" -> listGames(params);
+                case "list" -> listGames(params);
 
                 //case "play" -> playGame(params);
 
@@ -60,7 +63,37 @@ public class PostLoginClient {
     }
 
 
+    public String listGames(String... params) throws NetworkException {
 
+        if (params.length == 0) {
+
+            int counter = 0;
+
+            ArrayList<ListGameData> displayGames = new ArrayList<>();
+
+            ListGamesResponse resp = server.listGames(authToken);
+
+            for (ListGameData game: resp.games()) {
+
+                counter = counter + 1;
+
+                displayGames.add(new ListGameData(counter,
+                        game.whiteUsername(), game.blackUsername(), game.gameName()));
+            }
+
+            var result = new StringBuilder();
+
+            for ( ListGameData game : displayGames) {
+
+                result.append(game.gameID() + ". " + game.gameName().toUpperCase() +
+                        " | WhiteUser: " + game.whiteUsername() + " | BlackUser: " + game.blackUsername() + "\n");
+            }
+
+            return result.toString();
+        }
+
+        throw new NetworkException(400, "Expected no arguments!");
+    }
 
 
 
