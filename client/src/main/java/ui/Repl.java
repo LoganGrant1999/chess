@@ -8,6 +8,8 @@ public class Repl {
 
     private PostLoginClient postLogin;
 
+    private GameplayClient gameplay;
+
 
     private State state = State.PRELOGIN;
 
@@ -73,9 +75,10 @@ public class Repl {
 
                 } else if (state == State.GAMEPLAY){
 
+                    String board = gameplay.drawBoard();
 
+                    System.out.println(board);
 
-                    System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
                 }
 
             } catch (Throwable e)  {
