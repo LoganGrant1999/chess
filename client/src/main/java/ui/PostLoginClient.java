@@ -49,7 +49,7 @@ public class PostLoginClient {
 
                 case "play" -> playGame(params);
 
-                //case "observe" -> observeGame(params);
+                case "observe" -> observeGame(params);
 
                 case "logout" -> logout(params);
 
@@ -98,6 +98,31 @@ public class PostLoginClient {
         }
 
         throw new NetworkException(400, "Expected no arguments!");
+    }
+
+
+    public String observeGame(String... params) throws NetworkException {
+
+        if (currList.isEmpty()){
+
+            throw new NetworkException(400, "There are no current games");
+        }
+
+        if (params.length == 1 && Integer.parseInt(params[0]) <= currList.size()) {
+
+            int actualID = Integer.parseInt(params[0]);
+
+            ListGameData game = currList.get(actualID - 1);
+
+            JoinGameRequest req = new JoinGameRequest(null, game.gameID());
+
+            server.joinGame(req, authToken);
+
+            return String.format("You Are Observing the Game!");
+        }
+
+        throw new NetworkException(400, "Expected: <ID> <WHITE|BLACK>");
+
     }
 
 
