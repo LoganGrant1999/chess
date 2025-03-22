@@ -65,6 +65,11 @@ public class Repl {
                         setState(State.PRELOGIN);
                     }
 
+                    if (Objects.equals(result, "You Successfully Joined the Game")){
+
+                        setState(State.GAMEPLAY);
+                    }
+
                 } else if (state == State.GAMEPLAY){
 
 

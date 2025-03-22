@@ -3,11 +3,14 @@ package ui;
 import exceptions.NetworkException;
 import model.ListGameData;
 import request.CreateGameRequest;
+import request.JoinGameRequest;
+import response.JoinGameResponse;
 import response.ListGamesResponse;
 import server.ServerFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class PostLoginClient {
 
@@ -15,14 +18,13 @@ public class PostLoginClient {
 
     private final String authToken;
 
-    private final String serverUrl;
+    private ArrayList<ListGameData> currList;
+
 
 
     public PostLoginClient(String serverUrl, String authToken) {
 
         server = new ServerFacade(serverUrl);
-
-        this.serverUrl = serverUrl;
 
         this.authToken = authToken;
     }
@@ -45,7 +47,7 @@ public class PostLoginClient {
 
                 case "list" -> listGames(params);
 
-                //case "play" -> playGame(params);
+                case "play" -> playGame(params);
 
                 //case "observe" -> observeGame(params);
 
@@ -73,6 +75,8 @@ public class PostLoginClient {
 
             ListGamesResponse resp = server.listGames(authToken);
 
+            currList = resp.games();
+
             for (ListGameData game: resp.games()) {
 
                 counter = counter + 1;
@@ -86,6 +90,7 @@ public class PostLoginClient {
             for ( ListGameData game : displayGames) {
 
                 result.append(game.gameID() + ". " + game.gameName().toUpperCase() +
+
                         " | WhiteUser: " + game.whiteUsername() + " | BlackUser: " + game.blackUsername() + "\n");
             }
 
@@ -96,7 +101,31 @@ public class PostLoginClient {
     }
 
 
+    public String playGame(String... params) throws NetworkException {
 
+        if (currList.isEmpty()){
+
+            throw new NetworkException(400, "There are no current games");
+        }
+
+
+        if (params.length == 2 && (Objects.equals(params[1], "black") || Objects.equals(params[1], "white"))
+                && Integer.parseInt(params[0]) <= currList.size()) {
+
+            int actualID = Integer.parseInt(params[0]);
+
+            ListGameData game = currList.get(actualID - 1);
+
+            JoinGameRequest req = new JoinGameRequest(params[1], game.gameID());
+
+            server.joinGame(req, authToken);
+
+            return String.format("You Successfully Joined the Game");
+        }
+
+        throw new NetworkException(400, "Expected: <ID> <WHITE|BLACK>");
+
+    }
 
     public String createGame(String... params) throws NetworkException {
 
