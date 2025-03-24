@@ -63,9 +63,12 @@ public class PostLoginClient {
         } catch (NetworkException e) {
 
             return e.getMessage();
+
+        } catch (NumberFormatException e) {
+
+            return "Expected a number as an input";
         }
     }
-
 
     public String listGames(String... params) throws NetworkException {
 
@@ -158,6 +161,8 @@ public class PostLoginClient {
 
         throw new NetworkException(400, "Expected: <ID> <WHITE|BLACK>");
 
+
+
     }
 
     public String createGame(String... params) throws NetworkException {
@@ -212,7 +217,7 @@ public class PostLoginClient {
 
     public String getPlayerColor() {
 
-        return playerColor.toUpperCase();
+        return playerColor;
     }
 
     public int getGameID() {

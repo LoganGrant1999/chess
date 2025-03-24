@@ -31,7 +31,15 @@ public class GameplayClient {
 
         this.gameID = gameID;
 
-        this.playerColor = playerColor.toUpperCase();
+
+        if (playerColor != null) {
+
+            this.playerColor = playerColor.toUpperCase();
+
+        } else {
+
+        this.playerColor = playerColor;
+        }
     }
 
 
@@ -54,15 +62,12 @@ public class GameplayClient {
         colorSquares(out, board);
 
         return "";
-
-
     }
 
 
     public void colorSquares(PrintStream out, ChessBoard board){
 
         ChessPiece[][] boardDisplay = board.getBoard();
-
 
         if (Objects.equals(playerColor, "WHITE") || playerColor == null) {
 
