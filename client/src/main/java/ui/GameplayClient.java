@@ -6,10 +6,13 @@ import server.ServerFacade;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.EmptyStackException;
 import java.util.Objects;
 
 
 public class GameplayClient {
+
+    private static final String EMPTY = "   ";
 
     private final ServerFacade server;
 
@@ -50,6 +53,7 @@ public class GameplayClient {
 
         colorSquares(out, board);
 
+        return "";
 
 
     }
@@ -59,24 +63,31 @@ public class GameplayClient {
 
         ChessPiece[][] boardDisplay = board.getBoard();
 
-        if (Objects.equals(playerColor, "white") || Objects.equals(playerColor, null)) {
+        for (int x = 7; x >= 0; x--) {
 
-            for (int x = 7; x >= 0 ; x++){
+            for (int y = 0; y < boardDisplay[0].length; y++) {
 
-                for (int y = 0; y < boardDisplay[0].length; y++) {
+                if ((x + y) % 2 == 0) {
 
+                    out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
 
+                    out.print(EMPTY);
 
+                } else {
 
+                    out.print(EscapeSequences.SET_BG_COLOR_WHITE);
 
-
+                    out.print(EMPTY);
+                }
 
             }
 
+            out.print(EscapeSequences.RESET_BG_COLOR);
+
+            out.println();
+
+
         }
 
+        }
     }
-
-
-
-}

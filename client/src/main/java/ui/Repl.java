@@ -67,21 +67,20 @@ public class Repl {
                         setState(State.PRELOGIN);
                     }
 
-                    if (Objects.equals(result, "You Successfully Joined the Game")
-                            || Objects.equals(result, "You Are Observing the Game!")){
+                    if (Objects.equals(result, "You Successfully Joined the Game" + "\n")
+                            || Objects.equals(result, ("You Are Observing the Game!" + "\n"))){
 
                         setState(State.GAMEPLAY);
 
                         gameplay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
                                 postLogin.getGameID(), postLogin.getPlayerColor());
+
+                        String board = gameplay.drawBoard();
+
+                        System.out.println(board);
+
+                        continue;
                     }
-
-                } else if (state == State.GAMEPLAY){
-
-                    String board = gameplay.drawBoard();
-
-                    System.out.println(board);
-
                 }
 
             } catch (Throwable e)  {

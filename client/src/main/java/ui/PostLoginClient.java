@@ -120,14 +120,12 @@ public class PostLoginClient {
 
             JoinGameRequest req = new JoinGameRequest(null, game.gameID());
 
-            playerColor = params[0];
-
             server.joinGame(req, authToken);
 
-            return String.format("You Are Observing the Game!");
+            return String.format("You Are Observing the Game!" + "\n");
         }
 
-        throw new NetworkException(400, "Expected: <ID> <WHITE|BLACK>");
+        throw new NetworkException(400, "Expected: <ID>");
 
     }
 
@@ -149,13 +147,13 @@ public class PostLoginClient {
 
             gameID = game.gameID();
 
-            JoinGameRequest req = new JoinGameRequest(params[1], game.gameID());
+            JoinGameRequest req = new JoinGameRequest(params[1].toUpperCase(), game.gameID());
 
-            playerColor = params[1];
+            playerColor = params[1].toUpperCase();
 
             server.joinGame(req, authToken);
 
-            return String.format("You Successfully Joined the Game");
+            return String.format("You Successfully Joined the Game" + "\n");
         }
 
         throw new NetworkException(400, "Expected: <ID> <WHITE|BLACK>");

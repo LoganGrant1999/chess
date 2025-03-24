@@ -19,7 +19,8 @@ public class JoinGameService {
     public JoinGameResponse joinGame(JoinGameRequest req, UserDAO user, AuthDAO auth,
                                      GameDAO game, String authToken) throws Exception {
 
-        if (req.playerColor() == null || req.gameID() == 0 || !(req.playerColor().equals("WHITE") || req.playerColor().equals("BLACK"))) {
+        if (req.gameID() == 0 || !(req.playerColor() == null ||
+                req.playerColor().equals("WHITE") || req.playerColor().equals("BLACK"))) {
 
             throw new MissingDataException("Error: bad request");
         }
