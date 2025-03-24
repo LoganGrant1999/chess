@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -89,6 +90,12 @@ public class ChessBoard {
             board[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
             board[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         }
+    }
+
+    //getter method for to retrieve board array
+    public ChessPiece[][] getBoard() {
+
+        return board;
     }
 
     // Override methods to ensure no equals or hashCode issues

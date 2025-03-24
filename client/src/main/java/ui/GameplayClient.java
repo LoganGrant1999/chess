@@ -1,12 +1,13 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessPiece;
 import server.ServerFacade;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-import static java.lang.System.out;
 
 public class GameplayClient {
 
@@ -47,12 +48,35 @@ public class GameplayClient {
 
         board.resetBoard();
 
+        colorSquares(out, board);
 
 
-
-
-        return null;
 
     }
+
+
+    public void colorSquares(PrintStream out, ChessBoard board){
+
+        ChessPiece[][] boardDisplay = board.getBoard();
+
+        if (Objects.equals(playerColor, "white") || Objects.equals(playerColor, null)) {
+
+            for (int x = 7; x >= 0 ; x++){
+
+                for (int y = 0; y < boardDisplay[0].length; y++) {
+
+
+
+
+
+
+
+            }
+
+        }
+
+    }
+
+
 
 }
