@@ -31,7 +31,7 @@ public class GameplayClient {
 
         this.gameID = gameID;
 
-        this.playerColor = playerColor;
+        this.playerColor = playerColor.toUpperCase();
     }
 
 
@@ -63,31 +63,53 @@ public class GameplayClient {
 
         ChessPiece[][] boardDisplay = board.getBoard();
 
-        for (int x = 7; x >= 0; x--) {
 
-            for (int y = 0; y < boardDisplay[0].length; y++) {
+        if (Objects.equals(playerColor, "WHITE") || playerColor == null) {
 
-                if ((x + y) % 2 == 0) {
+            for (int x = 7; x >= 0; x--) {
 
-                    out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
+                loopThroughCols(out, boardDisplay, x);
 
-                    out.print(EMPTY);
+                out.print(EscapeSequences.RESET_BG_COLOR);
 
-                } else {
-
-                    out.print(EscapeSequences.SET_BG_COLOR_WHITE);
-
-                    out.print(EMPTY);
-                }
+                out.println();
 
             }
 
-            out.print(EscapeSequences.RESET_BG_COLOR);
+        } else if (Objects.equals(playerColor, "BLACK")) {
 
-            out.println();
+            for (int x = 0; x <= 7; x++) {
 
+                loopThroughCols(out, boardDisplay, x);
 
+                out.print(EscapeSequences.RESET_BG_COLOR);
+
+                out.println();
+
+            }
         }
+    }
+
+    private void loopThroughCols(PrintStream out, ChessPiece[][] boardDisplay, int x) {
+        for (int y = 0; y < boardDisplay[0].length; y++) {
+
+            if ((x + y) % 2 == 0) {
+
+                out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
+
+                out.print(EMPTY);
+
+            } else {
+
+                out.print(EscapeSequences.SET_BG_COLOR_WHITE);
+
+                out.print(EMPTY);
+            }
 
         }
     }
+
+}
+
+
+

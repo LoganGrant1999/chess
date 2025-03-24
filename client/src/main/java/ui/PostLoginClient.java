@@ -212,7 +212,7 @@ public class PostLoginClient {
 
     public String getPlayerColor() {
 
-        return playerColor;
+        return playerColor.toUpperCase();
     }
 
     public int getGameID() {
