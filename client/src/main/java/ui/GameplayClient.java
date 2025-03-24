@@ -1,6 +1,12 @@
 package ui;
 
+import chess.ChessBoard;
 import server.ServerFacade;
+
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+
+import static java.lang.System.out;
 
 public class GameplayClient {
 
@@ -33,7 +39,20 @@ public class GameplayClient {
 
     public String drawBoard() {
 
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+        out.print(EscapeSequences.ERASE_SCREEN);
+
+        ChessBoard board = new ChessBoard();
+
+        board.resetBoard();
+
+
+
+
+
         return null;
+
     }
 
 }

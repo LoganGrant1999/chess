@@ -71,6 +71,9 @@ public class Repl {
                             || Objects.equals(result, "You Are Observing the Game!")){
 
                         setState(State.GAMEPLAY);
+
+                        gameplay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
+                                postLogin.getGameID(), postLogin.getPlayerColor());
                     }
 
                 } else if (state == State.GAMEPLAY){

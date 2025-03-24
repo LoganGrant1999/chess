@@ -4,7 +4,6 @@ import exceptions.NetworkException;
 import model.ListGameData;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
-import response.JoinGameResponse;
 import response.ListGamesResponse;
 import server.ServerFacade;
 
@@ -14,12 +13,15 @@ import java.util.Objects;
 
 public class PostLoginClient {
 
+    private int gameID;
+
+    private String playerColor;
+
     private final ServerFacade server;
 
     private final String authToken;
 
     private ArrayList<ListGameData> currList;
-
 
 
     public PostLoginClient(String serverUrl, String authToken) {
@@ -114,7 +116,11 @@ public class PostLoginClient {
 
             ListGameData game = currList.get(actualID - 1);
 
+            gameID = game.gameID();
+
             JoinGameRequest req = new JoinGameRequest(null, game.gameID());
+
+            playerColor = params[0];
 
             server.joinGame(req, authToken);
 
@@ -141,7 +147,11 @@ public class PostLoginClient {
 
             ListGameData game = currList.get(actualID - 1);
 
+            gameID = game.gameID();
+
             JoinGameRequest req = new JoinGameRequest(params[1], game.gameID());
+
+            playerColor = params[1];
 
             server.joinGame(req, authToken);
 
@@ -195,4 +205,20 @@ public class PostLoginClient {
                 """;
     }
 
+
+    public String getAuthToken() {
+
+        return authToken;
+    }
+
+
+    public String getPlayerColor() {
+
+        return playerColor;
+    }
+
+    public int getGameID() {
+
+        return gameID;
+    }
 }
