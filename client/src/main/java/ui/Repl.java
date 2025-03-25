@@ -47,7 +47,7 @@ public class Repl {
 
                     result = prelogin.eval(line);
 
-                    System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
                     if (prelogin.getAuthToken() != null){
 
@@ -60,7 +60,7 @@ public class Repl {
 
                     result = postLogin.eval(line);
 
-                    System.out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA + result);
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
                     if (Objects.equals(result, "Successfully Logged out!")) {
 
