@@ -23,12 +23,16 @@ public class PostLoginClient {
 
     private ArrayList<ListGameData> currList;
 
+    private final String serverUrl;
+
 
     public PostLoginClient(String serverUrl, String authToken) {
 
         server = new ServerFacade(serverUrl);
 
         this.authToken = authToken;
+
+        this.serverUrl = serverUrl;
     }
 
     public String eval(String input){
@@ -130,9 +134,7 @@ public class PostLoginClient {
 
             gameID = game.gameID();
 
-            JoinGameRequest req = new JoinGameRequest(null, game.gameID());
-
-            server.joinGame(req, authToken);
+            new GameplayClient(serverUrl, authToken, gameID, playerColor);
 
             return String.format("You Are Observing the Game!" + "\n");
         }
