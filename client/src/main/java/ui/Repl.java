@@ -58,6 +58,8 @@ public class Repl {
 
                 } else if (state == State.POSTLOGIN) {
 
+                    postLogin.setPlayerColorNull();
+
                     result = postLogin.eval(line);
 
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
@@ -70,7 +72,6 @@ public class Repl {
                     if (Objects.equals(result, "You Successfully Joined the Game" + "\n")
                             || Objects.equals(result, ("You Are Observing the Game!" + "\n"))){
 
-                        setState(State.GAMEPLAY);
 
                         gameplay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
                                 postLogin.getGameID(), postLogin.getPlayerColor());

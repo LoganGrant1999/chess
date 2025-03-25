@@ -67,6 +67,15 @@ public class PostLoginClient {
         } catch (NumberFormatException e) {
 
             return "Expected a number as an input";
+
+        } catch (IndexOutOfBoundsException e) {
+
+            return "Error: invalid game number";
+
+        } catch (NullPointerException e) {
+
+            return ("Error: must list games before joining one");
+
         }
     }
 
@@ -208,6 +217,11 @@ public class PostLoginClient {
                 """;
     }
 
+
+    public void setPlayerColorNull() {
+
+        this.playerColor= null;
+    }
 
     public String getAuthToken() {
 

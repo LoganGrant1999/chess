@@ -8,6 +8,7 @@ import server.ServerFacade;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.Objects;
 
@@ -139,15 +140,33 @@ public class GameplayClient {
 
     public void colorSquares(PrintStream out, ChessBoard board) {
 
+        ArrayList<String> letters = new ArrayList<>(Arrays.asList
+                (" A ", " B ", " C ", " D ", " E ", " F ", " G ", " H "));
+
+        ArrayList<String> nums = new ArrayList<>(Arrays.asList
+                (" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "));
+
         ChessPiece[][] boardDisplay = board.getBoard();
 
         if (Objects.equals(playerColor, "WHITE") || playerColor == null) {
 
+            out.print(EMPTY);
+
+            for (int i = 0; i < letters.size(); i++){
+
+                out.print(letters.get(i));
+            }
+
+            out.println();
+
             for (int x = 7; x >= 0; x--) {
+
+                out.print(nums.get(x));
 
                 for (int y = 0; y < boardDisplay[0].length; y++) {
 
                     loopThroughSquares(out, boardDisplay, x, y);
+
                 }
 
                 out.print(EscapeSequences.RESET_BG_COLOR);
@@ -157,11 +176,23 @@ public class GameplayClient {
 
         } else if (Objects.equals(playerColor, "BLACK")) {
 
+            out.print(EMPTY);
+
+            for (int i = 7; i >= 0; i--) {
+
+                out.print(letters.get(i));
+            }
+
+            out.println();
+
             for (int x = 0; x <= 7; x++) {
+
+                out.print(nums.get(x));
 
                 for (int y = 7; y >= 0; y--) {
 
                     loopThroughSquares(out, boardDisplay, x, y);
+
                 }
 
                 out.print(EscapeSequences.RESET_BG_COLOR);
