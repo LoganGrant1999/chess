@@ -28,7 +28,4 @@ public class NetworkException extends Exception {
         return new NetworkException(stat, msg);
     }
 
-    public int StatusCode() {
-        return statusCode;
-    }
 }
