@@ -6,6 +6,7 @@ import websocket.messages.ServerMessage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import com.google.gson.Gson;
 
 public class ConnectionManager {
 
@@ -35,8 +36,9 @@ public class ConnectionManager {
 
             if (!c.userName.equals(excludeUserName)) {
 
-               c.send(msg.toString());
+               c.send(new Gson().toJson(msg));
             }
+
          } else {
 
             removeList.add(c);
