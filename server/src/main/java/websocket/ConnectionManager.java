@@ -8,9 +8,9 @@ public class ConnectionManager {
 
    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
-   public void add(String userName, Session session){
+   public void add(String userName, String playerRole, int gameID, String gameName, Session session){
 
-      var connection = new Connection();
+      var connection = new Connection(userName, playerRole, gameID, gameName, session);
 
       connections.put(userName, connection);
 
