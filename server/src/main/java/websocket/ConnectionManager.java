@@ -16,5 +16,14 @@ public class ConnectionManager {
 
    }
 
+   public void remove(String userName){
+
+      connections.remove(userName);
+
+   }
+
+
+
+
 
 }
