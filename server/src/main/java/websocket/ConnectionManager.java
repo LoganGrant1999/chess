@@ -1,7 +1,10 @@
 package websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ServerMessage;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -22,8 +25,27 @@ public class ConnectionManager {
 
    }
 
+   public void broadcast (String excludeUserName, ServerMessage msg) throws IOException {
 
+      var removeList = new ArrayList<Connection>();
 
+      for (var c : connections.values()) {
 
+         if (c.session.isOpen()) {
 
+            if (!c.userName.equals(excludeUserName)) {
+
+               c.send(msg.toString());
+            }
+         } else {
+
+            removeList.add(c);
+         }
+      }
+
+      for (var c : removeList) {
+
+         connections.remove(c.userName);
+      }
+   }
 }
