@@ -26,7 +26,7 @@ public class ConnectionManager {
 
    }
 
-   public void broadcast (String excludeUserName, ServerMessage msg) throws IOException {
+   public void broadcast (String excludeUserName, int gameID, ServerMessage msg) throws IOException {
 
       var removeList = new ArrayList<Connection>();
 
@@ -34,7 +34,7 @@ public class ConnectionManager {
 
          if (c.session.isOpen()) {
 
-            if (!c.userName.equals(excludeUserName)) {
+            if (!c.userName.equals(excludeUserName) && c.gameID == gameID) {
 
                c.send(new Gson().toJson(msg));
             }
