@@ -48,12 +48,26 @@ public class WebSocketHandler {
 
         UserGameCommand cmd = new Gson().fromJson(message, UserGameCommand.class);
 
-        switch (cmd.getCommandType()) {
+        try{
 
-            case CONNECT -> connect(cmd, session);
-            case MAKE_MOVE -> makeMove();
-            case LEAVE -> leave();
-            case RESIGN -> resign();
+            switch (cmd.getCommandType()) {
+
+                case CONNECT -> connect(cmd, session);
+                case MAKE_MOVE -> makeMove();
+                case LEAVE -> leave();
+                case RESIGN -> resign();
+            }
+
+        } catch (Exception e) {
+
+            var msg = e.getMessage();
+
+            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, msg);
+
+            String jsonMsg = new Gson().toJson(displayMsg);
+
+            session.getRemote().sendString(jsonMsg);
+
         }
     }
 
