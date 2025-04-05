@@ -18,6 +18,7 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,7 +49,7 @@ public class WebSocketHandler {
 
                 case CONNECT -> connect(cmd, session);
                 case MAKE_MOVE -> makeMove(cmd);
-                case LEAVE -> leave();
+                case LEAVE -> leave(cmd);
                 case RESIGN -> resign();
             }
 
@@ -100,11 +101,10 @@ public class WebSocketHandler {
     }
 
 
-    public void makeMove(UserGameCommand cmd) throws SQLException, DataAccessException, InvalidMoveException, IOException {
+    public void makeMove(UserGameCommand cmd)
+            throws SQLException, DataAccessException, InvalidMoveException, IOException {
 
-        validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
-
-        AuthData authData = auth.getAuth(cmd.getAuthToken());
+        AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
         if (cmd.getPlayerColor() == null || cmd.getMove() == null) {
 
@@ -165,8 +165,42 @@ public class WebSocketHandler {
         }
     }
 
-    public void leave() {
+    public void leave(UserGameCommand cmd) throws SQLException, DataAccessException, IOException {
 
+        AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
+
+        Connection conn = connections.getConnection(authData.username());
+
+        GameData currGame = game.getGame(cmd.getGameID());
+
+        if (conn.playerRole.equalsIgnoreCase("WHITE")
+                || conn.playerRole.equalsIgnoreCase("BLACK")) {
+
+            GameData updatedGame = game.joinGame(currGame.gameID(),null, conn.playerRole, currGame.gameName());
+
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, updatedGame.game());
+
+            connections.broadcast(authData.username(), cmd.getGameID(), msg);
+
+            var message = String.format("Player %s has left the game", authData.username());
+
+            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+
+            connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
+
+            connections.remove(authData.username());
+
+        } else {
+
+            var message = String.format("Observer %s has left the game", authData.username());
+
+            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+
+            connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
+
+            connections.remove(authData.username());
+
+        }
     }
 
     public void resign() {
@@ -174,7 +208,7 @@ public class WebSocketHandler {
     }
 
 
-    public void validateAuthAndGame(String authToken, int gameID) throws SQLException, DataAccessException {
+    public AuthData validateAuthAndGame(String authToken, int gameID) throws SQLException, DataAccessException {
 
         AuthData authData = auth.getAuth(authToken);
 
@@ -185,6 +219,8 @@ public class WebSocketHandler {
             throw new InvalidCredentialsException("Error: unauthorized");
 
         }
+
+        return authData;
     }
 
     public ChessGame.TeamColor getOpponent(ChessGame.TeamColor color) {

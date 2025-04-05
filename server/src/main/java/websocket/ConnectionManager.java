@@ -50,4 +50,11 @@ public class ConnectionManager {
          connections.remove(c.userName);
       }
    }
+
+
+   public Connection getConnection(String userName) {
+
+      return connections.get(userName);
+
+   }
 }
