@@ -10,6 +10,7 @@ import dataaccess.GameDAO;
 import exceptions.InvalidCredentialsException;
 import model.AuthData;
 import model.GameData;
+import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -50,7 +51,7 @@ public class WebSocketHandler {
                 case CONNECT -> connect(cmd, session);
                 case MAKE_MOVE -> makeMove(cmd);
                 case LEAVE -> leave(cmd);
-                case RESIGN -> resign();
+                case RESIGN -> resign(cmd);
             }
 
         } catch (Exception e) {
@@ -203,7 +204,15 @@ public class WebSocketHandler {
         }
     }
 
-    public void resign() {
+    public void resign(UserGameCommand cmd) {
+
+
+
+
+
+
+
+
 
     }
 

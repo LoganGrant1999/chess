@@ -16,6 +16,7 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor teamTurn;
+    private boolean resigned = false;
 
     public ChessGame() {
         this.board = new ChessBoard();
@@ -258,6 +259,17 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public void resign() {
+
+        resigned = true;
+    }
+
+    public boolean gameOver(){
+
+        return isInCheckmate(TeamColor.WHITE) || isInStalemate(TeamColor.WHITE)
+                || isInCheckmate(TeamColor.BLACK) || isInStalemate(TeamColor.BLACK) || resigned;
     }
 
     // Override methods to ensure no equals or hashCode issues and to improve debugging
