@@ -114,6 +114,11 @@ public class WebSocketHandler {
 
         ChessGame currGame = games.get(cmd.getGameID());
 
+        if (currGame.gameOver()) {
+
+            throw new InvalidMoveException("Error: Game Over");
+        }
+
         ChessBoard board = currGame.getBoard();
 
         ChessGame.TeamColor currColor = currGame.getTeamTurn();
