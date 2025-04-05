@@ -267,6 +267,11 @@ public class ChessGame {
         resigned = true;
     }
 
+    public void setGameIsOver() {
+
+        gameIsOver = true;
+    }
+
     public boolean gameOver() {
 
         return isInCheckmate(TeamColor.WHITE) || isInStalemate(TeamColor.WHITE)

@@ -25,6 +25,11 @@ public class MemoryGameDAO implements GameDAO{
         this.db = new HashMap<>();
     }
 
+    @Override
+    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
+
+    }
+
     //method for creating a new Game and entering GameData into the map
     @Override
     public int createGame(String gameName) throws DataAccessException{

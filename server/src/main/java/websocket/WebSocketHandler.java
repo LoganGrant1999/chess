@@ -128,6 +128,8 @@ public class WebSocketHandler {
 
         currGame.makeMove(cmd.getMove());
 
+        game.updateGame(cmd.getGameID(), currGame);
+
         ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, currGame);
 
         connections.broadcast(null, cmd.getGameID(), msg);
@@ -143,6 +145,10 @@ public class WebSocketHandler {
         ChessGame.TeamColor opponent = getOpponent(currColor);
 
         if (currGame.isInCheckmate(opponent)) {
+
+            currGame.setGameIsOver();
+
+            game.updateGame(cmd.getGameID(), currGame);
 
             var checkMsg = String.format("%s is in checkmate!", opponent);
 
@@ -160,6 +166,10 @@ public class WebSocketHandler {
             connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
 
         } else if (currGame.isInStalemate(opponent)) {
+
+            currGame.setGameIsOver();
+
+            game.updateGame(cmd.getGameID(), currGame);
 
             var checkMsg = String.format("%s is in stalemate!", opponent);
 
@@ -208,7 +218,7 @@ public class WebSocketHandler {
         }
     }
 
-    public void resign(UserGameCommand cmd) throws SQLException, DataAccessException {
+    public void resign(UserGameCommand cmd) throws SQLException, DataAccessException, IOException {
 
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
@@ -219,8 +229,25 @@ public class WebSocketHandler {
             throw new InvalidCredentialsException("Error: unauthorized");
         }
 
+        ChessGame currGame = gameData.game();
 
+        currGame.resign();
 
+        currGame.setGameIsOver();
+
+        game.updateGame(cmd.getGameID(), gameData.game());
+
+        ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, currGame);
+
+        connections.broadcast(authData.username(), cmd.getGameID(), msg);
+
+        ChessGame.TeamColor opponent = getOpponent(ChessGame.TeamColor.valueOf(cmd.getPlayerColor().toUpperCase()));
+
+        var message = String.format("%s has resigned from the game. %s wins!", authData.username(), opponent);
+
+        ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+
+        connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
 
     }
 

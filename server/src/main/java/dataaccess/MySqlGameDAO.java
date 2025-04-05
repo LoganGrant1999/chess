@@ -68,7 +68,7 @@ public class MySqlGameDAO implements GameDAO {
         }
     }
 
-
+    @Override
     public void updateGame(int gameID, ChessGame game) throws DataAccessException {
 
         var statement = "UPDATE game SET chessGame=? WHERE gameID=?";
