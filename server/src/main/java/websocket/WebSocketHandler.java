@@ -150,6 +150,7 @@ public class WebSocketHandler {
 
             connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
 
+
         } else if (currGame.isInCheck(opponent)) {
 
             var checkMsg = String.format("%s is in check!", opponent);
@@ -207,12 +208,16 @@ public class WebSocketHandler {
         }
     }
 
-    public void resign(UserGameCommand cmd) {
+    public void resign(UserGameCommand cmd) throws SQLException, DataAccessException {
 
+        AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
+        GameData gameData = game.getGame(cmd.getGameID());
 
+        if (cmd.getPlayerColor() == null || gameData.game().gameOver()) {
 
-
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
 
 
 

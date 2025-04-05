@@ -68,6 +68,17 @@ public class MySqlGameDAO implements GameDAO {
         }
     }
 
+
+    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
+
+        var statement = "UPDATE game SET chessGame=? WHERE gameID=?";
+
+        var json = new Gson().toJson(game);
+
+        executeUpdate(statement, json, gameID);
+
+    }
+
     //method designed to create a new record of game data in the game table
     @Override
     public int createGame(String gameName) throws DataAccessException {

@@ -17,6 +17,7 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor teamTurn;
     private boolean resigned = false;
+    public boolean gameIsOver = false;
 
     public ChessGame() {
         this.board = new ChessBoard();
@@ -266,7 +267,7 @@ public class ChessGame {
         resigned = true;
     }
 
-    public boolean gameOver(){
+    public boolean gameOver() {
 
         return isInCheckmate(TeamColor.WHITE) || isInStalemate(TeamColor.WHITE)
                 || isInCheckmate(TeamColor.BLACK) || isInStalemate(TeamColor.BLACK) || resigned;
