@@ -1,6 +1,8 @@
 package websocket;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -22,8 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @WebSocket
 public class WebSocketHandler {
 
-    private String playerColor;
-
     private final AuthDAO auth;
 
     private final GameDAO game;
@@ -31,12 +31,6 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
 
     private final Map<Integer, ChessGame> games = new ConcurrentHashMap<>();
-
-    public WebSocketHandler(AuthDAO auth, GameDAO game, String playerColor) {
-        this.auth = auth;
-        this.game = game;
-        this.playerColor = playerColor;
-    }
 
     public WebSocketHandler(AuthDAO auth, GameDAO game) {
         this.auth = auth;
@@ -53,7 +47,7 @@ public class WebSocketHandler {
             switch (cmd.getCommandType()) {
 
                 case CONNECT -> connect(cmd, session);
-                case MAKE_MOVE -> makeMove();
+                case MAKE_MOVE -> makeMove(cmd, session);
                 case LEAVE -> leave();
                 case RESIGN -> resign();
             }
@@ -96,16 +90,9 @@ public class WebSocketHandler {
 
         session.getRemote().sendString(jsonMsg);
 
-        if (cmd.getPlayerColor() == null) {
+        String playerRole = (cmd.getPlayerColor() == null) ? "observer" : cmd.getPlayerColor();
 
-            playerColor = "observer";
-
-        } else {
-
-            playerColor = cmd.getPlayerColor();
-        }
-
-        var message = String.format("%s joined game: %s as %s", authData.username(), gameData.gameName(), playerColor);
+        var message = String.format("%s joined game: %s as %s", authData.username(), gameData.gameName(), playerRole);
 
         ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
 
@@ -114,7 +101,41 @@ public class WebSocketHandler {
     }
 
 
-    public void makeMove() {
+    public void makeMove(UserGameCommand cmd, Session session) throws SQLException, DataAccessException, InvalidMoveException, IOException {
+
+        validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
+
+        AuthData authData = auth.getAuth(cmd.getAuthToken());
+
+        if (cmd.getPlayerColor() == null || cmd.getMove() == null) {
+
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
+
+        ChessGame currGame = games.get(cmd.getGameID());
+
+        ChessBoard board = currGame.getBoard();
+
+        ChessGame.TeamColor currColor = currGame.getTeamTurn();
+
+        if (!(ChessGame.TeamColor.valueOf(cmd.getPlayerColor().toUpperCase()) == currColor)){
+
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
+
+        currGame.makeMove(cmd.getMove());
+
+        ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, currGame);
+
+        connections.broadcast(null, cmd.getGameID(), msg);
+
+        var message = String.format("%s moved %s from %s to %s!", authData.username(),
+                board.getPiece(cmd.getMove().getEndPosition()), cmd.getMove().getStartPosition(),
+                cmd.getMove().getEndPosition());
+
+        ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+
+        connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
 
     }
 
@@ -139,7 +160,5 @@ public class WebSocketHandler {
 
         }
     }
-
-
 
 }

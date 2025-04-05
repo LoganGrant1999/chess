@@ -112,16 +112,22 @@ public class ChessGame {
 
         if (promote == null){
             board.addPiece(endPos, currPiece);
+
         } else {
+
             ChessPiece promotePiece = new ChessPiece(teamTurn, promote);
+
             board.addPiece(endPos, promotePiece);
         }
 
         board.addPiece(startPos, null);
 
         if (teamTurn == TeamColor.WHITE){
+
             setTeamTurn(TeamColor.BLACK);
+
         } else{
+
             setTeamTurn(TeamColor.WHITE);
         }
     }
@@ -204,8 +210,11 @@ public class ChessGame {
         for (ChessMove move : currTeamMoves){
 
             ChessGame copyGame = new ChessGame(this);
+
             ChessPiece movingPiece = copyGame.getBoard().getPiece(move.getStartPosition());
+
             copyGame.getBoard().addPiece(move.getEndPosition(), movingPiece);
+
             copyGame.getBoard().addPiece(move.getStartPosition(), null);
 
             if (!copyGame.isInCheck(teamColor)){
@@ -224,7 +233,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+
         if (isInCheck(teamColor)){
+
             return false;
         }
 
@@ -252,20 +263,26 @@ public class ChessGame {
     // Override methods to ensure no equals or hashCode issues and to improve debugging
     @Override
     public boolean equals(Object o) {
+
         if (o == null || getClass() != o.getClass()) {
+
             return false;
         }
+
         ChessGame chessGame = (ChessGame) o;
+
         return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
     }
 
     @Override
     public int hashCode() {
+
         return Objects.hash(board, teamTurn);
     }
 
     @Override
     public String toString() {
+
         return "ChessGame{" +
                 "board=" + board +
                 ", teamTurn=" + teamTurn +

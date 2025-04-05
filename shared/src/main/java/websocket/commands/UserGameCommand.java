@@ -31,7 +31,6 @@ public class UserGameCommand {
     }
 
 
-
     public enum CommandType {
         CONNECT,
         MAKE_MOVE,
@@ -52,6 +51,8 @@ public class UserGameCommand {
     }
 
     public String getPlayerColor(){return  playerColor;}
+
+    public ChessMove getMove() {return move;}
 
     @Override
     public boolean equals(Object o) {
