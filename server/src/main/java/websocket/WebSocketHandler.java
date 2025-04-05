@@ -10,7 +10,6 @@ import dataaccess.GameDAO;
 import exceptions.InvalidCredentialsException;
 import model.AuthData;
 import model.GameData;
-import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -19,7 +18,6 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
