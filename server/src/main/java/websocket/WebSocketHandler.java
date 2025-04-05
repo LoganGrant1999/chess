@@ -72,19 +72,11 @@ public class WebSocketHandler {
     }
 
 
-    public void connect(UserGameCommand cmd, Session sesh) throws SQLException, DataAccessException, IOException {
+    public void connect(UserGameCommand cmd, Session session) throws SQLException, DataAccessException, IOException {
 
-        if (auth.getAuth(cmd.getAuthToken()) == null) {
-
-            throw new InvalidCredentialsException("Error: unauthorized");
-        }
+        validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
         AuthData authData = auth.getAuth(cmd.getAuthToken());
-
-        if (game.getGame(cmd.getGameID()) == null) {
-
-            throw new InvalidCredentialsException("Error: unauthorized");
-        }
 
         GameData gameData = game.getGame(cmd.getGameID());
 
@@ -94,7 +86,7 @@ public class WebSocketHandler {
 
         }
 
-        connections.add(authData.username(), cmd.getPlayerColor(), cmd.getGameID(), gameData.gameName(), sesh);
+        connections.add(authData.username(), cmd.getPlayerColor(), cmd.getGameID(), gameData.gameName(), session);
 
         ChessGame currGame = games.get(cmd.getGameID());
 
@@ -102,7 +94,7 @@ public class WebSocketHandler {
 
         String jsonMsg = new Gson().toJson(msg);
 
-        sesh.getRemote().sendString(jsonMsg);
+        session.getRemote().sendString(jsonMsg);
 
         if (cmd.getPlayerColor() == null) {
 
@@ -133,5 +125,21 @@ public class WebSocketHandler {
     public void resign() {
 
     }
+
+
+    public void validateAuthAndGame(String authToken, int gameID) throws SQLException, DataAccessException {
+
+        AuthData authData = auth.getAuth(authToken);
+
+        GameData gameData = game.getGame(gameID);
+
+        if (authData == null || gameData == null) {
+
+            throw new InvalidCredentialsException("Error: unauthorized");
+
+        }
+    }
+
+
 
 }
