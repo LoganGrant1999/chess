@@ -47,7 +47,7 @@ public class WebSocketHandler {
             switch (cmd.getCommandType()) {
 
                 case CONNECT -> connect(cmd, session);
-                case MAKE_MOVE -> makeMove(cmd, session);
+                case MAKE_MOVE -> makeMove(cmd);
                 case LEAVE -> leave();
                 case RESIGN -> resign();
             }
@@ -64,7 +64,6 @@ public class WebSocketHandler {
 
         }
     }
-
 
     public void connect(UserGameCommand cmd, Session session) throws SQLException, DataAccessException, IOException {
 
@@ -101,7 +100,7 @@ public class WebSocketHandler {
     }
 
 
-    public void makeMove(UserGameCommand cmd, Session session) throws SQLException, DataAccessException, InvalidMoveException, IOException {
+    public void makeMove(UserGameCommand cmd) throws SQLException, DataAccessException, InvalidMoveException, IOException {
 
         validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
@@ -118,7 +117,7 @@ public class WebSocketHandler {
 
         ChessGame.TeamColor currColor = currGame.getTeamTurn();
 
-        if (!(ChessGame.TeamColor.valueOf(cmd.getPlayerColor().toUpperCase()) == currColor)){
+        if (!(ChessGame.TeamColor.valueOf(cmd.getPlayerColor().toUpperCase()) == currColor)) {
 
             throw new InvalidCredentialsException("Error: unauthorized");
         }
@@ -137,6 +136,33 @@ public class WebSocketHandler {
 
         connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
 
+        ChessGame.TeamColor opponent = getOpponent(currColor);
+
+        if (currGame.isInCheckmate(opponent)) {
+
+            var checkMsg = String.format("%s is in checkmate!", opponent);
+
+            ServerMessage displayCheckMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMsg);
+
+            connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
+
+        } else if (currGame.isInCheck(opponent)) {
+
+            var checkMsg = String.format("%s is in check!", opponent);
+
+            ServerMessage displayCheckMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMsg);
+
+            connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
+
+        } else if (currGame.isInStalemate(opponent)) {
+
+            var checkMsg = String.format("%s is in stalemate!", opponent);
+
+            ServerMessage displayCheckMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMsg);
+
+            connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
+
+        }
     }
 
     public void leave() {
@@ -161,4 +187,15 @@ public class WebSocketHandler {
         }
     }
 
+    public ChessGame.TeamColor getOpponent(ChessGame.TeamColor color) {
+
+        if (color == ChessGame.TeamColor.WHITE) {
+
+            return ChessGame.TeamColor.BLACK;
+
+        } else {
+
+            return ChessGame.TeamColor.WHITE;
+        }
+    }
 }
