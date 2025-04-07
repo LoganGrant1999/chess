@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.NetworkException;
 import websocket.commands.UserGameCommand;
@@ -73,6 +74,45 @@ public class WebSocketServerFacade extends Endpoint {
 
     }
 
+    public void makeMove(String authToken, int gameID, String playerColor, ChessMove move) throws NetworkException {
+
+        try {
+
+            UserGameCommand cmd =
+                    new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, move, authToken, gameID, playerColor);
+
+            String json = new Gson().toJson(cmd);
+
+            this.session.getBasicRemote().sendText(json);
+
+        } catch (IOException e) {
+
+            throw new NetworkException(500, e.getMessage());
+        }
+
+    }
+
+
+    public void leaveGame(String authToken, int gameID) throws NetworkException {
+
+        try {
+
+            UserGameCommand cmd =
+                    new UserGameCommand(UserGameCommand.CommandType.LEAVE,
+                            null, authToken, gameID, null);
+
+            String json = new Gson().toJson(cmd);
+
+            this.session.getBasicRemote().sendText(json);
+
+            this.session.close();
+
+        } catch (IOException e) {
+
+            throw new NetworkException(500, e.getMessage());
+        }
+
+    }
 
 
 
