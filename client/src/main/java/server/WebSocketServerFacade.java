@@ -115,5 +115,21 @@ public class WebSocketServerFacade extends Endpoint {
     }
 
 
+    public void resign(String authToken, int gameID, String playerColor) throws NetworkException {
 
+        try {
+
+            UserGameCommand cmd =
+                    new UserGameCommand(UserGameCommand.CommandType.RESIGN, null, authToken, gameID, playerColor);
+
+            String json = new Gson().toJson(cmd);
+
+            this.session.getBasicRemote().sendText(json);
+
+        } catch (IOException e) {
+
+            throw new NetworkException(500, e.getMessage());
+        }
+
+    }
 }
