@@ -3,13 +3,15 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
-import server.ServerFacade;
+import exceptions.NetworkException;
+import server.NotificationHandler;
+import server.WebSocketServerFacade;
+import websocket.messages.ServerMessage;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EmptyStackException;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -17,11 +19,11 @@ import static chess.ChessGame.TeamColor.WHITE;
 import static chess.ChessPiece.PieceType.*;
 
 
-public class GameplayClient {
+public class GameplayClient implements NotificationHandler {
+
+    private ChessGame game;
 
     private static final String EMPTY = "   ";
-
-    private final ServerFacade server;
 
     private final String authToken;
 
@@ -29,15 +31,17 @@ public class GameplayClient {
 
     private final String playerColor;
 
+    private WebSocketServerFacade ws;
 
-    public GameplayClient(String serverUrl, String authToken, int gameID, String playerColor) {
+    public GameplayClient(String serverUrl, String authToken, int gameID, String playerColor) throws NetworkException {
 
-        server = new ServerFacade(serverUrl);
+        this.ws = new WebSocketServerFacade(serverUrl, this );
+
+        ws.connectToGame(authToken, gameID, playerColor);
 
         this.authToken = authToken;
 
         this.gameID = gameID;
-
 
         if (playerColor != null) {
 
@@ -46,7 +50,9 @@ public class GameplayClient {
         } else {
 
         this.playerColor = playerColor;
+
         }
+
     }
 
 
@@ -219,6 +225,14 @@ public class GameplayClient {
             }
     }
 
+    @Override
+    public void notify(ServerMessage message) {
+
+
+
+
+
+    }
 }
 
 
