@@ -55,12 +55,39 @@ public class GameplayClient implements NotificationHandler {
 
     }
 
-
     public String eval(String input) {
 
-        return null;
-    }
+        try {
 
+            var tokens = input.toLowerCase().split(" ");
+
+            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+
+            return switch (cmd) {
+
+                case "help" -> help();
+                case "redraw" -> drawBoard();
+                case "leave" -> leave();
+                case "move" -> move();
+                case "resign" -> resign();
+                case "highlight" -> highlight();
+                case "quit" -> "quit";
+                default -> "Command unknown. Type 'help' to see all valid commands";
+
+            };
+
+        } catch (NumberFormatException e) {
+
+            return "Expected a number as an input";
+
+        } catch (IndexOutOfBoundsException e) {
+
+            return "Error: invalid game number";
+
+        }
+    }
 
     public String drawBoard() {
 
@@ -68,15 +95,12 @@ public class GameplayClient implements NotificationHandler {
 
         out.print(EscapeSequences.ERASE_SCREEN);
 
-        ChessBoard board = new ChessBoard();
-
-        board.resetBoard();
+        ChessBoard board = game.getBoard();
 
         colorSquares(out, board);
 
         return "";
     }
-
 
     public void printPieces(PrintStream out, ChessPiece[][] board,  int x, int y) {
 
@@ -143,7 +167,6 @@ public class GameplayClient implements NotificationHandler {
         }
     }
 
-
     public void colorSquares(PrintStream out, ChessBoard board) {
 
         ArrayList<String> letters = new ArrayList<>(Arrays.asList
@@ -208,7 +231,6 @@ public class GameplayClient implements NotificationHandler {
         }
     }
 
-
     private void loopThroughSquares(PrintStream out, ChessPiece[][] boardDisplay, int x, int y) {
 
             if ((x + y) % 2 == 0) {
@@ -226,14 +248,64 @@ public class GameplayClient implements NotificationHandler {
     }
 
     @Override
-    public void notify(ServerMessage message) {
+    public void notify(ServerMessage message) throws NetworkException {
 
+        try {
 
+            switch (message.getServerMessageType()) {
 
+                case LOAD_GAME -> {
 
+                    this.game = message.getGame();
+
+                    drawBoard();
+                }
+                case NOTIFICATION -> System.out.println(message.getMsg());
+                case ERROR -> System.out.print(message.getMsg());
+            }
+
+        } catch (Exception e) {
+            throw new NetworkException(500, e.getMessage());
+        }
 
     }
+
+
+    public String help(){
+
+        return """
+            - Help
+            - Redraw
+            - Leave
+            - Make Move <start position> <end position> <optional promotion> (e.g. f5 e4 q)
+            - Resign
+            - Highlight <position> (e.g. f5)
+            - Quit
+            """;
+    }
+
+
+    public String leave(){
+
+
+        return null;
+    }
+
+
+    public String move(){
+
+        return null;
+
+    }
+
+    public String resign(){
+        return null;
+    }
+
+    public String highlight(){
+
+        return null;
+
+    }
+
 }
-
-
-

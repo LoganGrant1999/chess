@@ -82,7 +82,9 @@ public class Repl {
 
                     System.out.println(board);
 
-                    continue;
+                    result = gamePlay.eval(line);
+
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
                 }
 

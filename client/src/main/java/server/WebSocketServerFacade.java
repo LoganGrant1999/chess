@@ -38,7 +38,13 @@ public class WebSocketServerFacade extends Endpoint {
 
                     ServerMessage msg = new Gson().fromJson(s, ServerMessage.class);
 
-                    notificationHandler.notify(msg);
+                    try {
+                        notificationHandler.notify(msg);
+
+                    } catch (NetworkException e) {
+
+                        throw new RuntimeException(e);
+                    }
 
                 }
             });
