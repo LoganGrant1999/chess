@@ -4,12 +4,11 @@ import java.util.Objects;
 import java.util.Scanner;
 public class Repl {
 
-    private final PreLoginClient prelogin;
+    private final PreLoginClient preLogin;
 
     private PostLoginClient postLogin;
 
-    private GameplayClient gameplay;
-
+    private GameplayClient gamePlay;
 
     private State state = State.PRELOGIN;
 
@@ -19,7 +18,7 @@ public class Repl {
 
         this.serverUrl = serverUrl;
 
-        prelogin = new PreLoginClient(serverUrl);
+        preLogin = new PreLoginClient(serverUrl);
 
     }
 
@@ -27,7 +26,7 @@ public class Repl {
 
         System.out.println(EscapeSequences.WHITE_KNIGHT + "Welcome to Chess. Sign in to start.");
 
-        System.out.print(prelogin.help());
+        System.out.print(preLogin.help());
 
         Scanner scanner = new Scanner(System.in);
 
@@ -43,17 +42,17 @@ public class Repl {
 
                 if (state == State.PRELOGIN) {
 
-                    prelogin.setAuthTokenNull();
+                    preLogin.setAuthTokenNull();
 
-                    result = prelogin.eval(line);
+                    result = preLogin.eval(line);
 
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
-                    if (prelogin.getAuthToken() != null){
+                    if (preLogin.getAuthToken() != null){
 
                         setState(State.POSTLOGIN);
 
-                        postLogin = new PostLoginClient(serverUrl, prelogin.getAuthToken());
+                        postLogin = new PostLoginClient(serverUrl, preLogin.getAuthToken());
                     }
 
                 } else if (state == State.POSTLOGIN) {
@@ -73,15 +72,18 @@ public class Repl {
                             || Objects.equals(result, ("You Are Observing the Game!" + "\n"))){
 
 
-                        gameplay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
+                        gamePlay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
                                 postLogin.getGameID(), postLogin.getPlayerColor());
-
-                        String board = gameplay.drawBoard();
-
-                        System.out.println(board);
-
-                        continue;
                     }
+
+                } else if (state == State.GAMEPLAY){
+
+                    String board = gamePlay.drawBoard();
+
+                    System.out.println(board);
+
+                    continue;
+
                 }
 
             } catch (Throwable e)  {
