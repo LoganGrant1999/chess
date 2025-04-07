@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import exceptions.NetworkException;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -53,7 +54,24 @@ public class WebSocketServerFacade extends Endpoint {
     }
 
 
+    public void connectToGame(String authToken, int gameID, String playerColor) throws NetworkException {
 
+        try {
+            UserGameCommand cmd =
+                    new UserGameCommand(UserGameCommand.CommandType.CONNECT,
+                            null, authToken, gameID, playerColor);
+
+            String json = new Gson().toJson(cmd);
+
+            this.session.getBasicRemote().sendText(json);
+
+        } catch (IOException e) {
+
+            throw new NetworkException(500, e.getMessage());
+
+        }
+
+    }
 
 
 
