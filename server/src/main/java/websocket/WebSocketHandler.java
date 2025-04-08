@@ -191,17 +191,17 @@ public class WebSocketHandler {
         if (conn.playerRole.equalsIgnoreCase("WHITE")
                 || conn.playerRole.equalsIgnoreCase("BLACK")) {
 
-            GameData updatedGame = game.joinGame(currGame.gameID(),null, conn.playerRole, currGame.gameName());
-
-            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, updatedGame.game());
-
-            connections.broadcast(authData.username(), cmd.getGameID(), msg);
-
             var message = String.format("Player %s has left the game", authData.username());
 
             ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
 
             connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
+
+            GameData updatedGame = game.joinGame(currGame.gameID(),null, conn.playerRole, currGame.gameName());
+
+            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, updatedGame.game());
+
+            connections.broadcast(authData.username(), cmd.getGameID(), msg);
 
             connections.remove(authData.username());
 

@@ -63,8 +63,6 @@ public class GameplayClient implements NotificationHandler {
 
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
 
-            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-
             return switch (cmd) {
 
                 case "help" -> help();
@@ -86,6 +84,9 @@ public class GameplayClient implements NotificationHandler {
 
             return "Error: invalid game number";
 
+        } catch (NetworkException e) {
+
+            return "Error: Could not leave game";
         }
     }
 
@@ -297,10 +298,11 @@ public class GameplayClient implements NotificationHandler {
     }
 
 
-    public String leave(){
+    public String leave() throws NetworkException {
 
+        ws.leaveGame(authToken, gameID);
 
-        return null;
+        return "You successfully left the game!";
     }
 
 
@@ -319,5 +321,7 @@ public class GameplayClient implements NotificationHandler {
         return null;
 
     }
+
+
 
 }

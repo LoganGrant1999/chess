@@ -87,6 +87,13 @@ public class Repl {
 
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
+                    if (Objects.equals(result, "You successfully left the game!")) {
+
+                        setState(State.POSTLOGIN);
+
+
+                    }
+
                 }
 
             } catch (Throwable e)  {
