@@ -19,33 +19,26 @@ public class WebSocketServerFacade extends Endpoint {
 
     public WebSocketServerFacade(String url, NotificationHandler notificationHandler) throws NetworkException {
 
-        try{
-
+        try {
             url = url.replace("http", "ws");
-
             URI socketURI = new URI(url + "/ws");
-
             this.notificationHandler = notificationHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-
             this.session = container.connectToServer(this, socketURI);
 
-            this.session.addMessageHandler(new MessageHandler.Whole<String>(){
 
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
-                public void onMessage(String s) {
-
-                    ServerMessage msg = new Gson().fromJson(s, ServerMessage.class);
-
+                public void onMessage(String message) {
+                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
                     try {
-                        notificationHandler.notify(msg);
+                        notificationHandler.notify(notification);
 
                     } catch (NetworkException e) {
 
                         throw new RuntimeException(e);
                     }
-
                 }
             });
 

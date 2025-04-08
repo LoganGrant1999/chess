@@ -3,6 +3,7 @@ package server;
 import dataaccess.*;
 import handlers.*;
 import spark.*;
+import websocket.WebSocketHandler;
 
 import static dataaccess.DatabaseManager.configureDatabase;
 
@@ -40,6 +41,8 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 
+        Spark.webSocket("/ws", new WebSocketHandler(authDAO, gameDAO));
+
         Spark.post("/user", new RegisterHandler(userDAO, authDAO));
         Spark.post("/session", new LoginHandler(userDAO, authDAO));
         Spark.delete("/session", new LogoutHandler(authDAO));
@@ -47,6 +50,8 @@ public class Server {
         Spark.get("/game", new ListGamesHandler(authDAO, gameDAO));
         Spark.put("/game", new JoinGameHandler(userDAO, authDAO, gameDAO));
         Spark.delete("/db", new ClearHandler(authDAO, gameDAO, userDAO));
+
+
 
         Spark.awaitInitialization();
         return Spark.port();
