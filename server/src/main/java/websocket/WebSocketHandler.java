@@ -188,7 +188,17 @@ public class WebSocketHandler {
 
         GameData currGame = game.getGame(cmd.getGameID());
 
-        if (conn.playerRole.equalsIgnoreCase("WHITE")
+        if (conn.playerRole == null) {
+            var message = String.format("Observer %s has left the game", authData.username());
+
+            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+
+            connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
+
+            connections.remove(authData.username());
+        }
+
+        else if (conn.playerRole.equalsIgnoreCase("WHITE")
                 || conn.playerRole.equalsIgnoreCase("BLACK")) {
 
             var message = String.format("Player %s has left the game", authData.username());
@@ -206,15 +216,7 @@ public class WebSocketHandler {
             connections.remove(authData.username());
 
         } else {
-
-            var message = String.format("Observer %s has left the game", authData.username());
-
-            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-
-            connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
-
-            connections.remove(authData.username());
-
+            throw new DataAccessException("Neither observer nor player");
         }
     }
 
