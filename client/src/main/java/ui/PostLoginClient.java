@@ -134,8 +134,6 @@ public class PostLoginClient {
 
             gameID = game.gameID();
 
-            new GameplayClient(serverUrl, authToken, gameID, playerColor);
-
             return String.format("You Are Observing the Game!" + "\n");
         }
 
@@ -167,7 +165,7 @@ public class PostLoginClient {
 
             server.joinGame(req, authToken);
 
-            return String.format("You Successfully Joined the Game" + "\n");
+            return String.format("You Successfully Joined the Game!" + "\n");
         }
 
         throw new NetworkException(400, "Expected: <ID> <WHITE|BLACK>");
@@ -213,7 +211,7 @@ public class PostLoginClient {
                 - Create <name>
                 - List
                 - Play <ID> <WHITE|BLACK>
-                - Observe
+                - Observe <ID>
                 - Logout
                 - Quit
                 """;

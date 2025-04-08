@@ -95,6 +95,8 @@ public class GameplayClient implements NotificationHandler {
 
         out.print(EscapeSequences.ERASE_SCREEN);
 
+        out.print("\n");
+
         ChessBoard board = game.getBoard();
 
         colorSquares(out, board);
@@ -259,9 +261,19 @@ public class GameplayClient implements NotificationHandler {
                     this.game = message.getGame();
 
                     drawBoard();
+
+                    System.out.print("\n>>> ");
                 }
-                case NOTIFICATION -> System.out.println(message.getMsg());
-                case ERROR -> System.out.print(message.getMsg());
+
+                case NOTIFICATION -> {
+                    System.out.println(message.getMsg());
+                    System.out.print("\n>>> ");
+                }
+
+                case ERROR -> {
+                    System.out.print(message.getMsg());
+                    System.out.print("\n>>> ");
+                }
             }
 
         } catch (Exception e) {
