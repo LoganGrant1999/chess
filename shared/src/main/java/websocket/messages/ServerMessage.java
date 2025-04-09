@@ -15,7 +15,9 @@ public class ServerMessage {
 
     ChessGame game;
 
-    String msg;
+    String message;
+
+    String errorMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -28,9 +30,18 @@ public class ServerMessage {
         this.game = game;
     }
 
-    public ServerMessage(ServerMessageType type, String msg) {
-        this.msg = msg;
+    public ServerMessage(ServerMessageType type, String message) {
+
         this.serverMessageType = type;
+
+        if (type == ServerMessageType.ERROR) {
+
+            this.errorMessage = message;
+
+        } else {
+
+            this.message = message;
+        }
     }
 
     public ServerMessage(ServerMessageType type) {
@@ -43,7 +54,7 @@ public class ServerMessage {
 
     public ChessGame getGame(){ return game;}
 
-    public String getMsg(){return msg;}
+    public String getMsg(){return message;}
 
     @Override
     public boolean equals(Object o) {

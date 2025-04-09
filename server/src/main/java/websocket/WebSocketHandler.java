@@ -8,6 +8,7 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import exceptions.InvalidCredentialsException;
+import exceptions.NetworkException;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -19,6 +20,7 @@ import websocket.messages.ServerMessage;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
@@ -27,6 +29,7 @@ public class WebSocketHandler {
     private final AuthDAO auth;
 
     private final GameDAO game;
+
 
     private final ConnectionManager connections = new ConnectionManager();
 
@@ -220,16 +223,18 @@ public class WebSocketHandler {
         }
     }
 
-    public void resign(UserGameCommand cmd) throws SQLException, DataAccessException, IOException {
+    public void resign(UserGameCommand cmd) throws SQLException, DataAccessException, IOException, NetworkException {
 
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
         GameData gameData = game.getGame(cmd.getGameID());
 
-        if (cmd.getPlayerColor() == null || gameData.game().gameOver()) {
+        if (!(Objects.equals(authData.username(), gameData.whiteUsername())
+                && !(Objects.equals(authData.username(), gameData.blackUsername())))) {
 
             throw new InvalidCredentialsException("Error: unauthorized");
         }
+
 
         ChessGame currGame = gameData.game();
 
@@ -239,17 +244,26 @@ public class WebSocketHandler {
 
         game.updateGame(cmd.getGameID(), gameData.game());
 
-        ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, currGame);
+        ChessGame.TeamColor opponent;
 
-        connections.broadcast(authData.username(), cmd.getGameID(), msg);
+        if (Objects.equals(authData.username(), gameData.whiteUsername())) {
 
-        ChessGame.TeamColor opponent = getOpponent(ChessGame.TeamColor.valueOf(cmd.getPlayerColor().toUpperCase()));
+            opponent = ChessGame.TeamColor.BLACK;
+
+        } else if (Objects.equals(authData.username(), gameData.blackUsername())){
+
+            opponent = ChessGame.TeamColor.WHITE;
+
+        } else {
+
+            throw new NetworkException(500, "Error: Observer can't resign");
+        }
 
         var message = String.format("%s has resigned from the game. %s wins!", authData.username(), opponent);
 
         ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
 
-        connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
+        connections.broadcast(null, cmd.getGameID(), displayMsg);
 
     }
 

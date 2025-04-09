@@ -69,7 +69,16 @@ public class GameplayClient implements NotificationHandler {
                 case "redraw" -> drawBoard();
                 case "leave" -> leave();
                 case "move" -> move();
-                case "resign" -> resign();
+                case "resign" -> {
+                    if (playerColor == null) {
+
+                        yield "Observers cannot resign!";
+
+                    } else {
+
+                        yield resign();
+                    }
+                }
                 case "highlight" -> highlight();
                 case "quit" -> "quit";
                 default -> "Command unknown. Type 'help' to see all valid commands";
@@ -283,7 +292,6 @@ public class GameplayClient implements NotificationHandler {
 
     }
 
-
     public String help(){
 
         return """
@@ -296,7 +304,6 @@ public class GameplayClient implements NotificationHandler {
             - Quit
             """;
     }
-
 
     public String leave() throws NetworkException {
 
@@ -312,8 +319,22 @@ public class GameplayClient implements NotificationHandler {
 
     }
 
-    public String resign(){
-        return null;
+    public String resign() throws NetworkException {
+
+        if (playerColor == null){
+
+            help();
+        }
+
+        return "Are you sure you would like to resign? [Y/N]";
+    }
+
+    public String resignFinal() throws NetworkException {
+
+        ws.resign(authToken, gameID, playerColor);
+
+        return "You have resigned from the game. You lose!";
+
     }
 
     public String highlight(){

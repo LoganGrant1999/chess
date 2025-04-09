@@ -1,8 +1,9 @@
 import chess.*;
+import exceptions.NetworkException;
 import ui.Repl;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NetworkException {
 
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
 
