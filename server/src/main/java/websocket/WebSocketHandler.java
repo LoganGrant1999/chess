@@ -136,7 +136,7 @@ public class WebSocketHandler {
 
         gameData.game().makeMove(cmd.getMove());
 
-        gameDAO.updateGame(cmd.getGameID(), gameData.game());
+        gameDAO.updateGame(cmd.getGameID(), gameData);
 
         ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
 
@@ -157,7 +157,7 @@ public class WebSocketHandler {
 
             gameData.game().setGameIsOver();
 
-            gameDAO.updateGame(cmd.getGameID(), gameData.game());
+            gameDAO.updateGame(cmd.getGameID(), gameData);
 
             var checkMsg = String.format("%s is in checkmate!", opponent);
 
@@ -178,7 +178,7 @@ public class WebSocketHandler {
 
             gameData.game().setGameIsOver();
 
-            gameDAO.updateGame(cmd.getGameID(), gameData.game());
+            gameDAO.updateGame(cmd.getGameID(), gameData);
 
             var checkMsg = String.format("%s is in stalemate!", opponent);
 
@@ -216,7 +216,22 @@ public class WebSocketHandler {
 
             connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
 
-            GameData updatedGame = gameDAO.joinGame(currGame.gameID(), null, conn.playerRole, currGame.gameName());
+            if (authData.username().equals(currGame.whiteUsername())) {
+
+                GameData updatedGame = new GameData(currGame.gameID(),null,
+                        currGame.blackUsername(), currGame.gameName(), currGame.game());
+
+                gameDAO.updateGame(updatedGame.gameID(), updatedGame);
+
+            } else if(authData.username().equals(currGame.blackUsername())){
+
+                GameData updatedGame = new GameData(currGame.gameID(), currGame.whiteUsername(),
+                        null, currGame.gameName(), currGame.game());
+
+                gameDAO.updateGame(updatedGame.gameID(), updatedGame);
+
+            }
+
 
             connections.remove(authData.username());
 
@@ -248,7 +263,7 @@ public class WebSocketHandler {
 
         currGame.setGameIsOver();
 
-        gameDAO.updateGame(cmd.getGameID(), gameData.game());
+        gameDAO.updateGame(cmd.getGameID(), gameData);
 
         ChessGame.TeamColor opponent;
 

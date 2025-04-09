@@ -3,7 +3,7 @@ import dataaccess.DataAccessException;
 
 import server.Server;
 
-public class Main {
+public class ServerMain {
 
     // method runs the server on localhost:8080
 

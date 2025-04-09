@@ -69,13 +69,13 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
+    public void updateGame(int gameID, GameData gameData) throws DataAccessException {
 
-        var statement = "UPDATE game SET chessGame=? WHERE gameID=?";
+        var statement = "UPDATE game SET whiteUsername=?, blackUsername=?, gameName=?, chessGame=? WHERE gameID=?";
 
-        var json = new Gson().toJson(game);
+        var json = new Gson().toJson(gameData.game());
 
-        executeUpdate(statement, json, gameID);
+        executeUpdate(statement, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), json, gameID);
 
     }
 
@@ -216,6 +216,7 @@ public class MySqlGameDAO implements GameDAO {
 
         }
     }
+
 
     //method designed to truncate the game table
     @Override

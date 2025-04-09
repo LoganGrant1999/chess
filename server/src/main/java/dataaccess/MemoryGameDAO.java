@@ -25,8 +25,9 @@ public class MemoryGameDAO implements GameDAO{
         this.db = new HashMap<>();
     }
 
+
     @Override
-    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
+    public void updateGame(int gameID, GameData gameData) throws DataAccessException {
 
     }
 
