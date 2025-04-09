@@ -108,16 +108,22 @@ public class WebSocketHandler {
 
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
-        if (cmd.getPlayerColor() == null || cmd.getMove() == null) {
-
-            throw new InvalidCredentialsException("Error: unauthorized");
-        }
-
         ChessGame currGame = games.get(cmd.getGameID());
 
         if (currGame.gameOver()) {
+            String message = String.format("%s attempted a move, but the game is already over.", authData.username());
 
-            throw new InvalidMoveException("Error: Game Over");
+            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+
+            connections.broadcast(null, cmd.getGameID(), displayMsg);
+
+            return;
+        }
+
+
+        if (cmd.getPlayerColor() == null || cmd.getMove() == null) {
+
+            throw new InvalidCredentialsException("Error: unauthorized");
         }
 
         ChessBoard board = currGame.getBoard();
@@ -192,6 +198,7 @@ public class WebSocketHandler {
         GameData currGame = game.getGame(cmd.getGameID());
 
         if (conn.playerRole == null) {
+
             var message = String.format("Observer %s has left the game", authData.username());
 
             ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
@@ -223,20 +230,26 @@ public class WebSocketHandler {
         }
     }
 
-    public void resign(UserGameCommand cmd) throws SQLException, DataAccessException, IOException, NetworkException {
+    public void resign(UserGameCommand cmd) throws SQLException, DataAccessException, IOException, NetworkException, InvalidMoveException {
 
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
         GameData gameData = game.getGame(cmd.getGameID());
 
-        if (!(Objects.equals(authData.username(), gameData.whiteUsername())
-                && !(Objects.equals(authData.username(), gameData.blackUsername())))) {
+        if (!Objects.equals(authData.username(), gameData.whiteUsername()) &&
+                !Objects.equals(authData.username(), gameData.blackUsername())) {
 
             throw new InvalidCredentialsException("Error: unauthorized");
         }
 
 
         ChessGame currGame = gameData.game();
+
+        if (currGame.gameOver()) {
+
+            throw new InvalidMoveException("Error: Game already over");
+
+        }
 
         currGame.resign();
 
