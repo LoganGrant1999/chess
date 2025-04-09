@@ -1,7 +1,5 @@
 package chess;
 
-import chess.piecemoves.PieceMovesCalculator;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,7 +14,6 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor teamTurn;
-    private boolean resigned = false;
     public boolean gameIsOver = false;
 
     public ChessGame() {
@@ -262,10 +259,6 @@ public class ChessGame {
         return board;
     }
 
-    public void resign() {
-
-        resigned = true;
-    }
 
     public void setGameIsOver() {
 
@@ -274,8 +267,7 @@ public class ChessGame {
 
     public boolean gameOver() {
 
-        return isInCheckmate(TeamColor.WHITE) || isInStalemate(TeamColor.WHITE)
-                || isInCheckmate(TeamColor.BLACK) || isInStalemate(TeamColor.BLACK) || resigned;
+        return gameIsOver;
     }
 
     // Override methods to ensure no equals or hashCode issues and to improve debugging

@@ -232,7 +232,6 @@ public class WebSocketHandler {
 
             }
 
-
             connections.remove(authData.username());
 
         }
@@ -243,23 +242,19 @@ public class WebSocketHandler {
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
         GameData gameData = gameDAO.getGame(cmd.getGameID());
+        ChessGame currGame = gameData.game();
+
+
+        if (currGame.gameOver()) {
+
+            throw new InvalidMoveException("Error: Game already over");
+        }
 
         if (!Objects.equals(authData.username(), gameData.whiteUsername()) &&
                 !Objects.equals(authData.username(), gameData.blackUsername())) {
 
             throw new InvalidCredentialsException("Error: unauthorized");
         }
-
-
-        ChessGame currGame = gameData.game();
-
-        if (currGame.gameOver()) {
-
-            throw new InvalidMoveException("Error: Game already over");
-
-        }
-
-        currGame.resign();
 
         currGame.setGameIsOver();
 

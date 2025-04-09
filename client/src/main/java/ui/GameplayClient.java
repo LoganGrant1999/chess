@@ -27,7 +27,10 @@ public class GameplayClient implements NotificationHandler {
 
     private final String authToken;
 
+    private boolean gameOver = false;
+
     private final int gameID;
+
 
     private final String playerColor;
 
@@ -73,6 +76,10 @@ public class GameplayClient implements NotificationHandler {
                     if (playerColor == null) {
 
                         yield "Observers cannot resign!";
+
+                    } else if (gameOver){
+
+                        yield "Game is Already Over";
 
                     } else {
 
@@ -277,7 +284,15 @@ public class GameplayClient implements NotificationHandler {
 
                 case NOTIFICATION -> {
                     System.out.println(message.getMsg());
+
+                    if (message.getMsg().contains("has resigned") || message.getMsg().contains("wins") ||
+                            message.getMsg().contains("checkmate") || message.getMsg().contains("stalemate")) {
+
+                        gameOver = true;
+                    }
+
                     System.out.print("\n>>> ");
+
                 }
 
                 case ERROR -> {
@@ -309,7 +324,7 @@ public class GameplayClient implements NotificationHandler {
 
         ws.leaveGame(authToken, gameID);
 
-        return "You successfully left the game!";
+        return "You successfully left the game! \n";
     }
 
 
@@ -331,9 +346,14 @@ public class GameplayClient implements NotificationHandler {
 
     public String resignFinal() throws NetworkException {
 
+        if (gameOver) {
+
+            return "Game is already over";
+        }
+
         ws.resign(authToken, gameID, playerColor);
 
-        return "You have resigned from the game. You lose!";
+        return "Resignation successful \n";
 
     }
 

@@ -35,9 +35,9 @@ public class Repl {
 
         Scanner scanner = new Scanner(System.in);
 
-        var result = "";
+        String result = "";
 
-        while (!result.equals("quit")) {
+        while (!"quit".equals(result)) {
 
             printPrompt();
 
@@ -76,14 +76,12 @@ public class Repl {
                     if (Objects.equals(result, "You Successfully Joined the Game!" + "\n")
                             || Objects.equals(result, ("You Are Observing the Game!" + "\n"))) {
 
-
                         gamePlay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
 
                                 postLogin.getGameID(), postLogin.getPlayerColor());
 
                         setState(State.GAMEPLAY);
 
-                        printPrompt();
                     }
 
                 } else if (state == State.GAMEPLAY) {
@@ -131,7 +129,7 @@ public class Repl {
                             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
                         }
 
-                        if (Objects.equals(result, "You successfully left the game!")) {
+                        if (Objects.equals(result, "You successfully left the game! \n")) {
 
                             setState(State.POSTLOGIN);
                         }
