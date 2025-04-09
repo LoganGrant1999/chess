@@ -19,25 +19,20 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
 public class WebSocketHandler {
 
-    private final AuthDAO auth;
+    private final AuthDAO authDAO;
 
-    private final GameDAO game;
-
+    private final GameDAO gameDAO;
 
     private final ConnectionManager connections = new ConnectionManager();
 
-    private final Map<Integer, ChessGame> games = new ConcurrentHashMap<>();
-
     public WebSocketHandler(AuthDAO auth, GameDAO game) {
-        this.auth = auth;
-        this.game = game;
+        this.authDAO = auth;
+        this.gameDAO = game;
     }
 
     @OnWebSocketMessage
@@ -45,12 +40,12 @@ public class WebSocketHandler {
 
         UserGameCommand cmd = new Gson().fromJson(message, UserGameCommand.class);
 
-        try{
+        try {
 
             switch (cmd.getCommandType()) {
 
                 case CONNECT -> connect(cmd, session);
-                case MAKE_MOVE -> makeMove(cmd);
+                case MAKE_MOVE -> makeMove(cmd, session);
                 case LEAVE -> leave(cmd);
                 case RESIGN -> resign(cmd);
             }
@@ -72,19 +67,13 @@ public class WebSocketHandler {
 
         validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
-        AuthData authData = auth.getAuth(cmd.getAuthToken());
+        AuthData authData = authDAO.getAuth(cmd.getAuthToken());
 
-        GameData gameData = game.getGame(cmd.getGameID());
-
-        if (!games.containsKey(cmd.getGameID())) {
-
-            games.put(cmd.getGameID(), new ChessGame());
-
-        }
+        GameData gameData = gameDAO.getGame(cmd.getGameID());
 
         connections.add(authData.username(), cmd.getPlayerColor(), cmd.getGameID(), gameData.gameName(), session);
 
-        ChessGame currGame = games.get(cmd.getGameID());
+        ChessGame currGame = gameData.game();
 
         ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, currGame);
 
@@ -103,43 +92,53 @@ public class WebSocketHandler {
     }
 
 
-    public void makeMove(UserGameCommand cmd)
+    public void makeMove(UserGameCommand cmd, Session session)
             throws SQLException, DataAccessException, InvalidMoveException, IOException {
 
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
-        ChessGame currGame = games.get(cmd.getGameID());
+        int gameID = cmd.getGameID();
 
-        if (currGame.gameOver()) {
+        GameData gameData = gameDAO.getGame(gameID);
+
+        String userName = authData.username();
+
+        ChessGame.TeamColor currColor = gameData.game().getTeamTurn();
+
+
+        if (gameData.game().gameOver()) {
+
             String message = String.format("%s attempted a move, but the game is already over.", authData.username());
 
-            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.ERROR, message);
 
-            connections.broadcast(null, cmd.getGameID(), displayMsg);
+            String jsonMsg = new Gson().toJson(displayMsg);
+
+            session.getRemote().sendString(jsonMsg);
 
             return;
         }
 
-
-        if (cmd.getPlayerColor() == null || cmd.getMove() == null) {
-
-            throw new InvalidCredentialsException("Error: unauthorized");
-        }
-
-        ChessBoard board = currGame.getBoard();
-
-        ChessGame.TeamColor currColor = currGame.getTeamTurn();
-
-        if (!(ChessGame.TeamColor.valueOf(cmd.getPlayerColor().toUpperCase()) == currColor)) {
+        if (cmd.getMove() == null) {
 
             throw new InvalidCredentialsException("Error: unauthorized");
         }
 
-        currGame.makeMove(cmd.getMove());
+        ChessBoard board = gameData.game().getBoard();
 
-        game.updateGame(cmd.getGameID(), currGame);
+        if (currColor == ChessGame.TeamColor.WHITE && !userName.equals(gameData.whiteUsername())) {
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
 
-        ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, currGame);
+        if (currColor == ChessGame.TeamColor.BLACK && !userName.equals(gameData.blackUsername())) {
+            throw new InvalidCredentialsException("Error: unauthorized");
+        }
+
+        gameData.game().makeMove(cmd.getMove());
+
+        gameDAO.updateGame(cmd.getGameID(), gameData.game());
+
+        ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
 
         connections.broadcast(null, cmd.getGameID(), msg);
 
@@ -153,11 +152,12 @@ public class WebSocketHandler {
 
         ChessGame.TeamColor opponent = getOpponent(currColor);
 
-        if (currGame.isInCheckmate(opponent)) {
 
-            currGame.setGameIsOver();
+        if (gameData.game().isInCheckmate(opponent)) {
 
-            game.updateGame(cmd.getGameID(), currGame);
+            gameData.game().setGameIsOver();
+
+            gameDAO.updateGame(cmd.getGameID(), gameData.game());
 
             var checkMsg = String.format("%s is in checkmate!", opponent);
 
@@ -166,7 +166,7 @@ public class WebSocketHandler {
             connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
 
 
-        } else if (currGame.isInCheck(opponent)) {
+        } else if (gameData.game().isInCheck(opponent)) {
 
             var checkMsg = String.format("%s is in check!", opponent);
 
@@ -174,11 +174,11 @@ public class WebSocketHandler {
 
             connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
 
-        } else if (currGame.isInStalemate(opponent)) {
+        } else if (gameData.game().isInStalemate(opponent)) {
 
-            currGame.setGameIsOver();
+            gameData.game().setGameIsOver();
 
-            game.updateGame(cmd.getGameID(), currGame);
+            gameDAO.updateGame(cmd.getGameID(), gameData.game());
 
             var checkMsg = String.format("%s is in stalemate!", opponent);
 
@@ -195,9 +195,10 @@ public class WebSocketHandler {
 
         Connection conn = connections.getConnection(authData.username());
 
-        GameData currGame = game.getGame(cmd.getGameID());
+        GameData currGame = gameDAO.getGame(cmd.getGameID());
 
-        if (conn.playerRole == null) {
+        // Check if it is an observer
+        if (!authData.username().equals(currGame.whiteUsername()) && !authData.username().equals(currGame.blackUsername())) {
 
             var message = String.format("Observer %s has left the game", authData.username());
 
@@ -206,10 +207,8 @@ public class WebSocketHandler {
             connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
 
             connections.remove(authData.username());
-        }
 
-        else if (conn.playerRole.equalsIgnoreCase("WHITE")
-                || conn.playerRole.equalsIgnoreCase("BLACK")) {
+        } else {
 
             var message = String.format("Player %s has left the game", authData.username());
 
@@ -217,16 +216,10 @@ public class WebSocketHandler {
 
             connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
 
-            GameData updatedGame = game.joinGame(currGame.gameID(),null, conn.playerRole, currGame.gameName());
-
-            ServerMessage msg = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, updatedGame.game());
-
-            connections.broadcast(authData.username(), cmd.getGameID(), msg);
+            GameData updatedGame = gameDAO.joinGame(currGame.gameID(), null, conn.playerRole, currGame.gameName());
 
             connections.remove(authData.username());
 
-        } else {
-            throw new DataAccessException("Neither observer nor player");
         }
     }
 
@@ -234,7 +227,7 @@ public class WebSocketHandler {
 
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
 
-        GameData gameData = game.getGame(cmd.getGameID());
+        GameData gameData = gameDAO.getGame(cmd.getGameID());
 
         if (!Objects.equals(authData.username(), gameData.whiteUsername()) &&
                 !Objects.equals(authData.username(), gameData.blackUsername())) {
@@ -255,7 +248,7 @@ public class WebSocketHandler {
 
         currGame.setGameIsOver();
 
-        game.updateGame(cmd.getGameID(), gameData.game());
+        gameDAO.updateGame(cmd.getGameID(), gameData.game());
 
         ChessGame.TeamColor opponent;
 
@@ -263,7 +256,7 @@ public class WebSocketHandler {
 
             opponent = ChessGame.TeamColor.BLACK;
 
-        } else if (Objects.equals(authData.username(), gameData.blackUsername())){
+        } else if (Objects.equals(authData.username(), gameData.blackUsername())) {
 
             opponent = ChessGame.TeamColor.WHITE;
 
@@ -283,9 +276,9 @@ public class WebSocketHandler {
 
     public AuthData validateAuthAndGame(String authToken, int gameID) throws SQLException, DataAccessException {
 
-        AuthData authData = auth.getAuth(authToken);
+        AuthData authData = authDAO.getAuth(authToken);
 
-        GameData gameData = game.getGame(gameID);
+        GameData gameData = gameDAO.getGame(gameID);
 
         if (authData == null || gameData == null) {
 
