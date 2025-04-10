@@ -326,6 +326,7 @@ public class GameplayClient implements NotificationHandler {
             throw new NetworkException(500, "Observers can't make moves!");
         }
 
+
         if (!(params.length == 2 || params.length == 3)) {
 
             throw new NetworkException(500, "Please enter <startPos> <endPos> and optional promotion");
