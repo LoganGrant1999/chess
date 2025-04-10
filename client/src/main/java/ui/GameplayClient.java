@@ -8,10 +8,7 @@ import websocket.messages.ServerMessage;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
@@ -24,8 +21,10 @@ public class GameplayClient implements NotificationHandler {
     private final String authToken;
     private boolean gameOver = false;
     private final int gameID;
-    private final String playerColor;
     private WebSocketServerFacade ws;
+    private ChessGame.TeamColor teamColor;
+    private String playerColor;
+
 
     public GameplayClient(String serverUrl, String authToken, int gameID, String playerColor) throws NetworkException {
         this.ws = new WebSocketServerFacade(serverUrl, this );
@@ -36,13 +35,24 @@ public class GameplayClient implements NotificationHandler {
 
         ws.connectToGame(authToken, gameID, playerColor);
 
-        if (playerColor != null) {
+        if (playerColor != null && playerColor.equalsIgnoreCase("WHITE")) {
 
-            this.playerColor = playerColor.toUpperCase();
+            teamColor = WHITE;
+
+            this.playerColor = "WHITE";
+
+        } else if (playerColor != null && playerColor.equalsIgnoreCase("BLACK")){
+
+            this.playerColor = "BLACK";
+
+            teamColor = BLACK;
 
         } else {
 
-        this.playerColor = playerColor;
+        teamColor = null;
+
+        this.playerColor = null;
+
         }
     }
 
@@ -63,7 +73,7 @@ public class GameplayClient implements NotificationHandler {
                 case "move" -> move(params);
                 case "resign" -> {
 
-                    if (playerColor == null) {
+                    if (teamColor == null) {
 
                         yield "Observers cannot resign!";
 
@@ -92,7 +102,7 @@ public class GameplayClient implements NotificationHandler {
 
         } catch (NetworkException e) {
 
-            return "Error: Could not leave game";
+            return "Error:" + e.getMessage();
         }
     }
 
@@ -183,7 +193,7 @@ public class GameplayClient implements NotificationHandler {
 
         ChessPiece[][] boardDisplay = board.getBoard();
 
-        if (Objects.equals(playerColor, "WHITE") || playerColor == null) {
+        if (Objects.equals(teamColor, WHITE) || teamColor == null) {
 
             out.print(EMPTY);
 
@@ -207,7 +217,7 @@ public class GameplayClient implements NotificationHandler {
 
                 out.println();
             }
-        } else if (Objects.equals(playerColor, "BLACK")) {
+        } else if (Objects.equals(teamColor, BLACK)) {
 
             out.print(EMPTY);
 
@@ -304,10 +314,14 @@ public class GameplayClient implements NotificationHandler {
     }
 
 
-
     public String move(String ... params) throws NetworkException {
 
-        if (playerColor == null){
+        if (gameOver) {
+
+            return "Game is already over";
+        }
+
+        if (teamColor == null){
 
             throw new NetworkException(500, "Observers can't make moves!");
         }
@@ -316,6 +330,8 @@ public class GameplayClient implements NotificationHandler {
 
             throw new NetworkException(500, "Please enter <startPos> <endPos> and optional promotion");
         }
+
+
         String startPos = params[0];
         String endPos = params[1];
 
@@ -323,14 +339,23 @@ public class GameplayClient implements NotificationHandler {
         Integer[] validNums = {1, 2, 3, 4, 5, 6, 7, 8};
 
         ArrayList<String> letters = new ArrayList<>(Arrays.asList(validLetters));
-        List<Integer> numbers = new ArrayList<>(Arrays.asList(validNums));
-        String promotion = null;
-        ChessPiece.PieceType finalPromotion = null;
 
+        List<Integer> numbers = new ArrayList<>(Arrays.asList(validNums));
+
+        String promotion = null;
+
+        ChessPiece.PieceType finalPromotion = null;
 
         if (params.length == 3){
 
             promotion = params[2];
+        }
+
+
+        if (game.getTeamTurn() != teamColor){
+
+            throw new NetworkException(500, "Not Your turn!");
+
         }
 
         if (!(startPos.length() == 2 && endPos.length() == 2)){
@@ -362,14 +387,40 @@ public class GameplayClient implements NotificationHandler {
 
         ChessMove move = lettersToNums(startPos, endPos, finalPromotion);
 
+        ChessBoard board = game.getBoard();
+
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+
+        if (piece == null){
+
+            throw new NetworkException(500, "No Piece at this position");
+        }
+
+        if (piece.getTeamColor() != teamColor){
+
+            throw new NetworkException(500, "Can't move opponent's piece");
+        }
+
+        Collection<ChessMove> moves = game.validMoves(move.getStartPosition());
+
+        if (!moves.contains(move)) {
+
+            throw new NetworkException(500, "Not a valid move");
+        }
+
         ws.makeMove(authToken, gameID, playerColor, move);
 
-        return "Move Successful \n";
-
+        return "";
     }
 
     public String resign() throws NetworkException {
-        if (playerColor == null){
+
+        if (gameOver) {
+
+            return "Game is already over";
+        }
+
+        if (teamColor == null){
 
             help();
         }
@@ -378,15 +429,10 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public String resignFinal() throws NetworkException {
-        if (gameOver) {
-
-            return "Game is already over";
-        }
 
         ws.resign(authToken, gameID, playerColor);
 
         return "Resignation successful \n";
-
     }
 
     public ChessMove lettersToNums(String startPos, String endPos, ChessPiece.PieceType promotion)
@@ -404,7 +450,6 @@ public class GameplayClient implements NotificationHandler {
         ChessPosition moveEndPos = new ChessPosition(endRow, getColNum(endCol));
 
         return new ChessMove(moveStartPos, moveEndPos, promotion);
-
     }
 
     public int getColNum(String letter) throws NetworkException {
@@ -424,7 +469,5 @@ public class GameplayClient implements NotificationHandler {
     public String highlight(){
 
         return null;
-
     }
-
 }

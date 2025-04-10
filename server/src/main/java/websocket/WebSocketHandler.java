@@ -130,15 +130,11 @@ public class WebSocketHandler {
             throw new InvalidCredentialsException("Error: unauthorized");
         }
 
-
         ChessMove move = cmd.getMove();
 
         ChessPosition start = move.getStartPosition();
 
         ChessPosition end = move.getEndPosition();
-
-        System.out.println("Server received move from " + start + " to " + end);
-        System.out.println("Piece at start: " + board.getPiece(start));
 
         gameData.game().makeMove(cmd.getMove());
 
@@ -158,7 +154,6 @@ public class WebSocketHandler {
         connections.broadcast(authData.username(), cmd.getGameID(), displayMsg);
 
         ChessGame.TeamColor opponent = getOpponent(currColor);
-
 
         if (gameData.game().isInCheckmate(opponent)) {
 
