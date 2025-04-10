@@ -79,7 +79,15 @@ public class WebSocketHandler {
 
         session.getRemote().sendString(jsonMsg);
 
-        String playerRole = (cmd.getPlayerColor() == null) ? "observer" : cmd.getPlayerColor();
+        String playerRole;
+        if (cmd.getPlayerColor() == null) {
+
+            playerRole = "observer";
+
+        } else {
+
+            playerRole = cmd.getPlayerColor();
+        }
 
         var message = String.format("%s joined game: %s as %s", authData.username(), gameData.gameName(), playerRole);
 
@@ -100,7 +108,6 @@ public class WebSocketHandler {
         String userName = authData.username();
 
         ChessGame.TeamColor currColor = gameData.game().getTeamTurn();
-
 
         if (gameData.game().gameOver()) {
 
@@ -146,8 +153,7 @@ public class WebSocketHandler {
 
         var message = String.format("%s moved %s from %s to %s!", authData.username(),
                 getPieceName(board.getPiece(cmd.getMove().getEndPosition()))
-                , convertPos(start),
-                convertPos(end));
+                , convertPos(start), convertPos(end));
 
         ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
 
@@ -166,7 +172,6 @@ public class WebSocketHandler {
             ServerMessage displayCheckMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkMsg);
 
             connections.broadcast(null, cmd.getGameID(), displayCheckMsg);
-
 
         } else if (gameData.game().isInCheck(opponent)) {
 
@@ -194,8 +199,6 @@ public class WebSocketHandler {
     public void leave(UserGameCommand cmd) throws SQLException, DataAccessException, IOException {
 
         AuthData authData = validateAuthAndGame(cmd.getAuthToken(), cmd.getGameID());
-
-        Connection conn = connections.getConnection(authData.username());
 
         GameData currGame = gameDAO.getGame(cmd.getGameID());
 

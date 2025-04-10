@@ -24,33 +24,25 @@ public class Repl {
         this.serverUrl = serverUrl;
 
         preLogin = new PreLoginClient(serverUrl);
-
     }
 
     public void run() throws NetworkException {
 
         System.out.println(EscapeSequences.WHITE_KNIGHT + "Welcome to Chess. Sign in to start.");
-
         System.out.print(preLogin.help());
-
         Scanner scanner = new Scanner(System.in);
-
         String result = "";
 
         while (!"quit".equals(result)) {
 
             printPrompt();
-
             String line = scanner.nextLine();
 
             try {
-
                 if (state == State.PRELOGIN) {
 
                     preLogin.setAuthTokenNull();
-
                     result = preLogin.eval(line);
-
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
                     if (preLogin.getAuthToken() != null) {
@@ -63,9 +55,7 @@ public class Repl {
                 } else if (state == State.POSTLOGIN) {
 
                     postLogin.setPlayerColorNull();
-
                     result = postLogin.eval(line);
-
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
                     if (Objects.equals(result, "Successfully Logged out!")) {
@@ -77,39 +67,30 @@ public class Repl {
                             || Objects.equals(result, ("You Are Observing the Game!" + "\n"))) {
 
                         gamePlay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
-
                                 postLogin.getGameID(), postLogin.getPlayerColor());
 
                         setState(State.GAMEPLAY);
-
                     }
 
                 } else if (state == State.GAMEPLAY) {
-
                     if (waiting) {
 
                         if (line.equalsIgnoreCase("y")) {
 
                             result = gamePlay.resignFinal();
-
                             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-
                             waiting = false;
 
                         } else if (line.equalsIgnoreCase("n")) {
 
                             result = "Cancelled Resignation!";
-
                             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-
                             waiting = false;
 
                         } else {
 
                             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "Please Enter Y or N");
-
                             result = gamePlay.resign();
-
                             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
 
                         }
@@ -117,7 +98,6 @@ public class Repl {
                     } else {
 
                         result = gamePlay.eval(line);
-
                         if (Objects.equals(result, "Are you sure you would like to resign? [Y/N]")) {
 
                             waiting = true;
@@ -135,10 +115,7 @@ public class Repl {
                         }
                     }
                 }
-
-
             } catch (Exception e) {
-
                 throw new NetworkException(500, e.getMessage());
             }
         }
