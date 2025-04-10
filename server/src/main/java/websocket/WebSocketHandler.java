@@ -316,7 +316,9 @@ public class WebSocketHandler {
     }
 
     private String getPieceName(ChessPiece piece) {
-        if (piece == null) return "Empty Space";
+        if (piece == null) {
+            return "Empty Space";
+        }
 
         return switch (piece.getPieceType()) {
             case PAWN -> "Pawn";
