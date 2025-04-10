@@ -248,7 +248,6 @@ public class GameplayClient implements NotificationHandler {
                 ChessPosition currPos = new ChessPosition(x + 1, y + 1);
 
                 if (squaresToHighlight != null && squaresToHighlight.contains(currPos)){
-
                     out.print(EscapeSequences.SET_BG_COLOR_GREEN);
                 }
 
@@ -257,11 +256,9 @@ public class GameplayClient implements NotificationHandler {
             } else {
 
                 out.print(EscapeSequences.SET_BG_COLOR_WHITE);
-
                 ChessPosition currPos = new ChessPosition(x + 1, y + 1);
 
                 if (squaresToHighlight != null && squaresToHighlight.contains(currPos)){
-
                     out.print(EscapeSequences.SET_BG_COLOR_GREEN);
                 }
 
@@ -277,9 +274,7 @@ public class GameplayClient implements NotificationHandler {
                 case LOAD_GAME -> {
 
                     this.game = message.getGame();
-
                     drawBoard(null);
-
                     System.out.print("\n>>> ");
                 }
                 case NOTIFICATION -> {
@@ -450,16 +445,23 @@ public class GameplayClient implements NotificationHandler {
             throw new NetworkException(500, "Please enter piece position (e.i. a3)");
         }
 
+
         String position = params[0];
         confirmPosInput(position);
         int row = Character.getNumericValue(position.charAt(1));
         String col = String.valueOf(position.charAt(0));
         int colNumb = getColNum(col.toUpperCase());
-
         ChessPosition pos = new ChessPosition(row, colNumb);
+        ChessBoard board = game.getBoard();
+        ChessPiece currPiece = board.getPiece(pos);
+
+        if (currPiece == null) {
+
+            throw new NetworkException(500, "There's no piece at this location!");
+        }
+
         Collection<ChessMove> moves = game.validMoves(pos);
         ArrayList<ChessPosition> squaresToHighlight = new ArrayList<>();
-
         squaresToHighlight.add(pos);
 
         for (ChessMove move : moves) {
