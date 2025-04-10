@@ -86,16 +86,7 @@ public class WebSocketHandler {
         ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
 
         connections.broadcast(authData.username(), gameData.gameID(), displayMsg);
-
-        System.out.println("CONNECT CALLED:");
-        System.out.println("Token user: " + authData.username());
-        System.out.println("Requested color: " + cmd.getPlayerColor());
-        System.out.println("Game white user: " + gameData.whiteUsername());
-        System.out.println("Game black user: " + gameData.blackUsername());
-
-
     }
-
 
     public void makeMove(UserGameCommand cmd, Session session)
             throws SQLException, DataAccessException, InvalidMoveException, IOException {
@@ -109,13 +100,6 @@ public class WebSocketHandler {
         String userName = authData.username();
 
         ChessGame.TeamColor currColor = gameData.game().getTeamTurn();
-
-        System.out.println("User attempting move: " + authData.username());
-        System.out.println("Game white: " + gameData.whiteUsername());
-        System.out.println("Game black: " + gameData.blackUsername());
-        System.out.println("Turn: " + currColor);
-        System.out.println("[DEBUG] Received move from playerColor: " + cmd.getPlayerColor());
-        System.out.println("[DEBUG] Server thinks it's " + gameData.game().getTeamTurn() + "'s turn");
 
 
         if (gameData.game().gameOver()) {
@@ -165,8 +149,9 @@ public class WebSocketHandler {
         connections.broadcast(null, cmd.getGameID(), msg);
 
         var message = String.format("%s moved %s from %s to %s!", authData.username(),
-                board.getPiece(cmd.getMove().getEndPosition()), cmd.getMove().getStartPosition(),
-                cmd.getMove().getEndPosition());
+                getPieceName(board.getPiece(cmd.getMove().getEndPosition()))
+                , convertPos(start),
+                convertPos(end));
 
         ServerMessage displayMsg = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
 
@@ -332,5 +317,37 @@ public class WebSocketHandler {
         }
     }
 
+    private String getPieceName(ChessPiece piece) {
+        if (piece == null) return "Empty Space";
 
+        return switch (piece.getPieceType()) {
+            case PAWN -> "Pawn";
+            case ROOK -> "Rook";
+            case KNIGHT -> "Knight";
+            case BISHOP -> "Bishop";
+            case QUEEN -> "Queen";
+            case KING -> "King";
+        };
+    }
+
+    private String convertPos(ChessPosition pos){
+
+        String finalCol = null;
+
+        int col = pos.getColumn();
+
+        switch(col){
+
+            case 1 -> finalCol = "A";
+            case 2 -> finalCol = "B";
+            case 3 -> finalCol = "C";
+            case 4 -> finalCol = "D";
+            case 5 -> finalCol = "E";
+            case 6 -> finalCol = "F";
+            case 7 -> finalCol = "G";
+            case 8 -> finalCol = "H";
+        }
+
+        return finalCol + pos.getRow();
+    }
 }
