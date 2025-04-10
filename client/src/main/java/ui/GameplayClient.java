@@ -1,8 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 import exceptions.NetworkException;
 import server.NotificationHandler;
 import server.WebSocketServerFacade;
@@ -12,39 +10,31 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 import static chess.ChessPiece.PieceType.*;
 
-
 public class GameplayClient implements NotificationHandler {
 
     private ChessGame game;
-
     private static final String EMPTY = "   ";
-
     private final String authToken;
-
     private boolean gameOver = false;
-
     private final int gameID;
-
-
     private final String playerColor;
-
     private WebSocketServerFacade ws;
 
     public GameplayClient(String serverUrl, String authToken, int gameID, String playerColor) throws NetworkException {
-
         this.ws = new WebSocketServerFacade(serverUrl, this );
-
-        ws.connectToGame(authToken, gameID, playerColor);
 
         this.authToken = authToken;
 
         this.gameID = gameID;
+
+        ws.connectToGame(authToken, gameID, playerColor);
 
         if (playerColor != null) {
 
@@ -53,26 +43,26 @@ public class GameplayClient implements NotificationHandler {
         } else {
 
         this.playerColor = playerColor;
-
         }
-
     }
 
     public String eval(String input) {
-
         try {
 
             var tokens = input.toLowerCase().split(" ");
 
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
 
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+
             return switch (cmd) {
 
                 case "help" -> help();
                 case "redraw" -> drawBoard();
                 case "leave" -> leave();
-                case "move" -> move();
+                case "move" -> move(params);
                 case "resign" -> {
+
                     if (playerColor == null) {
 
                         yield "Observers cannot resign!";
@@ -107,7 +97,6 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public String drawBoard() {
-
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(EscapeSequences.ERASE_SCREEN);
@@ -122,7 +111,6 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public void printPieces(PrintStream out, ChessPiece[][] board,  int x, int y) {
-
         ChessPiece piece = board[x][y];
 
         if (piece == null){
@@ -187,7 +175,6 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public void colorSquares(PrintStream out, ChessBoard board) {
-
         ArrayList<String> letters = new ArrayList<>(Arrays.asList
                 (" A ", " B ", " C ", " D ", " E ", " F ", " G ", " H "));
 
@@ -214,14 +201,12 @@ public class GameplayClient implements NotificationHandler {
                 for (int y = 0; y < boardDisplay[0].length; y++) {
 
                     loopThroughSquares(out, boardDisplay, x, y);
-
                 }
 
                 out.print(EscapeSequences.RESET_BG_COLOR);
 
                 out.println();
             }
-
         } else if (Objects.equals(playerColor, "BLACK")) {
 
             out.print(EMPTY);
@@ -242,7 +227,6 @@ public class GameplayClient implements NotificationHandler {
                     loopThroughSquares(out, boardDisplay, x, y);
 
                 }
-
                 out.print(EscapeSequences.RESET_BG_COLOR);
 
                 out.println();
@@ -251,7 +235,6 @@ public class GameplayClient implements NotificationHandler {
     }
 
     private void loopThroughSquares(PrintStream out, ChessPiece[][] boardDisplay, int x, int y) {
-
             if ((x + y) % 2 == 0) {
 
                 out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
@@ -268,9 +251,7 @@ public class GameplayClient implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage message) throws NetworkException {
-
         try {
-
             switch (message.getServerMessageType()) {
 
                 case LOAD_GAME -> {
@@ -281,7 +262,6 @@ public class GameplayClient implements NotificationHandler {
 
                     System.out.print("\n>>> ");
                 }
-
                 case NOTIFICATION -> {
                     System.out.println(message.getMsg());
 
@@ -294,7 +274,6 @@ public class GameplayClient implements NotificationHandler {
                     System.out.print("\n>>> ");
 
                 }
-
                 case ERROR -> {
                     System.out.print(message.getMsg());
                     System.out.print("\n>>> ");
@@ -304,11 +283,9 @@ public class GameplayClient implements NotificationHandler {
         } catch (Exception e) {
             throw new NetworkException(500, e.getMessage());
         }
-
     }
 
     public String help(){
-
         return """
             - Help
             - Redraw
@@ -321,21 +298,77 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public String leave() throws NetworkException {
-
         ws.leaveGame(authToken, gameID);
 
         return "You successfully left the game! \n";
     }
 
 
-    public String move(){
 
-        return null;
+    public String move(String ... params) throws NetworkException {
+
+        if (playerColor == null){
+
+            throw new NetworkException(500, "Observers can't make moves!");
+        }
+
+        if (!(params.length == 2 || params.length == 3)) {
+
+            throw new NetworkException(500, "Please enter <startPos> <endPos> and optional promotion");
+        }
+        String startPos = params[0];
+        String endPos = params[1];
+
+        String[] validLetters = {"A", "B", "C", "D", "E", "F", "G", "H"};
+        Integer[] validNums = {1, 2, 3, 4, 5, 6, 7, 8};
+
+        ArrayList<String> letters = new ArrayList<>(Arrays.asList(validLetters));
+        List<Integer> numbers = new ArrayList<>(Arrays.asList(validNums));
+        String promotion = null;
+        ChessPiece.PieceType finalPromotion = null;
+
+
+        if (params.length == 3){
+
+            promotion = params[2];
+        }
+
+        if (!(startPos.length() == 2 && endPos.length() == 2)){
+
+            throw new NetworkException(500, "Start Pos and End Pos must be exactly 2 characters");
+        }
+
+        if (!(letters.contains(String.valueOf(startPos.charAt(0)).toUpperCase())
+                && letters.contains(String.valueOf(endPos.charAt(0)).toUpperCase()))) {
+
+            throw new NetworkException(500, "First character in chess move must be a letter A-H");
+        }
+
+        if (!(numbers.contains(Character.getNumericValue(startPos.charAt(1))) &&
+                numbers.contains(Character.getNumericValue(endPos.charAt(1))))) {
+
+            throw new NetworkException(500, "Second character in chess move must be a number 1-8");
+        }
+
+        if (promotion != null){
+            switch(promotion.toUpperCase()) {
+                case "Q" -> finalPromotion = QUEEN;
+                case "B" -> finalPromotion = BISHOP;
+                case "K" -> finalPromotion = KNIGHT;
+                case "R" -> finalPromotion = ROOK;
+                default -> throw new NetworkException(500, "Only Q, B, K, and R are valid promotions");
+            }
+        }
+
+        ChessMove move = lettersToNums(startPos, endPos, finalPromotion);
+
+        ws.makeMove(authToken, gameID, playerColor, move);
+
+        return "Move Successful \n";
 
     }
 
     public String resign() throws NetworkException {
-
         if (playerColor == null){
 
             help();
@@ -345,7 +378,6 @@ public class GameplayClient implements NotificationHandler {
     }
 
     public String resignFinal() throws NetworkException {
-
         if (gameOver) {
 
             return "Game is already over";
@@ -357,12 +389,42 @@ public class GameplayClient implements NotificationHandler {
 
     }
 
+    public ChessMove lettersToNums(String startPos, String endPos, ChessPiece.PieceType promotion)
+            throws NetworkException {
+        String startCol = String.valueOf(startPos.charAt(0)).toUpperCase();
+
+        int startRow = Character.getNumericValue(startPos.charAt(1));
+
+        String endCol = String.valueOf(endPos.charAt(0)).toUpperCase();
+
+        int endRow = Character.getNumericValue(endPos.charAt(1));
+
+        ChessPosition moveStartPos = new ChessPosition(startRow, getColNum(startCol));
+
+        ChessPosition moveEndPos = new ChessPosition(endRow, getColNum(endCol));
+
+        return new ChessMove(moveStartPos, moveEndPos, promotion);
+
+    }
+
+    public int getColNum(String letter) throws NetworkException {
+        return switch(letter) {
+            case "A" ->  1;
+            case "B" -> 2;
+            case "C" -> 3;
+            case "D" -> 4;
+            case "E" -> 5;
+            case "F" -> 6;
+            case "G" -> 7;
+            case "H" -> 8;
+            default -> throw new NetworkException(500, "Invalid Move");
+        };
+    }
+
     public String highlight(){
 
         return null;
 
     }
-
-
 
 }

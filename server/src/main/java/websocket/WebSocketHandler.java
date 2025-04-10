@@ -1,8 +1,6 @@
 package websocket;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -89,6 +87,13 @@ public class WebSocketHandler {
 
         connections.broadcast(authData.username(), gameData.gameID(), displayMsg);
 
+        System.out.println("CONNECT CALLED:");
+        System.out.println("Token user: " + authData.username());
+        System.out.println("Requested color: " + cmd.getPlayerColor());
+        System.out.println("Game white user: " + gameData.whiteUsername());
+        System.out.println("Game black user: " + gameData.blackUsername());
+
+
     }
 
 
@@ -104,6 +109,13 @@ public class WebSocketHandler {
         String userName = authData.username();
 
         ChessGame.TeamColor currColor = gameData.game().getTeamTurn();
+
+        System.out.println("User attempting move: " + authData.username());
+        System.out.println("Game white: " + gameData.whiteUsername());
+        System.out.println("Game black: " + gameData.blackUsername());
+        System.out.println("Turn: " + currColor);
+        System.out.println("[DEBUG] Received move from playerColor: " + cmd.getPlayerColor());
+        System.out.println("[DEBUG] Server thinks it's " + gameData.game().getTeamTurn() + "'s turn");
 
 
         if (gameData.game().gameOver()) {
@@ -133,6 +145,16 @@ public class WebSocketHandler {
         if (currColor == ChessGame.TeamColor.BLACK && !userName.equals(gameData.blackUsername())) {
             throw new InvalidCredentialsException("Error: unauthorized");
         }
+
+
+        ChessMove move = cmd.getMove();
+
+        ChessPosition start = move.getStartPosition();
+
+        ChessPosition end = move.getEndPosition();
+
+        System.out.println("Server received move from " + start + " to " + end);
+        System.out.println("Piece at start: " + board.getPiece(start));
 
         gameData.game().makeMove(cmd.getMove());
 
@@ -197,7 +219,6 @@ public class WebSocketHandler {
 
         GameData currGame = gameDAO.getGame(cmd.getGameID());
 
-        // Check if it is an observer
         if (!authData.username().equals(currGame.whiteUsername()) && !authData.username().equals(currGame.blackUsername())) {
 
             var message = String.format("Observer %s has left the game", authData.username());
@@ -310,4 +331,6 @@ public class WebSocketHandler {
             return ChessGame.TeamColor.WHITE;
         }
     }
+
+
 }

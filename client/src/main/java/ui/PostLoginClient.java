@@ -23,8 +23,6 @@ public class PostLoginClient {
 
     private ArrayList<ListGameData> currList;
 
-    private final String serverUrl;
-
 
     public PostLoginClient(String serverUrl, String authToken) {
 
@@ -32,7 +30,6 @@ public class PostLoginClient {
 
         this.authToken = authToken;
 
-        this.serverUrl = serverUrl;
     }
 
     public String eval(String input){

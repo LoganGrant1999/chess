@@ -31,6 +31,8 @@ public class WebSocketServerFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
+                    System.out.println("[DEBUG] WS raw message: " + message);
+
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
                     try {
                         notificationHandler.notify(notification);
@@ -76,6 +78,8 @@ public class WebSocketServerFacade extends Endpoint {
     public void makeMove(String authToken, int gameID, String playerColor, ChessMove move) throws NetworkException {
 
         try {
+
+            System.out.println("[DEBUG] Sending move as color: " + playerColor);
 
             UserGameCommand cmd =
                     new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, move, authToken, gameID, playerColor);
