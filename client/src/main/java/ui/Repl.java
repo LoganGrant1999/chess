@@ -41,81 +41,18 @@ public class Repl {
             try {
                 if (state == State.PRELOGIN) {
 
-                    preLogin.setAuthTokenNull();
-                    result = preLogin.eval(line);
-                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-
-                    if (preLogin.getAuthToken() != null) {
-
-                        setState(State.POSTLOGIN);
-
-                        postLogin = new PostLoginClient(serverUrl, preLogin.getAuthToken());
-                    }
+                    result = preLogin(result, line);
 
                 } else if (state == State.POSTLOGIN) {
 
-                    postLogin.setPlayerColorNull();
-                    result = postLogin.eval(line);
-                    System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-
-                    if (Objects.equals(result, "Successfully Logged out!")) {
-
-                        setState(State.PRELOGIN);
-                    }
-
-                    if (Objects.equals(result, "You Successfully Joined the Game!" + "\n")
-                            || Objects.equals(result, ("You Are Observing the Game!" + "\n"))) {
-
-                        gamePlay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
-                                postLogin.getGameID(), postLogin.getPlayerColor());
-
-                        setState(State.GAMEPLAY);
-                    }
+                    result = postLogin(result, line);
 
                 } else if (state == State.GAMEPLAY) {
-                    if (waiting) {
 
-                        if (line.equalsIgnoreCase("y")) {
-
-                            result = gamePlay.resignFinal();
-                            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-                            waiting = false;
-
-                        } else if (line.equalsIgnoreCase("n")) {
-
-                            result = "Cancelled Resignation!";
-                            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-                            waiting = false;
-
-                        } else {
-
-                            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "Please Enter Y or N");
-                            result = gamePlay.resign();
-                            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-
-                        }
-
-                    } else {
-
-                        result = gamePlay.eval(line);
-                        if (Objects.equals(result, "Are you sure you would like to resign? [Y/N]")) {
-
-                            waiting = true;
-
-                            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-
-                        } else {
-
-                            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
-                        }
-
-                        if (Objects.equals(result, "You successfully left the game! \n")) {
-
-                            setState(State.POSTLOGIN);
-                        }
-                    }
+                    result = gamePlay(result, line);
                 }
             } catch (Exception e) {
+
                 throw new NetworkException(500, e.getMessage());
             }
         }
@@ -130,4 +67,94 @@ public class Repl {
 
         System.out.print("\n" + EscapeSequences.RESET_TEXT_COLOR + ">>> " + EscapeSequences.SET_TEXT_COLOR_BLUE);
     }
+
+    public String preLogin(String result, String line){
+
+        preLogin.setAuthTokenNull();
+        result = preLogin.eval(line);
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+
+        if (preLogin.getAuthToken() != null) {
+
+            setState(State.POSTLOGIN);
+
+            postLogin = new PostLoginClient(serverUrl, preLogin.getAuthToken());
+        }
+
+        return result;
+    }
+
+    public String postLogin(String result, String line) throws NetworkException {
+
+        postLogin.setPlayerColorNull();
+        result = postLogin.eval(line);
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+
+        if (Objects.equals(result, "Successfully Logged out!")) {
+
+            setState(State.PRELOGIN);
+        }
+
+        if (Objects.equals(result, "You Successfully Joined the Game!" + "\n")
+                || Objects.equals(result, ("You Are Observing the Game!" + "\n"))) {
+
+            gamePlay = new GameplayClient(serverUrl, postLogin.getAuthToken(),
+                    postLogin.getGameID(), postLogin.getPlayerColor());
+
+            setState(State.GAMEPLAY);
+        }
+
+        return result;
+    }
+
+
+    public String gamePlay(String result, String line) throws NetworkException {
+        if (waiting) {
+
+            if (line.equalsIgnoreCase("y")) {
+
+                result = gamePlay.resignFinal();
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+                waiting = false;
+
+            } else if (line.equalsIgnoreCase("n")) {
+
+                result = "Cancelled Resignation!";
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+                waiting = false;
+
+            } else {
+
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "Please Enter Y or N");
+                result = gamePlay.resign();
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+
+            }
+
+        } else {
+
+            result = gamePlay.eval(line);
+
+            if (Objects.equals(result, "Are you sure you would like to resign? [Y/N]")) {
+
+                waiting = true;
+
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+
+            } else {
+
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+            }
+
+            if (Objects.equals(result, "You successfully left the game! \n")) {
+
+                setState(State.POSTLOGIN);
+            }
+
+        }
+
+        return result;
+    }
 }
+
+
